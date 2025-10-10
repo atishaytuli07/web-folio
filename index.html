@@ -1,246 +1,627 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" 
-        content="Atishay Tuli's WebFolio - MERN Stack Developer & Frontend Developer. Explore my WebFolio featuring creative web projects, GSAP animations, and full-stack applications. View my work on GitHub @atishaytuli07.">
-    <meta name="keywords"
-        content="Atishay Tuli, atishaytuli07, atishaytuli, Webfolio, MERN, frontend developer, GitHub webfolio, web development projects, 3D web animations, JavaScript developer, React developer, Node.js developer, atishaytuli07 github, atishay tuli webfolio">
-    <meta name="author" content="Atishay Tuli">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Atishay Tuli (atishaytuli07) - Creative Frontend & MERN Stack Developer">
-    <meta property="og:description"
-        content="Discover Atishay Tuli's WebFolio - A showcase of modern web development projects including gsap animations, MERN stack projects, and creative tools. Follow @atishaytuli07 on GitHub.">
-    <meta property="og:image" content="./atishaytuli.png">
-    <meta property="og:url" content="https://atishaytuli07.github.io/webfolio">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Atishay Tuli (atishaytuli07) - Creative Frontend & MERN Stack Developer">
-    <meta name="twitter:description" content="Explore Atishay Tuli's web development webfolio featuring MERN stack projects, gsap animations, creative tools, and Revision guides.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Atishay Tuli's WebFolio - Creative Frontend Developer, Blending UX/UI, Code & Motion. Explore my WebFolio featuring creative web projects, GSAP animations, and full-stack applications. View my work on GitHub @atishaytuli07."
+    />
+    <meta
+      name="keywords"
+      content="Atishay Tuli, atishaytuli07, atishaytuli, Webfolio, frontend developer, GitHub webfolio, web development projects, 3D web animations, JavaScript developer, React developer, Node.js developer, atishaytuli07 github, atishay tuli webfolio, tuli, tuli atishay"
+    />
+    <meta name="author" content="Atishay Tuli" />
+    <meta name="robots" content="index, follow" />
+    <meta
+      property="og:title"
+      content="Atishay Tuli - Creative Frontend Developer, Blending UX/UI, Code & Motion"
+    />
+    <meta
+      property="og:description"
+      content="Discover Atishay Tuli's WebFolio - A showcase of modern web development projects including gsap animations, MERN stack projects, and creative tools. Follow @atishaytuli07 on GitHub."
+    />
+    <meta property="og:image" content="./atishaytuli.png" />
+    <meta
+      property="og:url"
+      content="https://atishaytuli07.github.io/webfolio"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Atishay Tuli - Creative Frontend Developer, Blending UX/UI, Code & Motion"
+    />
+    <meta
+      name="twitter:description"
+      content="Explore Atishay Tuli's web development webfolio featuring MERN stack projects, gsap animations, creative tools, and Revision guides."
+    />
     <title>WebFolio</title>
-    <link rel="canonical" href="https://webfolio-atishay.vercel.app">
-    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.4.0/fonts/remixicon.css" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/style.css">
-</head>
+    <link rel="canonical" href="https://webfolio-atishay.vercel.app" />
+    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.4.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
 
-<body class="bg-gray-100">
+  <body class="bg-gray-100">
     <nav class="block sm:hidden flex justify-between p-3">
-        <a href="https://drive.google.com/file/d/1l9PXZn_aFcxynIVgamQmG462L2o6DWCR/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-sm bg-blue-400 px-3 py-1 rounded-full text-white font-semibold Hire inline-block">Hire me 👋🏻</a>
+      <a
+        href="https://drive.google.com/file/d/1l9PXZn_aFcxynIVgamQmG462L2o6DWCR/view?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm bg-blue-400 px-3 py-1 rounded-full text-white font-semibold Hire inline-block"
+        >Hire me 👋🏻</a
+      >
     </nav>
     <header class="text-center py-6 sm:py-10">
-        <div class="flip-container">
-            <div class="flipper">
-                <div class="front">
-                    <img src="./images/atishaytuli.png" alt="Atishay Tuli" loading="lazy" width="152" height="152"
-                        class="mx-auto rounded-full w-26 h-26 sm:w-38 sm:h-38">
-                </div>
-                <div class="back">
-                    <img src="./images/memoji.png" alt="Mimoji" loading="lazy" width="152" height="152"
-                        class="rounded-full w-26 h-26 sm:w-38 sm:h-38">
-                </div>
-            </div>
+      <div class="flip-container">
+        <div class="flipper">
+          <div class="front">
+            <img
+              src="./images/atishaytuli.png"
+              alt="Atishay Tuli"
+              loading="lazy"
+              width="152"
+              height="152"
+              class="mx-auto rounded-full w-26 h-26 sm:w-38 sm:h-38"
+            />
+          </div>
+          <div class="back">
+            <img
+              src="./images/memoji.png"
+              alt="Mimoji"
+              loading="lazy"
+              width="152"
+              height="152"
+              class="rounded-full w-26 h-26 sm:w-38 sm:h-38"
+            />
+          </div>
         </div>
+      </div>
 
-        <h1 class="text-2xl sm:text-4xl font-semibold mt-2 sm:mt-4">Atishay Tuli</h1>
-        <p class="text-xs sm:text-base text-gray-600 font-medium mt-1 sm:mt-2">MERN | @ Creative Frontend Developer</p>
+      <h1 class="text-2xl sm:text-4xl font-semibold mt-2 sm:mt-4">
+        Atishay Tuli
+      </h1>
+      <p class="text-xs sm:text-base text-gray-600 mt-1 sm:mt-2">
+        @Frontend Engineer | blending design, code & creativity
+      </p>
 
-        <div class="space-x-3 sm:space-x-3 mt-4 sm:mt-4 flex justify-center items-center">
-            <a href="mailto:atishaytuliiaf@gmail.com" rel="noopener" aria-label="Email" class="flex items-center justify-center">
-                <img src="./images/email.svg" alt="Email" class="w-7 h-7 sm:w-6 sm:h-6" loading="lazy" width="24" height="24">
-            </a>
-            <a href="https://www.linkedin.com/in/atishaytuli07/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="flex items-center justify-center">
-                <img src="./images/linkedin.svg" alt="LinkedIn" class="w-7 h-7 sm:w-6 sm:h-6" loading="lazy" width="24" height="24">
-            </a>
-            <a href="https://github.com/atishaytuli07" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="flex items-center justify-center">
-                <img src="./images/github.svg" alt="GitHub" class="w-7 h-7 sm:w-6 sm:h-6" loading="lazy" width="24" height="24">
-            </a>
-            <a href="https://drive.google.com/file/d/1l9PXZn_aFcxynIVgamQmG462L2o6DWCR/view?usp=sharing" target="_blank" rel="noopener noreferrer" aria-label="Resume" class="flex items-center justify-center">
-                <img src="./images/resume.svg" alt="Resume" class="w-7 h-7 sm:w-6 sm:h-6" loading="lazy" width="24" height="24">
-            </a>
-            <a href="https://uiverse.io/profile/atishaytuli07" target="_blank" rel="noopener noreferrer" aria-label="Uiverse Profile" class="flex items-center justify-center">
-                <img src="./images/uiversa.svg" alt="Uiverse" class="w-7 h-7 sm:w-6 sm:h-6" loading="lazy" width="24" height="24">
-            </a>
-        </div>
+      <div
+        class="space-x-3 sm:space-x-3 mt-4 sm:mt-4 flex justify-center items-center"
+      >
+        <a
+          href="mailto:atishaytuliiaf@gmail.com"
+          rel="noopener"
+          aria-label="Email"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/email.svg"
+            alt="Email"
+            class="w-7 h-7 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="24"
+            height="24"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/atishaytuli07/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/linkedin.png"
+            alt="LinkedIn"
+            class="w-10 h-10 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </a>
+        <a
+          href="https://github.com/atishaytuli07"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/github.png"
+            alt="GitHub"
+            class="w-7 h-7 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="24"
+            height="24"
+          />
+        </a>
+        <a
+          href="https://dribbble.com/atishaytuli07"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Dribble Profile"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/dribbble.png"
+            alt="Uiverse"
+            class="w-7 h-7 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="24"
+            height="24"
+          />
+        </a>
+        <a
+          href="https://www.behance.net/atishaytuli07"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Behnace Profile"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/behance.png"
+            alt="Uiverse"
+            class="w-7 h-7 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="24"
+            height="24"
+          />
+        </a>
+        <a
+          href="https://drive.google.com/file/d/1l9PXZn_aFcxynIVgamQmG462L2o6DWCR/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Resume"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/resume.svg"
+            alt="Resume"
+            class="w-7 h-7 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="24"
+            height="24"
+          />
+        </a>
+        <a
+          href="https://uiverse.io/profile/atishaytuli07"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Uiverse Profile"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/uiversa.svg"
+            alt="Uiverse"
+            class="w-7 h-7 sm:w-6 sm:h-6"
+            loading="lazy"
+            width="24"
+            height="24"
+          />
+        </a>
+        <a
+          href="https://me.muz.li/atishaytuli07"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Muzli Profile"
+          class="flex items-center justify-center"
+        >
+          <img
+            src="./images/muzli.png"
+            alt="Uiverse"
+            class="w-6 h-6"
+            loading="lazy"
+            width="20"
+            height="20"
+          />
+        </a>
+      </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-8">
-        <section class="text-center mb-8 sm:mb-12 lg:mx-32">
-            <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6">
-                <div class="mb-6 sm:mb-0">
-                    <h2 class="font-bold text-lg sm:text-xl text-center">Visionary 7🧨</h2>
-                    <ul class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base">
-                        <li><a href="https://luxryslider.netlify.app" target="_blank" rel="noopener noreferrer">Luxry Slider</a></li>
-                        <li><a href="https://mycanvadesigns.netlify.app" target="_blank" rel="noopener noreferrer">Canva Work</a></li>
-                        <li><a href="https://3natureslider.netlify.app" target="_blank" rel="noopener noreferrer">3JS Showcase</a></li>
-                    </ul>
-                </div>
-                <div class="mb-6 sm:mb-0">
-                    <h2 class="font-bold text-lg sm:text-xl">New Products 🛠</h2>
-                    <ul class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base">
-                        <li><a href="https://annotationsdocs.vercel.app" target="_blank" rel="noopener noreferrer">ANnotations</a></li>
-                        <li><a href="https://atishaytuli07.github.io/textcaseconvertor" target="_blank" rel="noopener noreferrer">@ tcc &nbsp;-text</a></li>
-                        <li><a href="https://atishaytuli07.github.io/autographica" target="_blank" rel="noopener noreferrer">Autographica</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h2 class="font-bold text-lg sm:text-xl">My Guides 📜</h2>
-                    <ul class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base">
-                        <li><a href="https://atishaytuli07.github.io/Hinglish" target="_blank" rel="noopener noreferrer">Asynchronous JS</a></li>
-                        <li><a href="https://atishaytuli07.github.io/Hinglish/dom.html" target="_blank" rel="noopener noreferrer">JS &nbsp;BOM & DOM</a></li>
-                        <li><a href="https://atishaytuli.medium.com" target="_blank" rel="noopener noreferrer">Medium</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+      <section class="text-center mb-8 sm:mb-12 lg:mx-32">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6"
+        >
+          <div class="mb-6 sm:mb-0">
+            <h2 class="font-bold text-lg sm:text-xl text-center">
+              Visionary 7🧨
+            </h2>
+            <ul
+              class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base"
+            >
+              <li>
+                <a
+                  href="https://luxryslider.netlify.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Luxry Slider</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://mycanvadesigns.netlify.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Canva Work</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://3natureslider.netlify.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >3JS Showcase</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="mb-6 sm:mb-0">
+            <h2 class="font-bold text-lg sm:text-xl">New Products 🛠</h2>
+            <ul
+              class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base"
+            >
+              <li>
+                <a
+                  href="https://oopshubby.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Oops Hubby</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://annotationsdocs.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >ANnotations</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://atishaytuli07.github.io/autographica"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Autographica</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="font-bold text-lg sm:text-xl">My Guides 📜</h2>
+            <ul
+              class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base"
+            >
+              <li>
+                <a
+                  href="https://atishaytuli07.github.io/Hinglish"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Asynchronous JS</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://atishaytuli07.github.io/Hinglish/dom.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >JS &nbsp;BOM & DOM</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://atishaytuli.medium.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Medium</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-        <section class="bg-white shadow rounded-lg p-4 sm:p-6 pt-6 mt-14 sm:pt-8">
-            <h2 class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10">Full Stack Projects 🐦</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- <div class="mb-4 sm:mb-0">
+      <section class="bg-white shadow rounded-lg p-4 sm:p-6 pt-6 mt-14 sm:pt-8">
+        <h2 class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10">
+          Full Stack Projects 🐦
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <!-- <div class="mb-4 sm:mb-0">
                     <h3 class="font-bold text-sm sm:text-base">
                         <a href="#" class="text-black no-underline">1. &nbsp;⏳</a>
                     </h3>
                     <span class="text-xs sm:text-sm text-gray-700">updating soon ....</span>
                 </div> -->
-                <div class="mb-4 sm:mb-0">
-                    <h3 class="font-bold text-base sm:text-base">
-                        <a href="#" target="_blank" rel="noopener noreferrer" class="text-black no-underline">1. &nbsp;TinDev</a>
-                    </h3>
-                    <span class="text-xs sm:text-sm text-gray-700"> MERN, Tailwind</span>
-                    <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-500"><i class="ri-link"></i></a>
-                </div>
-                <div class="mb-4 sm:mb-0">
-                    <h3 class="font-bold text-base sm:text-base">
-                        <a href="https://anacondacases.vercel.app" target="_blank" rel="noopener noreferrer" class="text-black no-underline">2. &nbsp;Anaconda Case</a>
-                    </h3>
-                    <span class="text-xs sm:text-sm text-gray-700"> NextJS, Typescript, Shadcn UI </span>
-                    <a href="https://github.com/atishaytuli07/Anaconda-Cases.git" target="_blank" rel="noopener noreferrer" class="text-blue-500"><i class="ri-link"></i></a>
-                </div>
-                <div class="mb-4 sm:mb-0">
-                    <h3 class="font-bold text-base sm:text-base">
-                        <a href="https://github.com/atishaytuli/AdoreChat.git" target="_blank" rel="noopener noreferrer" class="text-black no-underline">3. &nbsp;Adore Chat</a>
-                    </h3>
-                    <span class="text-xs sm:text-sm text-gray-700"> React, Tailwind, ZegoCloud</span>
-                    <a href="https://adorechat.vercel.app" target="_blank" rel="noopener noreferrer" class="text-blue-500"><i class="ri-link"></i></a>
-                </div>
-                <div class="mb-4 sm:mb-0">
-                    <h3 class="font-bold text-base sm:text-base">
-                        <a href="https://github.com/atishaytuli/______codeReview.git" target="_blank" rel="noopener noreferrer" class="text-black no-underline">4. &nbsp;AI Code Reviewer</a>
-                    </h3>
-                    <span class="text-xs sm:text-sm text-gray-700"> React, Express, Gemini ai</span>
-                    <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-500"><i class="ri-link"></i></a>
-                </div>
+          <div class="mb-4 sm:mb-0">
+            <h3 class="font-bold text-base sm:text-base">
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-black no-underline"
+                >1. &nbsp;Meeeezy</a
+              >
+            </h3>
+            <span class="text-xs sm:text-sm text-gray-700">
+              Next.js, Wordpress, Tailwind</span
+            >
+            <a
+              href="https://github.com/atishaytuli/Meeeezy"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500"
+              ><i class="ri-link"></i
+            ></a>
+          </div>
+          <div class="mb-4 sm:mb-0">
+            <h3 class="font-bold text-base sm:text-base">
+              <a
+                href="https://anacondacases.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-black no-underline"
+                >2. &nbsp;Anaconda Case</a
+              >
+            </h3>
+            <span class="text-xs sm:text-sm text-gray-700">
+              NextJS, Typescript, Shadcn UI
+            </span>
+            <a
+              href="https://github.com/atishaytuli07/Anaconda-Cases.git"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500"
+              ><i class="ri-link"></i
+            ></a>
+          </div>
+          <div class="mb-4 sm:mb-0">
+            <h3 class="font-bold text-base sm:text-base">
+              <a
+                href="https://github.com/atishaytuli/AdoreChat.git"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-black no-underline"
+                >3. &nbsp;Adore Chat</a
+              >
+            </h3>
+            <span class="text-xs sm:text-sm text-gray-700">
+              React, Tailwind, ZegoCloud</span
+            >
+            <a
+              href="https://adorechat.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500"
+              ><i class="ri-link"></i
+            ></a>
+          </div>
+          <div class="mb-4 sm:mb-0">
+            <h3 class="font-bold text-base sm:text-base">
+              <a
+                href="https://github.com/atishaytuli/______codeReview.git"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-black no-underline"
+                >4. &nbsp;AI Code Reviewer</a
+              >
+            </h3>
+            <span class="text-xs sm:text-sm text-gray-700">
+              React, Express, Gemini ai</span
+            >
+            <a
+              href="https://bestcodereview.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500"
+              ><i class="ri-link"></i
+            ></a>
+          </div>
+        </div>
+
+        <section class="mt-8 sm:mt-10">
+          <h2 class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10">
+            Creative Projects ✨
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                1. &nbsp;DUO
+                <a
+                  href="https://atishaytuli07.github.io/DUO"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
             </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                2. &nbsp;Fishing Adventure
+                <a
+                  href="https://atishaytuli.github.io/fishing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                3. &nbsp;OCHII
+                <a
+                  href="https://ochhii.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                4. &nbsp;ExoApe
+                <a
+                  href="https://exoape-uiclone.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                5. &nbsp;Pour Mojito
+                <a
+                  href="            https://pourmojito.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                6. &nbsp;21st 'C Museum
+                <a
+                  href="https://atishaytuli07.github.io/21st-Century-Museum"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                7. &nbsp;Two Good
+                <a
+                  href="https://atishaytuli07.github.io/twogood.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                8. &nbsp;Rejouicee
+                <a
+                  href="https://atishaytuli07.github.io/rejouicee"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                9. &nbsp;Botanicals
+                <a
+                  href="https://atishaytuli07.github.io/shery.js"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                10. &nbsp;ReFokus
+                <a
+                  href="https://refokus-drab.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <!-- <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                10. &nbsp;SwipeSync
+                <a
+                  href="https://atishaytuli07.github.io/swipesync/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div> -->
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                11. &nbsp;Cuberto
+                <a
+                  href="https://atishaytuli07.github.io/cuberto"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+            <div class="mb-3 sm:mb-0">
+              <h3 class="font-bold text-sm sm:text-base">
+                12. &nbsp;Doze Studios
+                <a
+                  href="https://dozestudios.netlify.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500"
+                >
+                  <i class="ri-links-fill"></i
+                ></a>
+              </h3>
+            </div>
+          </div>
 
-            <section class="mt-8 sm:mt-10">
-                <h2 class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10">Creative Projects ✨</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            1. &nbsp;DUO
-                            <a href="https://atishaytuli07.github.io/DUO" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            2. &nbsp;Fishing Adventure
-                            <a href="https://atishaytuli.github.io/fishing" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            3. &nbsp;OCHII
-                            <a href="https://ochhii.vercel.app" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            4. &nbsp;ExoApe
-                            <a href="https://exoape-uiclone.vercel.app" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            5. &nbsp;21st 'C Museum
-                            <a href="https://atishaytuli07.github.io/21st-Century-Museum" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            6. &nbsp;Two Good
-                            <a href="https://atishaytuli07.github.io/twogood.co" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            7. &nbsp;Rejouicee
-                            <a href="https://atishaytuli07.github.io/rejouicee" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            8. &nbsp;Botanicals
-                            <a href="https://atishaytuli07.github.io/shery.js" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            9. &nbsp;ReFokus
-                            <a href="https://refokus-drab.vercel.app" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            10. &nbsp;SwipeSync
-                            <a href="https://atishaytuli07.github.io/swipesync/" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            11. &nbsp;Cuberto
-                            <a href="https://atishaytuli07.github.io/cuberto" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                    <div class="mb-3 sm:mb-0">
-                        <h3 class="font-bold text-sm sm:text-base">
-                            12. &nbsp;Doze Studios
-                            <a href="https://dozestudios.netlify.app" target="_blank" rel="noopener noreferrer" class="text-blue-500">
-                                <i class="ri-links-fill"></i></a>
-                        </h3>
-                    </div>
-                </div>
-
-                <div class="text-right mt-4">
-                    <a href="https://github.com/atishaytuli07?tab=repositories" target="_blank" rel="noopener noreferrer" class="text-blue-500 font-semibold text-sm sm:text-base"> More projects here
-                        →</a>
-                </div>
-
-            </section>
-
+          <div class="text-right mt-4">
+            <a
+              href="https://github.com/atishaytuli07?tab=repositories"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 font-semibold text-sm sm:text-base"
+            >
+              More projects here →</a
+            >
+          </div>
         </section>
-
+      </section>
     </main>
 
     <footer class="text-center mt-8 sm:mt-0 mb-2 block sm:hidden">
-        <p class="text-xs sm:text-sm text-gray-600">© '21 Atishay Tuli, All rights reserved.</p>
+      <p class="text-xs sm:text-sm text-gray-600">
+        © '21 Atishay Tuli, All rights reserved.
+      </p>
     </footer>
 
     <script src="./script.js"></script>
-</body>
-
+  </body>
 </html>
