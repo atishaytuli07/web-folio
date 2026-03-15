@@ -1,37 +1,503 @@
+/* Font for Side Sections (/about, /projects) */
+@font-face {
+  font-family: "FontSide";
+  src: url("https://static.wixstatic.com/ufonts/fce596_fe1dbd76ea054b39b695163378dbc5a3/woff2/file.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Font for Name (h1) */
+@font-face {
+  font-family: "FontName";
+  src: url("https://static.wixstatic.com/ufonts/5499e3_723fcf7240ac4c1ca9afaada105b9952/woff2/file.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Font for Subheading, Paragraphs, Footer */
+@font-face {
+  font-family: "FontBody";
+  src: url("https://static.wixstatic.com/ufonts/c2d769_c89262bde4024faca0472a2cacb37b66/woff2/file.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-color: #1b1917;
+  --text-name: #f5f5f4;
+  --text-sub: #b8b3ad;
+  --text-body: #e6e3df;
+  --text-side: #b8b3ad;
+}
+
 * {
-    user-select: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.flip-container {
-    perspective: 1000px;
-    width: 128px;
-    height: 128px;
-    margin: auto;
+body {
+  background-color: var(--bg-color);
+  color: var(--text-body);
+  /* Fallback font family */
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-.flipper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.6s;
+/* Subtle paper noise texture and glow */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: -1;
+  will-change: transform;
 }
 
-.flip-container.clicked .flipper {
-    transform: rotateY(180deg);
+body::after {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.02) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: -2;
 }
 
-.front,
-.back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
+::selection {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Layout */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--text-name);
+  color: var(--bg-color);
+  padding: 8px 16px;
+  z-index: 100;
+  font-family: "FontBody", sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
+.layout-split {
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.pane-left {
+  padding: 4rem 1.5rem 2rem;
+}
+
+.pane-right {
+  padding: 2rem 1.5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+@media (min-width: 1024px) {
+  .layout-split {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .pane-left {
+    width: 45%;
+    padding: 6rem 4rem 6rem 6rem;
+  }
+  .sticky-content {
+    position: sticky;
+    top: 6rem;
+    max-height: calc(100dvh - 12rem);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc(100dvh - 12rem);
+  }
+  .pane-right {
+    width: 55%;
+    padding: 6rem 6rem 6rem 4rem;
+  }
 }
 
-.back {
-    transform: rotateY(180deg);
+/* Header & About */
+.profile-img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-family: "FontName", sans-serif;
+  font-size: 28px;
+  line-height: 39.2px;
+  color: var(--text-name);
+  margin-bottom: 0.5rem;
+  font-weight: normal;
+}
+
+.subtitle {
+  font-family: "FontBody", sans-serif;
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--text-sub);
+  margin-bottom: 1.7rem;
+}
+
+.about-section p,
+.text-content p {
+  font-family: "FontBody", sans-serif;
+  font-size: 15px;
+  color: var(--text-body);
+  line-height: 1.5;
+}
+
+.text-content p + p {
+  margin-top: 1.5rem;
+}
+
+.inline-avatar {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: -5px;
+  margin-left: 5px;
+  margin-right: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+/* Right Pane Content */
+.section-title {
+  font-family: "FontSide", sans-serif;
+  font-size: 13px;
+  color: var(--text-side);
+  margin-bottom: 1rem;
+  text-transform: lowercase;
+  font-weight: normal;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (hover: hover) {
+  .project-list:hover .project-row {
+    opacity: 0.4;
+  }
+
+  .project-list .project-row:hover {
+    opacity: 1;
+  }
+}
+
+.project-list li {
+  margin-bottom: 1rem;
+}
+
+.project-list li:last-child {
+  margin-bottom: 0;
+}
+
+.project-row {
+  display: block;
+  text-decoration: none;
+  color: var(--text-body);
+  border-radius: 4px;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.project-row:hover {
+  transform: translateX(4px);
+}
+
+.more-projects {
+  display: block;
+  margin-top: 1.5rem;
+  font-family: "FontBody", sans-serif;
+  font-size: 15px;
+  color: var(--text-sub);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.3s ease;
+}
+
+.more-projects:hover {
+  color: var(--text-name);
+}
+
+.project-name {
+  display: inline;
+  font-family: "FontBody", sans-serif;
+  font-size: 15px;
+  color: var(--text-body);
+  font-weight: normal;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--text-body);
+  transition:
+    color 0.3s ease,
+    text-decoration-color 0.3s ease;
+}
+
+.project-name::after {
+  content: "↗";
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.3s ease;
+  font-size: 13px;
+  margin-left: 4px;
+  color: var(--text-name);
+}
+
+.project-row:hover .project-name::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.project-row:hover .project-name {
+  color: var(--text-name);
+  text-decoration-color: var(--text-name);
+  text-decoration-style: dashed;
+}
+
+.project-desc {
+  display: inline;
+  font-family: "FontBody", sans-serif;
+  font-size: 15px;
+  color: var(--text-body);
+  line-height: 1.7;
+}
+
+.project-desc::before {
+  content: " - ";
+}
+
+/* Style for inline links in descriptions to match text color */
+.project-desc a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--text-sub);
+  text-underline-offset: 2px;
+  transition: color 0.3s ease, text-decoration-color 0.3s ease;
+}
+
+.project-desc a:hover {
+  color: var(--text-name);
+  text-decoration-color: var(--text-name);
+  text-decoration-style: dashed;
+}
+
+/* Footer & Socials */
+.footer-content {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mobile-footer {
+  display: flex;
+}
+
+.desktop-footer {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .mobile-footer {
+    display: none;
+  }
+  .desktop-footer {
+    display: flex;
+  }
+}
+
+.footer-links {
+  display: flex;
+  gap: 0.5rem 1.5rem;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-family: "FontBody", sans-serif;
+  font-size: 15px;
+  color: var(--text-side);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.footer-links a::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--text-name);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.footer-links a:hover::before {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.footer-links a::after {
+  content: "↗";
+  position: absolute;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.3s ease;
+  font-size: 12px;
+  right: -14px;
+  bottom: 0;
+  color: var(--text-name);
+}
+
+.footer-links a:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.footer-links a:hover {
+  color: var(--text-name);
+}
+
+/* Focus states */
+a:focus-visible {
+  outline: 2px dashed var(--text-name);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Entrance Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-section,
+.about-section,
+.footer-content,
+.content-section {
+  opacity: 0;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.header-section {
+  animation-delay: 0.1s;
+}
+.about-section {
+  animation-delay: 0.2s;
+}
+.footer-content {
+  animation-delay: 0.3s;
+}
+.content-section:nth-of-type(1) {
+  animation-delay: 0.4s;
+}
+.content-section:nth-of-type(2) {
+  animation-delay: 0.5s;
+}
+.content-section:nth-of-type(3) {
+  animation-delay: 0.6s;
+}
+.content-section:nth-of-type(4) {
+  animation-delay: 0.7s;
+}
+.content-section:nth-of-type(5) {
+  animation-delay: 0.8s;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) var(--bg-color);
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

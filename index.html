@@ -1,15 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1B1917" />
     <meta
       name="description"
-      content="Atishay Tuli's WebFolio - Creative Frontend Developer, Blending UX/UI, Code & Motion. Explore my WebFolio featuring creative web projects, GSAP animations, and full-stack applications. View my work on GitHub @atishaytuli07."
+      content="WebFolio - Atishay Tuli is a creative frontend developer and a designer who develops. Specializing in GSAP, Barba.js, React, and immersive web experiences."
     />
     <meta
       name="keywords"
-      content="Atishay Tuli, atishaytuli07, atishaytuli, Webfolio, frontend developer, GitHub webfolio, web development projects, 3D web animations, JavaScript developer, React developer, Node.js developer, atishaytuli07 github, atishay tuli webfolio, tuli, tuli atishay"
+      content="atishay, Atishay Tuli, atishaytuli07, atishaytuli, frontend developer, creative developer, gsap developer, barbajs developer, a designer who develops, webfolio, UI engineer, atishaytuli07 github, atishay tuli webfolio, tuli, tuli atishay, Webfolio, frontend developer, GitHub webfolio, web development projects, 3D web animations, JavaScript developer, React developer,"
     />
     <meta name="author" content="Atishay Tuli" />
     <meta name="robots" content="index, follow" />
@@ -21,10 +22,13 @@
       property="og:description"
       content="Discover Atishay Tuli's WebFolio - A showcase of modern web development projects including gsap animations, MERN stack projects, and creative tools. Follow @atishaytuli07 on GitHub."
     />
-    <meta property="og:image" content="./atishaytuli.png" />
+    <meta
+      property="og:image"
+      content="https://webfolio-atishay.vercel.app/images/atishaytuli.png"
+    />
     <meta
       property="og:url"
-      content="https://atishaytuli07.github.io/webfolio"
+      content="https://webfolio-atishay.vercel.app"
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -36,592 +40,527 @@
       name="twitter:description"
       content="Explore Atishay Tuli's web development webfolio featuring MERN stack projects, gsap animations, creative tools, and Revision guides."
     />
-    <title>WebFolio</title>
+    <!-- Font Preloading for Performance (Prevents FOUT/FOIT) -->
+    <link
+      rel="preload"
+      href="https://static.wixstatic.com/ufonts/5499e3_723fcf7240ac4c1ca9afaada105b9952/woff2/file.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="https://static.wixstatic.com/ufonts/c2d769_c89262bde4024faca0472a2cacb37b66/woff2/file.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>Atishay Tuli | Creative Frontend Developer</title>
     <link rel="canonical" href="https://webfolio-atishay.vercel.app" />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preconnect" href="https://static.wixstatic.com" crossorigin />
     <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@4.4.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="./styles/style.css" />
+
+    <!-- JSON-LD Structured Data for AIO / Answer Engines -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        "mainEntity": {
+          "@type": "Person",
+          "name": "Atishay Tuli",
+          "alternateName": ["atishay", "atishaytuli", "atishaytuli07"],
+          "jobTitle": "Creative Frontend Engineer",
+          "url": "https://atishaytuli07.github.io/webfolio",
+          "sameAs": [
+            "https://github.com/atishaytuli07",
+            "https://www.linkedin.com/in/atishaytuli07/",
+            "https://twitter.com/atishaytuli07",
+            "https://dribbble.com/atishaytuli07",
+            "https://www.behance.net/atishaytuli07"
+          ],
+          "description": "Atishay Tuli is a creative frontend developer and a designer who develops. Specializing in GSAP, Barba.js, React, and immersive web experiences.",
+          "image": "https://webfolio-atishay.vercel.app/images/atishaytuli.png",
+          "knowsAbout": [
+            "Frontend Development",
+            "Creative Development",
+            "GSAP",
+            "Barba.js",
+            "React",
+            "Web Animation",
+            "UI/UX Design",
+            "Three.js"
+          ]
+        }
+      }
+    </script>
   </head>
 
-  <body class="bg-gray-100">
-    <nav class="block sm:hidden flex justify-between p-3">
-      <a
-        href="https://drive.google.com/file/d/1l9PXZn_aFcxynIVgamQmG462L2o6DWCR/view?usp=sharing"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-sm bg-blue-400 px-3 py-1 rounded-full text-white font-semibold Hire inline-block"
-        >Hire me 👋🏻</a
-      >
-    </nav>
-    <header class="text-center py-6 sm:py-10">
-      <div class="flip-container">
-        <div class="flipper">
-          <div class="front">
-            <img
-              src="./images/atishaytuli.png"
-              alt="Atishay Tuli"
-              loading="lazy"
-              width="152"
-              height="152"
-              class="mx-auto rounded-full w-26 h-26 sm:w-38 sm:h-38"
-            />
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <main class="layout-split">
+      <!-- Left Pane: Sticky Identity -->
+      <div class="pane-left">
+        <div class="sticky-content">
+          <div>
+            <header class="header-section">
+              <img
+                src="./images/atishaytuli.png"
+                alt="Atishay Tuli - Creative Frontend Developer and Designer"
+                class="profile-img"
+                width="128"
+                height="128"
+                fetchpriority="high"
+                decoding="sync"
+              />
+              <h1 translate="no">Atishay Tuli</h1>
+              <p class="subtitle">
+                Frontend Engineer crafting clean and interactive web
+                experiences.
+              </p>
+            </header>
+
+            <section class="about-section">
+              <div class="text-content">
+                <p class="subtitle">
+                  I build modern websites with React, Next.js, and Tailwind CSS.
+                  I focus on creating smooth, interactive interfaces using GSAP
+                  and Framer Motion. My goal is simple: build websites that look
+                  good, feel fast, and are enjoyable to use. I also work on SEO
+                  and AIO so the project doesn&apos;t just look good, it
+                  actually reaches people.
+                </p>
+              </div>
+            </section>
           </div>
-          <div class="back">
-            <img
-              src="./images/memoji.png"
-              alt="Mimoji"
-              loading="lazy"
-              width="152"
-              height="152"
-              class="rounded-full w-26 h-26 sm:w-38 sm:h-38"
-            />
-          </div>
+
+          <footer class="footer-content desktop-footer">
+            <nav class="footer-links" aria-label="Social Links">
+              <a
+                href="https://www.linkedin.com/in/atishaytuli07/"
+                title="LinkedIn"
+                rel="noopener noreferrer"
+                target="_blank"
+                >LinkedIn</a
+              >
+              <a
+                href="https://github.com/atishaytuli07"
+                title="GitHub"
+                rel="noopener noreferrer"
+                target="_blank"
+                >GitHub</a
+              >
+              <a
+                href="https://me.muz.li/atishaytuli07"
+                title="Muzli"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Muzli</a
+              >
+              <a
+                href="https://drive.google.com/file/d/15MpGhSNANDpJ-q6XWBP4PBjo-9YrNM_9/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Resume"
+                >Resume</a
+              >
+              <a
+                href="https://twitter.com/atishaytuli07"
+                title="X"
+                rel="noopener noreferrer"
+                target="_blank"
+                >X</a
+              >
+              <a
+                href="https://dribbble.com/atishaytuli07"
+                title="Dribbble"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Dribbble</a
+              >
+              <a
+                href="https://www.behance.net/atishaytuli07"
+                title="Behance"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Behance</a
+              >
+              <a
+                href="https://uiverse.io/profile/atishaytuli07"
+                title="Uiverse"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Uiverse</a
+              >
+              <a
+                href="https://www.perplexity.ai/search/atishay-tuli-gu.OnXYtT_qnnwPLJWF77A#0"
+                title="AI"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Perplexity</a
+              >
+            </nav>
+          </footer>
         </div>
       </div>
 
-      <h1 class="text-2xl sm:text-4xl font-semibold mt-2 sm:mt-4">
-        Atishay Tuli
-      </h1>
-      <p class="text-xs sm:text-base text-gray-600 mt-1 sm:mt-2">
-        @Frontend Engineer | blending design, code & creativity
-      </p>
-
-      <div
-        class="space-x-3 sm:space-x-3 mt-4 sm:mt-4 flex justify-center items-center"
-      >
-        <a
-          href="mailto:atishaytuliiaf@gmail.com"
-          rel="noopener"
-          aria-label="Email"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/email.svg"
-            alt="Email"
-            class="w-7 h-7 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/atishaytuli07/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/linkedin.png"
-            alt="LinkedIn"
-            class="w-10 h-10 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="30"
-            height="30"
-          />
-        </a>
-        <a
-          href="https://github.com/atishaytuli07"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/github.png"
-            alt="GitHub"
-            class="w-7 h-7 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          href="https://dribbble.com/atishaytuli07"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Dribble Profile"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/dribbble.png"
-            alt="Uiverse"
-            class="w-7 h-7 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          href="https://www.behance.net/atishaytuli07"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Behnace Profile"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/behance.png"
-            alt="Uiverse"
-            class="w-7 h-7 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          href="https://drive.google.com/file/d/15MpGhSNANDpJ-q6XWBP4PBjo-9YrNM_9/view?usp=sharing"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Resume"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/resume.svg"
-            alt="Resume"
-            class="w-7 h-7 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          href="https://uiverse.io/profile/atishaytuli07"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Uiverse Profile"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/uiversa.svg"
-            alt="Uiverse"
-            class="w-7 h-7 sm:w-6 sm:h-6"
-            loading="lazy"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          href="https://me.muz.li/atishaytuli07"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Muzli Profile"
-          class="flex items-center justify-center"
-        >
-          <img
-            src="./images/muzli.png"
-            alt="Uiverse"
-            class="w-6 h-6"
-            loading="lazy"
-            width="20"
-            height="20"
-          />
-        </a>
-      </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-8">
-      <section class="text-center mb-8 sm:mb-12 lg:mx-32">
-        <div
-          class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6"
-        >
-          <div class="mb-6 sm:mb-0">
-            <h2 class="font-bold text-lg sm:text-xl text-center">
-              Visionary 7🧨
-            </h2>
-            <ul
-              class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base"
-            >
-              <li>
+      <!-- Right Pane: Scrolling Content -->
+      <div id="main-content" class="pane-right" tabindex="-1">
+        <!-- Products -->
+        <section class="content-section" aria-labelledby="products-title">
+          <h2 id="products-title" class="section-title">/products</h2>
+          <ul class="project-list">
+            <li>
+              <div class="project-row">
                 <a
-                  href="https://luxryslider.netlify.app"
+                  href="https://valentine-project-link.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  >Luxry Slider</a
+                  class="project-name"
+                  >Will You Be My Valentine</a
                 >
-              </li>
-              <li>
+                <span class="project-desc">
+                  A fun interactive website to ask someone “Will you be my
+                  Valentine?” in a unique way. This hobby project went viral
+                  with 15k+ users and 37k visitors, and was featured in the Top
+                  10 on
+                  <a
+                    href="https://me.muz.li/atishaytuli07/will-you-be-my-valentine-2?ref=glcipcfhmopcgidicgdociohdoicpdfc&uid=47c0d860-9529-40fc-86f3-90fcb3e2f291"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Muzli</a
+                  >
+                  and recognized by
+                  <a
+                    href="https://save.design/website/9adfb44f-1003-4792-8972-81a2bfefd764"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Save.design</a
+                  >.
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="project-row">
                 <a
-                  href="https://mycanvadesigns.netlify.app"
+                  href="https://mosaic-effect-tool.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  >Canva Work</a
+                  class="project-name"
+                  >Mosaic Effect Tool</a
                 >
-              </li>
-              <li>
-                <a
-                  href="https://3natureslider.netlify.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >3JS Showcase</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="mb-6 sm:mb-0">
-            <h2 class="font-bold text-lg sm:text-xl">New Products 🛠</h2>
-            <ul
-              class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base"
-            >
-              <li>
+                <span class="project-desc">
+                  Turn any image into a customizable mosaic made of circles or
+                  squares. Built with React, Tailwind, and Canvas with custom
+                  physics for smooth mouse interactions and particle effects.
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="project-row">
                 <a
                   href="https://oopshubby.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
+                  class="project-name"
                   >Oops Hubby</a
                 >
-              </li>
-              <li>
+                <span class="project-desc">
+                  A playful AI tool that generates creative excuses for husbands
+                  in tricky situations. Built with Next.js and Tailwind, and
+                  launched on
+                  <a
+                    href="https://www.producthunt.com/products"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Product Hunt</a
+                  >
+                  and got 1k+ users.
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="project-row">
                 <a
                   href="https://annotationsdocs.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  >ANnotations</a
+                  class="project-name"
+                  >Annotations</a
                 >
-              </li>
-              <li>
+                <span class="project-desc">
+                  A minimal notes app where you can create notes anywhere on the
+                  screen, drag them around, change colors, and download them as
+                  .txt files.
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="project-row">
                 <a
                   href="https://atishaytuli07.github.io/autographica"
                   target="_blank"
                   rel="noopener noreferrer"
+                  class="project-name"
                   >Autographica</a
                 >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h2 class="font-bold text-lg sm:text-xl">My Guides 📜</h2>
-            <ul
-              class="text-blue-600 mt-2 sm:mt-4 font-normal text-sm sm:text-base"
-            >
-              <li>
-                <a
-                  href="https://atishaytuli07.github.io/Hinglish"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Asynchronous JS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://atishaytuli07.github.io/Hinglish/dom.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >JS &nbsp;BOM & DOM</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://atishaytuli.medium.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Medium</a
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
+                <span class="project-desc">
+                  A digital signature tool to draw, customize, and save your
+                  signature instantly. Adjust pen style, background, and export
+                  signatures as PNG or JPG.
+                </span>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-      <section class="bg-white shadow rounded-lg p-4 sm:p-6 pt-6 mt-14 sm:pt-8">
-        <h2 class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10">
-          Full Stack Projects 🐦
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          <!-- <div class="mb-4 sm:mb-0">
-                    <h3 class="font-bold text-sm sm:text-base">
-                        <a href="#" class="text-black no-underline">1. &nbsp;⏳</a>
-                    </h3>
-                    <span class="text-xs sm:text-sm text-gray-700">updating soon ....</span>
-                </div> -->
-          <div class="mb-4 sm:mb-0">
-            <h3 class="font-bold text-base sm:text-base">
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-black no-underline"
-                >1. &nbsp;Meeeezy</a
-              >
-            </h3>
-            <span class="text-xs sm:text-sm text-gray-700">
-              Next.js, Wordpress, Tailwind</span
-            >
-            <a
-              href="https://github.com/atishaytuli/Meeeezy"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-500"
-              ><i class="ri-link"></i
-            ></a>
-          </div>
-          <div class="mb-4 sm:mb-0">
-            <h3 class="font-bold text-base sm:text-base">
-              <a
-                href="https://anacondacases.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-black no-underline"
-                >2. &nbsp;Anaconda Case</a
-              >
-            </h3>
-            <span class="text-xs sm:text-sm text-gray-700">
-              NextJS, Typescript, Shadcn UI
-            </span>
-            <a
-              href="https://github.com/atishaytuli07/Anaconda-Cases.git"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-500"
-              ><i class="ri-link"></i
-            ></a>
-          </div>
-          <div class="mb-4 sm:mb-0">
-            <h3 class="font-bold text-base sm:text-base">
-              <a
-                href="https://github.com/atishaytuli/AdoreChat.git"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-black no-underline"
-                >3. &nbsp;Adore Chat</a
-              >
-            </h3>
-            <span class="text-xs sm:text-sm text-gray-700">
-              React, Tailwind, ZegoCloud</span
-            >
-            <a
-              href="https://adorechat.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-500"
-              ><i class="ri-link"></i
-            ></a>
-          </div>
-          <div class="mb-4 sm:mb-0">
-            <h3 class="font-bold text-base sm:text-base">
-              <a
-                href="https://github.com/atishaytuli/______codeReview.git"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-black no-underline"
-                >4. &nbsp;AI Code Reviewer</a
-              >
-            </h3>
-            <span class="text-xs sm:text-sm text-gray-700">
-              React, Express, Gemini ai</span
-            >
-            <a
-              href="https://bestcodereview.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-500"
-              ><i class="ri-link"></i
-            ></a>
-          </div>
-        </div>
+        <!-- Full Stack Projects -->
+        <section class="content-section" aria-labelledby="full-stack-title">
+          <h2 id="full-stack-title" class="section-title">/full-stack</h2>
+          <ul class="project-list">
+            <li>
+              <div class="project-row">
+                <a
+                  href="https://github.com/atishaytuli07/ai-chef"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="project-name"
+                  >Served AI Chef</a
+                >
+                <span class="project-desc">
+                  An AI recipe platform that turns your pantry into meals.
+                  Upload ingredients or scan your kitchen and the AI suggests
+                  recipes with step-by-step cooking instructions.
+                </span>
+              </div>
+            </li>
 
-        <section class="mt-8 sm:mt-10">
-          <h2 class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10">
-            Creative Projects ✨
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                1. &nbsp;DUO
+            <li>
+              <div class="project-row">
                 <a
-                  href="https://atishaytuli07.github.io/DUO"
+                  href="https://github.com/atishaytuli/Meeeezy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-blue-500"
+                  class="project-name"
+                  >Meeeezy</a
                 >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                2. &nbsp;Fishing Adventure
-                <a
-                  href="https://atishaytuli.github.io/fishing"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                3. &nbsp;OCHII
-                <a
-                  href="https://ochhii.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                4. &nbsp;ExoApe
-                <a
-                  href="https://exoape-uiclone.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                5. &nbsp;Pour Mojito
-                <a
-                  href="            https://pourmojito.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                6. &nbsp;21st 'C Museum
-                <a
-                  href="https://atishaytuli07.github.io/21st-Century-Museum"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                7. &nbsp;Two Good
-                <a
-                  href="https://atishaytuli07.github.io/twogood.co"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                8. &nbsp;Rejouicee
-                <a
-                  href="https://atishaytuli07.github.io/rejouicee"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                9. &nbsp;Botanicals
-                <a
-                  href="https://atishaytuli07.github.io/shery.js"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                10. &nbsp;ReFokus
-                <a
-                  href="https://refokus-drab.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <!-- <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                10. &nbsp;SwipeSync
-                <a
-                  href="https://atishaytuli07.github.io/swipesync/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div> -->
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                11. &nbsp;Cuberto
-                <a
-                  href="https://atishaytuli07.github.io/cuberto"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-            <div class="mb-3 sm:mb-0">
-              <h3 class="font-bold text-sm sm:text-base">
-                12. &nbsp;Doze Studios
-                <a
-                  href="https://dozestudios.netlify.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-500"
-                >
-                  <i class="ri-links-fill"></i
-                ></a>
-              </h3>
-            </div>
-          </div>
+                <span class="project-desc">
+                  A full-stack clone of Yeezy.com built with Next.js and
+                  Headless WordPress. Features real-time product data, a modern
+                  storefront, and secure Stripe checkout.
+                </span>
+              </div>
+            </li>
 
-          <div class="text-right mt-4">
-            <a
-              href="https://github.com/atishaytuli07?tab=repositories"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-500 font-semibold text-sm sm:text-base"
-            >
-              More projects here →</a
-            >
+            <li>
+              <div class="project-row">
+                <a
+                  href="https://anacondacases.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="project-name"
+                  >Anaconda Case</a
+                >
+                <span class="project-desc">
+                  A modern e-commerce app for creating custom iPhone cases.
+                  Users can design their case in a live configurator and
+                  purchase it with secure payments.
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <div class="project-row">
+                <a
+                  href="https://adorechat.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="project-name"
+                  >Adore Chat</a
+                >
+                <span class="project-desc">
+                  A simple real-time video and chat app built with React and
+                  ZegoCloud. Start video calls instantly and stay connected from
+                  anywhere.
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <div class="project-row">
+                <a
+                  href="https://bestcodereview.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="project-name"
+                  >AI Code Reviewer</a
+                >
+                <span class="project-desc">
+                  A simple AI tool that reviews your code and suggests
+                  improvements. Paste your code into the editor and get instant
+                  feedback and clean-code tips.
+                </span>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Creative Projects -->
+        <section class="content-section" aria-labelledby="creative-title">
+          <h2 id="creative-title" class="section-title">/creative-coding</h2>
+          <div class="text-content">
+            <p>
+              A collection of creative experiments where I explore motion,
+              scroll-driven storytelling, and interactive UI. I enjoy recreating
+              and studying beautiful websites to learn new techniques. These
+              projects are my playground for GSAP, Framer Motion, and Three.js
+              to build immersive digital experiences.
+              <a
+                href="https://github.com/atishaytuli07?tab=repositories&q=gsap&type=source"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="more-projects"
+                >View all creative projects</a
+              >
+            </p>
           </div>
         </section>
-      </section>
+
+<!-- Writing -->
+<section class="content-section" aria-labelledby="writing-title">
+  <h2 id="writing-title" class="section-title">/writing</h2>
+  <ul class="project-list">
+    <li>
+      <div class="project-row">
+        <a
+          href="https://atishaytuli07.github.io/Hinglish"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-name"
+          >Asynchronous JS & BOM & DOM</a
+        >
+      </div>
+    </li>
+
+    <li>
+      <div class="project-row">
+        <a
+          href="https://atishaytuli.medium.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-name"
+          >Medium Articles</a
+        >
+      </div>
+    </li>
+  </ul>
+</section>
+
+        <!-- Notes -->
+        <section class="content-section" aria-labelledby="notes-title">
+          <h2 id="notes-title" class="section-title">/notes</h2>
+          <div class="text-content">
+            <p>
+              I enjoy building interfaces that feel smooth, interactive, and
+              thoughtful. Along with frontend development, I also work on SEO
+              and AEO so creative work doesn&apos;t just look good, it actually gets
+              discovered. I completed my B.Tech in 2025 with an 8.72 CGPA and
+              I&apos;m always exploring new tools, creative ideas, and AI. If you
+              were looking for <strong>Atishay Tuli</strong>
+              <img
+                src="./images/atishaytuli.png"
+                alt="Atishay Tuli"
+                class="inline-avatar"
+                width="24"
+                height="24"
+                loading="lazy"
+                decoding="async"
+              />, you&apos;re in the right place.
+              />, you’re in the right place.
+            </p>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="thank-you-title">
+          <h2 id="thank-you-title" class="section-title">/thank you</h2>
+          <div class="text-content">
+            <p>
+              © 2024 atishaytuli
+            </p>
+          </div>
+        </section>
+
+        <footer class="footer-content mobile-footer">
+          <nav class="footer-links" aria-label="Social Links">
+            <a
+              href="https://www.linkedin.com/in/atishaytuli07/"
+              title="LinkedIn"
+              rel="noopener noreferrer"
+              target="_blank"
+              >LinkedIn</a
+            >
+            <a
+              href="https://github.com/atishaytuli07"
+              title="GitHub"
+              rel="noopener noreferrer"
+              target="_blank"
+              >GitHub</a
+            >
+            <a
+              href="https://me.muz.li/atishaytuli07"
+              title="Muzli"
+              rel="noopener noreferrer"
+              target="_blank"
+              >Muzli</a
+            >
+            <a
+              href="https://drive.google.com/file/d/15MpGhSNANDpJ-q6XWBP4PBjo-9YrNM_9/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Resume"
+              >Resume</a
+            >
+            <a
+              href="https://twitter.com/atishaytuli07"
+              title="X"
+              rel="noopener noreferrer"
+              target="_blank"
+              >X</a
+            >
+            <a
+              href="https://dribbble.com/atishaytuli07"
+              title="Dribbble"
+              rel="noopener noreferrer"
+              target="_blank"
+              >Dribbble</a
+            >
+            <a
+              href="https://www.behance.net/atishaytuli07"
+              title="Behance"
+              rel="noopener noreferrer"
+              target="_blank"
+              >Behance</a
+            >
+            <a
+              href="https://uiverse.io/profile/atishaytuli07"
+              title="Uiverse"
+              rel="noopener noreferrer"
+              target="_blank"
+              >Uiverse</a
+            >
+            <a
+              href="https://www.perplexity.ai/search/atishay-tuli-gu.OnXYtT_qnnwPLJWF77A#0"
+              title="AI"
+              rel="noopener noreferrer"
+              target="_blank"
+              >AI</a
+            >
+          </nav>
+        </footer>
+      </div>
     </main>
 
-    <footer class="text-center mt-8 sm:mt-0 mb-2 block sm:hidden">
-      <p class="text-xs sm:text-sm text-gray-600">
-        © '21 Atishay Tuli, All rights reserved.
-      </p>
-    </footer>
-
-    <script src="./script.js"></script>
+    <script src="./script.js" defer></script>
   </body>
 </html>
