@@ -162,7 +162,9 @@ body::after {
   height: 6rem;
   border-radius: 50%;
   object-fit: cover;
+  object-position: top;
   margin-bottom: 1.5rem;
+  border: #343130 0.5px dashed;
 }
 
 h1 {
@@ -201,7 +203,7 @@ h1 {
   border-radius: 50%;
   object-fit: cover;
   vertical-align: -5px;
-  margin-left: 5px;
+  margin-left: 1px;
   margin-right: 3px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   flex-shrink: 0;
