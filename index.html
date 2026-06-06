@@ -2,64 +2,702 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1B1917" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#ffffff" />
     <meta
       name="description"
-      content="WebFolio - Atishay Tuli is a creative frontend developer and a designer who develops. Specializing in GSAP, Barba.js, React, and immersive web experiences."
+      content="Atishay Tuli is a creative frontend developer and a designer who develops. Specializing in GSAP, Framer Motion, React, and immersive web experiences."
     />
     <meta
       name="keywords"
-      content="atishay, Atishay Tuli, atishaytuli07, atishaytuli, frontend developer, creative developer, gsap developer, barbajs developer, a designer who develops, webfolio, UI engineer, atishaytuli07 github, atishay tuli webfolio, tuli, tuli atishay, Webfolio, frontend developer, GitHub webfolio, web development projects, 3D web animations, JavaScript developer, React developer,"
+      content="atishay, Atishay Tuli, atishaytuli07, frontend developer, creative developer, creative frontend developer, UI engineer, GSAP developer, Framer Motion developer, React developer, Next.js developer, landing page developer, web animation, animated landing page, designer who codes"
     />
     <meta name="author" content="Atishay Tuli" />
     <meta name="robots" content="index, follow" />
     <meta
       property="og:title"
-      content="Atishay Tuli - Creative Frontend Developer, Blending UX/UI, Code & Motion"
+      content="Atishay Tuli · Creative Frontend Developer"
     />
     <meta
       property="og:description"
-      content="Discover Atishay Tuli's WebFolio - A showcase of modern web development projects including gsap animations, MERN stack projects, and creative tools. Follow @atishaytuli07 on GitHub."
+      content="Creative frontend developer who designs, builds, and animates web experiences. React · Next.js · GSAP · Framer Motion."
     />
     <meta
       property="og:image"
-      content="https://webfolio-atishay.vercel.app/images/atishaytuli.png"
+      content="https://www.creativeatishay.in/images/01.webp"
     />
-    <meta property="og:url" content="https://webfolio-atishay.vercel.app" />
+    <meta property="og:url" content="https://www.creativeatishay.in" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Atishay Tuli - Creative Frontend Developer, Blending UX/UI, Code & Motion"
+      content="Atishay Tuli · Creative Frontend Developer"
     />
     <meta
       name="twitter:description"
-      content="Explore Atishay Tuli's web development webfolio featuring MERN stack projects, gsap animations, creative tools, and Revision guides."
+      content="Explore Atishay Tuli's webfolio featuring creative tools, GSAP animations, and immersive web experiences."
     />
-    <!-- Font Preloading for Performance (Prevents FOUT/FOIT) -->
-    <link
-      rel="preload"
-      href="https://static.wixstatic.com/ufonts/5499e3_723fcf7240ac4c1ca9afaada105b9952/woff2/file.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="https://static.wixstatic.com/ufonts/c2d769_c89262bde4024faca0472a2cacb37b66/woff2/file.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <title>Atishay Tuli | Creative Frontend Developer</title>
-    <link rel="canonical" href="https://webfolio-atishay.vercel.app" />
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
-    <link rel="preconnect" href="https://static.wixstatic.com" crossorigin />
+    <title>Atishay Tuli · Creative Frontend Developer &amp; Designer</title>
+    <link rel="canonical" href="https://www.creativeatishay.in" />
     <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="./styles/style.css" />
+    <!-- Signature type system: Hanken Grotesk (body), Space Grotesk (display), JetBrains Mono (metrics) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
+    />
 
-    <!-- JSON-LD Structured Data for AIO / Answer Engines -->
+    <!-- Overrides: only the few things specific to this site (avatar image,
+         making static project items visible since there is no JS animation). -->
+    <style>
+      .profile-avatar {
+        background-image: url("./images/01.webp");
+        background-position: 0% 5%;
+      }
+      .project-item {
+        opacity: 1;
+      }
+      .project-status {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--grey3);
+        white-space: nowrap;
+      }
+
+      /* Hover preview image that follows the cursor (like Hamza's) */
+      .hover-preview {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 50;
+        pointer-events: none;
+        will-change: transform;
+      }
+      .hover-preview__inner {
+        width: 230px;
+        height: 165px;
+        border-radius: 0;
+        overflow: hidden;
+        background: var(--wash2);
+        box-shadow: 0 10px 34px rgba(0, 0, 0, 0.14);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.92);
+        transition:
+          opacity 0.18s ease,
+          transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      }
+      .hover-preview[data-show="true"] .hover-preview__inner {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .hover-preview__inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hover-preview__inner {
+          transition: opacity 0.12s ease;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      /* Contact links: dashed underline on hover */
+      .contact-item .chip-link__text {
+        border-bottom: 1px dashed var(--grey3);
+        transition: border-bottom-color 0.18s ease;
+      }
+
+      /* Hide the scrollbar everywhere (scrolling still works) */
+      html,
+      body {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* old Edge/IE */
+      }
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Edge */
+        width: 0;
+        height: 0;
+      }
+
+      /* Accessibility: skip link (visible only on keyboard focus) */
+      .skip-link {
+        position: absolute;
+        left: 8px;
+        top: -48px;
+        z-index: 100;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background: var(--grey1);
+        color: #fff;
+        font-size: 13px;
+        line-height: 1;
+        text-decoration: none;
+        transition: top 0.15s ease;
+      }
+      .skip-link:focus {
+        top: 8px;
+        outline: 2px solid var(--focus-color);
+        outline-offset: 2px;
+      }
+      [tabindex="-1"]:focus {
+        outline: none;
+      }
+
+      /* Header role subtitle (replaces the misused <time>) */
+      .profile-info .profile-role {
+        margin: 0;
+        color: var(--grey3);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: -0.00563rem;
+      }
+
+      /* Footer becomes a contentinfo landmark outside <main> */
+      .site-footer {
+        margin-top: 64px;
+        animation: staggerIn 0.5s ease both;
+        animation-delay: 0.55s;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .site-footer {
+          animation: none;
+        }
+      }
+
+      /* Products: show first 3, reveal the rest via "View all" */
+      .project-item.is-extra-hidden {
+        display: none;
+      }
+      .show-more-btn {
+        margin-top: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1;
+        letter-spacing: -0.00563rem;
+        color: var(--grey3);
+        transition: color 0.12s ease;
+      }
+      .show-more-btn:hover {
+        color: var(--grey1);
+      }
+      .show-more-btn:focus-visible {
+        outline: 2px solid var(--focus-color);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      .show-more-btn .chev {
+        transition: transform 0.2s ease;
+      }
+      .show-more-btn[aria-expanded="true"] .chev {
+        transform: rotate(180deg);
+      }
+      .show-more-label {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+      }
+      #opensource-list .project-body {
+        gap: 12px;
+      }
+      .case-study-link {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 8px;
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        width: fit-content;
+        color: var(--accent);
+        border-bottom: 1px dashed transparent;
+        transition: border-bottom-color 0.18s ease;
+      }
+      .case-study-link:hover {
+        border-bottom-color: var(--accent);
+      }
+      .case-study-link.is-soon {
+        color: var(--grey3);
+        font-weight: 400;
+        pointer-events: none;
+      }
+      .os-links {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 16px;
+        margin-top: 4px;
+        width: fit-content;
+      }
+      .project-description .chip-link {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Pixel clouds (static, top-right) */
+      .cloud {
+        position: absolute;
+        top: 0;
+        background-image: url("./images/cloud.png?v=3");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        image-rendering: pixelated;
+        z-index: 11;
+        pointer-events: none;
+      }
+      .cloud-1 {
+        top: 22px;
+        left: calc(50% + 210px);
+        width: 100px;
+        height: 56px;
+      }
+      .cloud-2 {
+        top: 66px;
+        left: calc(50% + 168px);
+        width: 64px;
+        height: 36px;
+      }
+      @media (max-width: 900px) {
+        .cloud-1,
+        .cloud-2 {
+          display: none;
+        }
+      }
+
+      /* Sparrow: flies in, perches, idles, flies off */
+      .bird {
+        position: fixed;
+        left: 0;
+        bottom: 8px;
+        z-index: 40;
+        pointer-events: none;
+        transform: translateX(-70px);
+        will-change: transform;
+      }
+      .bird-lift {
+        transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(0);
+      }
+      .bird-lift.is-up {
+        transform: translateY(-30px);
+      }
+      .bird-sprite {
+        width: 50px;
+        height: 40px;
+        background-image: url("./images/runner.png?v=4");
+        background-repeat: no-repeat;
+        background-size: 150px 40px;
+        background-position-x: -100px;
+        image-rendering: pixelated;
+      }
+      .bird-sprite.is-flying {
+        animation:
+          birdFlap 0.28s steps(2) infinite,
+          birdBob 1.1s ease-in-out infinite;
+      }
+      @keyframes birdFlap {
+        from {
+          background-position-x: 0;
+        }
+        to {
+          background-position-x: -100px;
+        }
+      }
+      @keyframes birdBob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bird {
+          display: none;
+        }
+      }
+      /* Visuals tiles: white-matted framed card look */
+      .photo-scroller img {
+        width: 184px;
+        height: 248px;
+        border: 5px solid #fff;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.07),
+          0 2px 5px rgba(0, 0, 0, 0.04);
+      }
+      /* "Seeing stars" effect while the bird is perched */
+      .bird-stars {
+        position: absolute;
+        left: 34px;
+        top: -3px;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .bird.is-sitting .bird-stars {
+        opacity: 1;
+      }
+      .star {
+        position: absolute;
+        left: -4px;
+        top: -4px;
+        width: 9px;
+        height: 9px;
+        background: #f6c945;
+        clip-path: polygon(
+          50% 0%,
+          61% 35%,
+          98% 35%,
+          68% 57%,
+          79% 91%,
+          50% 70%,
+          21% 91%,
+          32% 57%,
+          2% 35%,
+          39% 35%
+        );
+        animation: birdOrbit 1.8s linear infinite;
+        animation-play-state: paused;
+      }
+      .bird.is-sitting .star {
+        animation-play-state: running;
+      }
+      .star:nth-child(2) {
+        animation-delay: -0.6s;
+      }
+      .star:nth-child(3) {
+        animation-delay: -1.2s;
+      }
+      @keyframes birdOrbit {
+        0% {
+          transform: translate(15px, 0);
+        }
+        12.5% {
+          transform: translate(10.6px, 3.5px);
+        }
+        25% {
+          transform: translate(0, 5px);
+        }
+        37.5% {
+          transform: translate(-10.6px, 3.5px);
+        }
+        50% {
+          transform: translate(-15px, 0);
+        }
+        62.5% {
+          transform: translate(-10.6px, -3.5px);
+        }
+        75% {
+          transform: translate(0, -5px);
+        }
+        87.5% {
+          transform: translate(10.6px, -3.5px);
+        }
+        100% {
+          transform: translate(15px, 0);
+        }
+      }
+      /* Pixel trees (bottom-right ground decoration) */
+      body {
+        position: relative;
+      }
+      .tree {
+        position: absolute;
+        bottom: 0;
+        background-image: url("./images/tree.png?v=3");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        image-rendering: pixelated;
+        z-index: 11;
+        pointer-events: none;
+      }
+      .tree-1 {
+        left: calc(50% + 162px);
+        width: 70px;
+        height: 111px;
+      }
+      .tree-2 {
+        left: calc(50% + 132px);
+        width: 50px;
+        height: 80px;
+      }
+      @media (max-width: 900px) {
+        .tree-1,
+        .tree-2 {
+          display: none;
+        }
+      }
+      .project-year .metric-label {
+        top: 16px;
+        color: var(--grey3);
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      .profile-info h1 {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .verified-tick {
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+        position: relative;
+        top: 1px;
+      }
+      .profile-avatar {
+        border: 4px solid #fff;
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.08),
+          0 2px 7px rgba(0, 0, 0, 0.06);
+      }
+      /* Chat */
+      .chat {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 16px;
+      }
+      .cb {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+        padding: 9px 14px;
+        border-radius: 18px;
+        width: fit-content;
+        max-width: 80%;
+      }
+      .cb-them {
+        align-self: flex-start;
+        background: #f0f1f3;
+        color: var(--grey1);
+        border-bottom-left-radius: 5px;
+      }
+      .cb-you {
+        align-self: flex-end;
+        background: var(--accent);
+        color: #fff;
+        border-bottom-right-radius: 5px;
+      }
+      .chat-panel {
+        align-self: flex-start;
+        width: min(82%, 320px);
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin: 2px 0;
+      }
+      .chat-line {
+        background: #f0f1f3;
+        color: var(--grey1);
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 14px;
+        word-break: break-all;
+      }
+      .chat-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        border: none;
+        background: #fff;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+        color: var(--grey1);
+        font-family: inherit;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          background 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .chat-btn:hover {
+        background: #fafbfc;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+      }
+      .chat-btn svg {
+        flex-shrink: 0;
+      }
+      .kbd {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 10px;
+        padding: 1px 5px;
+        border-radius: 5px;
+        background: #fff;
+        color: var(--grey2);
+        box-shadow:
+          inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+          0 1px 0 rgba(0, 0, 0, 0.08);
+      }
+      .copy-toast {
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        background: var(--grey1);
+        color: #fff;
+        font-size: 13px;
+        padding: 8px 15px;
+        border-radius: 999px;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 1000;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+      .copy-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      /* === Premium type system (re-consolidated) + top nav === */
+      :root {
+        --accent: #3b5bff;
+        color-scheme: light only;
+        --font-graphik:
+          "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui,
+          sans-serif;
+      }
+      .__variable_2732ae {
+        --font-graphik:
+          "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui,
+          sans-serif;
+      }
+      .profile-info h1 {
+        font-family: "Space Grotesk", "Hanken Grotesk", sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.03em;
+      }
+      /* tiny uppercase-mono section labels (the editorial premium signal) */
+      .post-list-title,
+      .photo-scroller-label {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        color: var(--grey3);
+      }
+      /* hero metrics: mono + cobalt */
+      .project-year {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 13px;
+      }
+      .project-year > span:first-child {
+        color: var(--accent);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+      }
+      .project-year .metric-label {
+        top: 16px;
+        color: var(--grey3);
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      #clock {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: -0.02em;
+      }
+      .chip-link:hover .chip-link__text {
+        border-bottom-color: var(--accent);
+      }
+      .project-title-link:hover .project-title-text {
+        border-bottom-color: var(--accent);
+      }
+      .show-more-btn:hover {
+        color: var(--accent);
+      }
+      .homepage > article.article {
+        gap: 13px;
+      }
+      .cb-them + .cb-you,
+      .cb-you + .cb-them,
+      .cb-you + .chat-panel,
+      .chat-panel + .cb-you,
+      .chat-panel + .cb-them {
+        margin-top: 13px;
+      }
+      .contact-list {
+        display: grid;
+        grid-template-columns: repeat(4, max-content);
+        gap: 15px 34px;
+        margin-top: 16px;
+      }
+      .contact-item {
+        display: block;
+      }
+      .photo-scroller {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      @media (max-width: 900px) {
+        .cloud-1 {
+          display: block;
+          left: auto;
+          right: 8px;
+          top: 14px;
+          width: 72px;
+          height: 40px;
+        }
+        .cloud-2 {
+          display: block;
+          left: auto;
+          right: 64px;
+          top: 48px;
+          width: 46px;
+          height: 26px;
+        }
+        .tree-1 {
+          display: block;
+          left: auto;
+          right: 8px;
+          width: 54px;
+          height: 86px;
+        }
+        .tree-2 {
+          display: block;
+          left: auto;
+          right: 48px;
+          width: 38px;
+          height: 60px;
+        }
+      }
+    </style>
+
+    <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -68,8 +706,8 @@
           "@type": "Person",
           "name": "Atishay Tuli",
           "alternateName": ["atishay", "atishaytuli", "atishaytuli07"],
-          "jobTitle": "Creative Frontend Engineer",
-          "url": "https://atishaytuli07.github.io/webfolio",
+          "jobTitle": "Creative Frontend Developer",
+          "url": "https://www.creativeatishay.in",
           "sameAs": [
             "https://github.com/atishaytuli07",
             "https://www.linkedin.com/in/atishaytuli07/",
@@ -77,564 +715,2685 @@
             "https://dribbble.com/atishaytuli07",
             "https://www.behance.net/atishaytuli07"
           ],
-          "description": "Atishay Tuli is a creative frontend developer and a designer who develops. Specializing in GSAP, Barba.js, React, and immersive web experiences.",
-          "image": "https://webfolio-atishay.vercel.app/images/atishaytuli.png",
+          "description": "Atishay Tuli is a creative frontend developer and a designer who develops. Specializing in GSAP, Framer Motion, React, and immersive web experiences.",
+          "image": "https://www.creativeatishay.in/images/01.webp",
           "knowsAbout": [
             "Frontend Development",
             "Creative Development",
             "GSAP",
-            "Barba.js",
+            "Framer Motion",
             "React",
+            "Next.js",
+            "Tailwind CSS",
             "Web Animation",
-            "UI/UX Design",
-            "Three.js"
+            "Landing Page Development",
+            "UI Design",
+            "Figma",
+            "On-Page SEO"
           ]
         }
       }
     </script>
   </head>
 
-  <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <main class="layout-split">
-      <!-- Left Pane: Sticky Identity -->
-      <div class="pane-left">
-        <div class="sticky-content">
-          <div>
-            <header class="header-section">
-              <img
-                src="./images/img.webp"
-                alt="Atishay Tuli - Creative Frontend Developer and Designer"
-                class="profile-img"
-                width="128"
-                height="128"
-                fetchpriority="high"
-                decoding="sync"
-              />
-              <h1 translate="no">Atishay Tuli</h1>
-              <p class="subtitle">
-                Creative Frontend Engineer crafting clean and interactive web
-                experiences.
-              </p>
-            </header>
+  <body
+    class="__variable_2732ae __variable_e61402 __variable_97f5e1 __className_2732ae"
+  >
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="page-shell">
+      <main id="content" class="homepage" tabindex="-1">
+        <!-- Intro -->
+        <article class="article">
+          <header class="page-header">
+            <div style="flex-shrink: 0">
+              <div class="profile-avatar" aria-hidden="true"></div>
+            </div>
+            <div class="profile-info">
+              <h1 translate="no">
+                Atishay Tuli<svg
+                  class="verified-tick"
+                  viewBox="0 0 22 22"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill="#3b5bff"
+                    d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.443C11.276.918 10.646.72 10 .704 9.354.72 8.724.918 8.183 1.272c-.54.357-.972.856-1.245 1.443-.607-.223-1.264-.27-1.897-.14-.634.131-1.217.437-1.687.882-.445.47-.75 1.053-.882 1.687-.13.633-.083 1.29.14 1.897-.586.274-1.084.705-1.439 1.246-.354.541-.551 1.17-.569 1.816.018.646.215 1.275.57 1.816.354.54.852.972 1.438 1.246-.223.607-.27 1.264-.14 1.897.131.634.437 1.218.882 1.687.47.445 1.053.75 1.687.882.633.13 1.29.083 1.897-.14.273.587.704 1.086 1.245 1.443.541.354 1.17.551 1.817.569.646-.018 1.275-.215 1.816-.569.54-.357.972-.856 1.245-1.443.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.541.551-1.17.569-1.816z"
+                  ></path>
+                  <path
+                    fill="#fff"
+                    d="M9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
+                  ></path>
+                </svg>
+              </h1>
+              <p class="profile-role">Creative Frontend Developer</p>
+            </div>
+          </header>
 
-            <section class="about-section">
-              <div class="text-content">
-                <p class="subtitle">
-                  I build modern, high-impact websites with React, Next.js, Typescript and Tailwind CSS.
-                  My obsession is with creating smooth, interactive immersive interfaces using GSAP, Framer Motion & Lenis. My goal is simple: build websites that look
-                  good, feel fast, and are enjoyable to use. I also handle on-page SEO + AI optimization (AEO) so your project ranks and gets real users.
+          <p>Creativity is the actual skill. Tech is just the tool.</p>
+          <p>
+            I design in Figma, build in React and Next.js. My obsession is
+            creating smooth, interactive interfaces with GSAP, Framer Motion,
+            and Lenis. My goal is simple: websites that look good, feel fast,
+            and are enjoyable to use.
+          </p>
+          <p>
+            I also handle on-page SEO and AEO, because great work deserves to be
+            found. Always exploring new tools, creative ideas, and AI.
+            Everything I know, I taught myself by finding something beautiful on
+            the internet and figuring out how it works.
+          </p>
+        </article>
+
+        <!-- Products -->
+        <section class="post-list">
+          <h2 class="post-list-title">Products</h2>
+          <ul class="project-list" id="products-list">
+            <li class="project-item">
+              <div class="project-year">
+                <span>40,000+</span><span class="metric-label">visitors</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://willyoubmyvalentine.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Will You Be My Valentine</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A small interactive experience that went viral with 37.5k
+                  visitors, no ads, no budget. Featured in
+                  <a
+                    class="chip-link"
+                    href="https://me.muz.li/atishaytuli07/will-you-be-my-valentine-2"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="chip-link__text">Muzli</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg
+                  ></a>
+                  Top #10 and recognized by
+                  <a
+                    class="chip-link"
+                    href="https://save.design/website/willyoubmyvalentine-vercel-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="chip-link__text">Save.design</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg></a
+                  >.
                 </p>
               </div>
-            </section>
-          </div>
-
-          <footer class="footer-content desktop-footer">
-            <nav class="footer-links" aria-label="Social Links">
-              <a
-                href="https://www.linkedin.com/in/atishaytuli07/"
-                title="LinkedIn"
-                rel="noopener noreferrer"
-                target="_blank"
-                >LinkedIn</a
-              >
-              <a
-                href="https://github.com/atishaytuli07"
-                title="GitHub"
-                rel="noopener noreferrer"
-                target="_blank"
-                >GitHub</a
-              >
-              <a
-                href="https://me.muz.li/atishaytuli07"
-                title="Muzli"
-                rel="noopener noreferrer"
-                target="_blank"
-                >Muzli</a
-              >
-              <a
-                href="https://drive.google.com/file/d/15MpGhSNANDpJ-q6XWBP4PBjo-9YrNM_9/view?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Resume"
-                >Resume</a
-              >
-              <a
-                href="https://twitter.com/atishaytuli07"
-                title="X"
-                rel="noopener noreferrer"
-                target="_blank"
-                >X</a
-              >
-              <a
-                href="https://dribbble.com/atishaytuli07"
-                title="Dribbble"
-                rel="noopener noreferrer"
-                target="_blank"
-                >Dribbble</a
-              >
-              <a
-                href="https://www.behance.net/atishaytuli07"
-                title="Behance"
-                rel="noopener noreferrer"
-                target="_blank"
-                >Behance</a
-              >
-              <a
-                href="https://uiverse.io/profile/atishaytuli07"
-                title="Uiverse"
-                rel="noopener noreferrer"
-                target="_blank"
-                >Uiverse</a
-              >
-              <a
-                href="https://www.perplexity.ai/search/atishay-tuli-gu.OnXYtT_qnnwPLJWF77A#0"
-                title="AI"
-                rel="noopener noreferrer"
-                target="_blank"
-                >ai ↗</a
-              >
-            </nav>
-          </footer>
-        </div>
-      </div>
-
-      <!-- Right Pane: Scrolling Content -->
-      <div id="main-content" class="pane-right" tabindex="-1">
-        <!-- Products -->
-        <section class="content-section" aria-labelledby="products-title">
-          <h2 id="products-title" class="section-title">/products</h2>
-          <ul class="project-list">
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://www.aibestprompts.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >AI Best Prompts</a
-                >
-                <span class="project-desc">
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>100+</span><span class="metric-label">downloads</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://chromewebstore.google.com/detail/gpamgcimpfifhcbelkmhlnienpppklcn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Woblo</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Turn any website into your design system. Not just eyedropper
+                  colors, but the real brand palette, type scale, and spacing
+                  grid. Production-ready exports for Tailwind v4, shadcn, and
+                  design-token tools. A free Chrome extension.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>1,500+</span><span class="metric-label">users</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://www.aibestprompts.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">AI Best Prompts</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
                   The only AI prompt library with a trust score. Copy-paste
                   verified prompts for Claude, ChatGPT, Gemini, Lovable, and
-                  Replit all free, with community likes and dislikes to
-                  surface what actually works.
-                </span>
-              </div>
-            </li>
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://www.makemyaisite.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >MakeMyAISite</a
-                >
-                <span class="project-desc">
-                  Contributed to this AI portfolio SaaS built the landing
-                  page and all portfolio templates. Handled design, frontend,
-                  SEO, and AIO with
+                  Replit, all free, with community likes and dislikes to surface
+                  what actually works. Launched on
                   <a
-                    href="https://www.instagram.com/makemyaisite/"
+                    class="chip-link"
+                    href="https://www.producthunt.com/products/ai-best-prompts"
                     target="_blank"
                     rel="noopener noreferrer"
-                    >Instagram</a
-                  > marketing. Attracted 5,500+
-                  users with 2–3k monthly traffic and ranks #2 on Google for
-                  target keywords.
-                </span>
-              </div>
-            </li>
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://valentine-project-link.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Will You Be My Valentine</a
-                >
-                <span class="project-desc">
-                  Interactive romantic experience website to ask someone “Will you be my
-                  Valentine?” in a unique way that went viral
-                  with 15k+ users and 37.5k visitors, and was featured in the Top
-                  #10 on
+                    ><span class="chip-link__text">Product Hunt</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg
+                  ></a>
+                  and
                   <a
-                    href="https://me.muz.li/atishaytuli07/will-you-be-my-valentine-2?ref=glcipcfhmopcgidicgdociohdoicpdfc&uid=47c0d860-9529-40fc-86f3-90fcb3e2f291"
+                    class="chip-link"
+                    href="https://peerlist.io/atishaytuli07/project/best-ai-prompts"
                     target="_blank"
                     rel="noopener noreferrer"
-                    >Muzli</a
-                  >
-                  and recognized by
-                  <a
-                    href="https://save.design/website/9adfb44f-1003-4792-8972-81a2bfefd764"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Save.design</a
+                    ><span class="chip-link__text">Peerlist</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg></a
                   >.
-                </span>
+                </p>
               </div>
             </li>
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://www.mosaiceffect.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Mosaic Effect Tool</a
-                >
-                <span class="project-desc">
-                  Turn any image into a customizable mosaic made of circles or
-                  squares. Built with React.js, Tailwind, and Canvas with custom
-                  physics for smooth mouse interactions and particle effects.
-                </span>
+            <li class="project-item">
+              <div class="project-year">
+                <span>1,000+</span><span class="metric-label">users</span>
               </div>
-            </li>
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://oopshubby.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Oops Hubby</a
-                >
-                <span class="project-desc">
-                  A playful AI tool that generates creative excuses for husbands
-                  in tricky situations. Built with Next.js and Tailwind, and
-                  launched on 🎖️
+              <div class="project-body">
+                <div class="project-title">
                   <a
-                    href="https://www.producthunt.com/products"
+                    class="project-title-link"
+                    href="https://oopshubby.vercel.app"
                     target="_blank"
                     rel="noopener noreferrer"
-                    >Product Hunt</a
-                  >
-                   and got 1k+ users.
-                </span>
+                    ><span class="project-title-text">Oops Hubby</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A playful AI tool that generates creative excuses for husbands
+                  in tricky situations. Built with Next.js and Tailwind.
+                  Launched on
+                  <a
+                    class="chip-link"
+                    href="https://www.producthunt.com/products/oops-hubby"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="chip-link__text">Product Hunt</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg></a
+                  >.
+                </p>
               </div>
             </li>
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://annotationsdocs.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Annotations</a
-                >
-                <span class="project-desc">
-                  A minimal notes app where you can create notes anywhere on the
-                  screen, drag them around, change colors, and download them as
-                  .txt files.
-                </span>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://www.mosaiceffect.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Mosaic Effect Tool</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Turn any image into a mosaic of circles or squares. Custom
+                  physics for smooth mouse interactions and particle effects.
+                  Built with React, Canvas, and Tailwind.
+                </p>
               </div>
             </li>
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://atishaytuli07.github.io/autographica"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Autographica</a
-                >
-                <span class="project-desc">
-                  A digital signature tool to draw, customize, and save your
-                  signature instantly. Adjust pen style, background, and export
-                  signatures as PNG or JPG.
-                </span>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://annotationsdocs.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Annotations</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A minimal sticky notes app. Create notes anywhere on the
+                  screen, drag them, change colors, download as .txt. Nothing
+                  extra.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/autographica"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Autographica</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Draw, customize, and save your signature instantly. Adjust pen
+                  style, background, export as PNG or JPG.
+                </p>
               </div>
             </li>
           </ul>
+          <button
+            class="show-more-btn"
+            type="button"
+            hidden
+            aria-expanded="false"
+            aria-controls="products-list"
+          >
+            <span class="show-more-label">View all</span>
+            <svg
+              class="chev"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4.5 6 7.5 9 4.5"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
         </section>
 
-        <!-- Full Stack Projects -->
-        <section class="content-section" aria-labelledby="full-stack-title">
-          <h2 id="full-stack-title" class="section-title">/full-stack</h2>
-          <ul class="project-list">
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://github.com/atishaytuli07/ai-chef"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Served AI Chef</a
-                >
-                <span class="project-desc">
+        <!-- Open source -->
+        <section class="post-list">
+          <h2 class="post-list-title">Open source</h2>
+          <ul class="project-list" id="opensource-list">
+            <li
+              class="project-item"
+              data-preview="./images/photos/design.md.webp"
+            >
+              <div class="project-year"><span>40+ stars</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://design-md-1047885385938.asia-south2.run.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">design.md</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Paste any URL and get a DESIGN.md, the site's real colors,
+                  typography, spacing, and tokens, ready for AI agents like
+                  Claude Code, Cursor, and v0 to read before they build. I built
+                  the whole thing, the website and the token-extraction engine
+                  behind it.
+                </p>
+                <div class="os-links">
+                  <a
+                    class="chip-link"
+                    href="https://github.com/sunil-dsb/design.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="chip-link__text">GitHub</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg
+                  ></a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="project-item"
+              data-preview="./images/photos/volunteer.webp"
+            >
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://github.com/atishaytuli07/VolunteerPlatform/tree/atishayfrontend"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Volunteer Platform</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Contributed the frontend design for this open-source volunteer
+                  platform.
+                </p>
+              </div>
+            </li>
+          </ul>
+          <button
+            class="show-more-btn"
+            type="button"
+            hidden
+            data-visible="1"
+            aria-expanded="false"
+            aria-controls="opensource-list"
+          >
+            <span class="show-more-label">View all</span>
+            <svg
+              class="chev"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4.5 6 7.5 9 4.5"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
+        </section>
+
+        <!-- Projects (full-stack) -->
+        <section class="post-list">
+          <h2 class="post-list-title">Projects</h2>
+          <ul class="project-list" id="projects-list">
+            <li class="project-item" data-preview="./images/photos/p-00.webp">
+              <div class="project-year">
+                <span>6,500+</span><span class="metric-label">users</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://www.makemyaisite.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">MakeMyAISite</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Built the landing page and all portfolio templates for an AI
+                  career portfolio SaaS. Handled SEO and AIO strategy, ranked #2
+                  on Google. Still building it.
+                </p>
+                <span class="case-study-link is-soon">Case study · soon</span>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/p-01.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://github.com/atishaytuli07/ai-chef"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Served AI Chef</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
                   An AI recipe platform that turns your pantry into meals.
                   Upload ingredients or scan your kitchen and the AI suggests
                   recipes with step-by-step cooking instructions.
-                </span>
+                </p>
               </div>
             </li>
-
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://github.com/atishaytuli/Meeeezy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Meeeezy</a
-                >
-                <span class="project-desc">
+            <li class="project-item" data-preview="./images/photos/p-02.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://github.com/atishaytuli/Meeeezy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Meeeezy</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
                   A full-stack clone of Yeezy.com built with Next.js and
                   Headless WordPress. Features real-time product data, a modern
                   storefront, and secure Stripe checkout.
-                </span>
+                </p>
               </div>
             </li>
-
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://anacondacases.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Anaconda Case</a
-                >
-                <span class="project-desc">
-                  A modern e-commerce app for creating custom iPhone cases.
-                  Users can design their case in a live configurator and
-                  purchase it with secure payments.
-                </span>
+            <li class="project-item" data-preview="./images/photos/p-03.webp">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://github.com/atishaytuli07/Blink-AI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Blink AI</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  From PDF to AI summary in a blink. Blink AI turns long PDFs
+                  into clear, concise, well-structured summaries in seconds,
+                  built for students, professionals, and content creators who
+                  want fast results.
+                </p>
               </div>
             </li>
-
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://adorechat.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Adore Chat</a
-                >
-                <span class="project-desc">
-                  A simple real-time video and chat app built with React and
-                  ZegoCloud. Start video calls instantly and stay connected from
-                  anywhere.
-                </span>
-              </div>
-            </li>
-
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://bestcodereview.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >AI Code Reviewer</a
-                >
-                <span class="project-desc">
+            <li class="project-item" data-preview="./images/photos/p-04.webp">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://bestcodereview.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">AI Code Reviewer</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
                   A simple AI tool that reviews your code and suggests
                   improvements. Paste your code into the editor and get instant
                   feedback and clean-code tips.
-                </span>
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/p-05.webp">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://anacondacases.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Anaconda Case</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A modern e-commerce app for creating custom iPhone cases.
+                  Users can design their case in a live configurator and
+                  purchase it with secure payments.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/p-06.webp">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://adorechat.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Adore Chat</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A simple real-time video and chat app built with React and
+                  ZegoCloud. Start video calls instantly and stay connected from
+                  anywhere.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/p-07.webp">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://github.com/atishaytuli07/Web-scraping"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Web &amp; Image Scraper</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Fetch e-commerce product details from sites like Flipkart, the
+                  title, price, description, and more, in one click. Built with
+                  Python, Beautiful Soup, and Flask.
+                </p>
               </div>
             </li>
           </ul>
+          <button
+            class="show-more-btn"
+            type="button"
+            hidden
+            aria-expanded="false"
+            data-visible="3"
+            aria-controls="projects-list"
+          >
+            <span class="show-more-label">View all</span>
+            <svg
+              class="chev"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4.5 6 7.5 9 4.5"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
         </section>
 
-        <!-- Creative Projects -->
-        <section class="content-section" aria-labelledby="creative-title">
-          <h2 id="creative-title" class="section-title">/creative-coding</h2>
-          <div class="text-content">
-            <p class="project-desc">
-              Many of these projects are small creative experiments where I
-              explore motion, scroll-driven storytelling, and interactive UI. I
-              enjoy recreating and studying beautiful websites like
-              <a href="https://ochhii.vercel.app" target="_blank">OCHII</a>,
-              <a href="https://exoape-uiclone.vercel.app" target="_blank"
-                >ExoApe</a
-              >,
-              <a href="https://refokus-drab.vercel.app" target="_blank"
-                >ReFokus</a
-              >,
-              <a href="https://atishaytuli07.github.io/cuberto" target="_blank"
-                >Cuberto</a
-              >,
-              <a href="https://dozestudios.netlify.app" target="_blank"
-                >Doze Studios</a
-              >,
-              <a
-                href="https://atishaytuli07.github.io/rejouicee"
-                target="_blank"
-                >Rejouicee</a
-              >,               <a href="https://atishaytuli07.github.io/DUO" target="_blank"
-                >DUO Studios</a
-              >, and
-              <a
-                href="https://atishaytuli07.github.io/twogood.co"
-                target="_blank"
-                >Two Good</a
-              >. Along the way I also built my own creative ideas like
-              <a href="https://atishaytuli.github.io/fishing" target="_blank"
-                >Fishing Adventure</a
-              >,
-              <a href="https://atishaytuli07.github.io/shery.js" target="_blank"
-                >Botanicals</a
-              >,
-              <a href="https://luxryslider.netlify.app" target="_blank"
-                >Luxury Slider</a
-              >,
-              <a href="https://mycanvadesigns.netlify.app" target="_blank"
-                >Canva Work</a
-              >,
-              <a href="https://3natureslider.netlify.app" target="_blank"
-                >Three.js Showcase</a
-              >,
-              <a href="https://pourmojito.vercel.app" target="_blank"
-                >Pour Mojito</a
-              >, and
-              <a
-                href="https://atishaytuli07.github.io/21st-Century-Museum"
-                target="_blank"
-                >21st 'C Museum</a
-              >. These projects are where I experiment with GSAP, Framer Motion,
-              and Shery.js to build smooth animations, scroll-triggered
-              interactions, and immersive UI experiences. Creating things like
-              this is what I enjoy most turning simple pages into small pieces
-              of digital magic.
-            </p>
-          </div>
+        <!-- Client works -->
+        <section class="post-list">
+          <h2 class="post-list-title">Client works</h2>
+          <ul class="project-list" id="client-list">
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://prepvia.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >FBA prep &amp; fulfillment (3PL)</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Automation-first prep — 24–48h turnaround, net-30, no
+                  minimums.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://jufaarkitekt.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Architecture studio site</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Architecture and interior-design firm.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://designingsolutions.co.in/website-development-services"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Web-dev services site</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Service page for web-development offerings.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://ghesindia-site.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Student-funding nonprofit</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Funding professional education for deserving students for 38+
+                  years.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://geaux.fish/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Fishing companion app</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Spot discovery, live weather, and a community for anglers.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://sebenza-nathi-v2.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Recycling rewards platform</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Doorstep recyclables pickup that rewards families and funds
+                  schools.
+                </p>
+              </div>
+              <span class="project-status">Incomplete</span>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://designingsolutions.co.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">IT company site</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Corporate site for an IT services company.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Anim</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://www.exaldia.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >HR &amp; SEO agency site</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Agency landing page with creative animations.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://hkl-global.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Mindfulness movement site</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Global community and conference for Humility, Kindness &amp;
+                  Love.
+                </p>
+                <a
+                  class="case-study-link"
+                  href="https://app.notion.com/p/HKL-Community-App-36bc31e57d7580fe9792c6db688af87b?source=copy_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Case study
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                      fill="currentColor"
+                      transform="rotate(45 6 6)"
+                    ></path></svg
+                ></a>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://menahomes.ae/en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Real-estate marketplace</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  UAE property marketplace for buyers, sellers, and agents.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">app</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <span class="project-title-text">Delivery dashboard</span>
+                </div>
+                <p class="project-description">Operations dashboard revamp.</p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">app</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="http://dsol-admin.dsbitteam.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Admin portal</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Internal admin portal — build and revamp.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">app</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <span class="project-title-text">HR &amp; jobs app</span>
+                </div>
+                <p class="project-description">
+                  HRM and job-listings app revamp.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">app</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://mihprosapp.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Home repair &amp; handyman app</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  On-demand home-repair booking, Phoenix.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year">
+                <span>Dev + Design</span>
+                <span class="metric-label">web</span>
+              </div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://mouurn-five.vercel.app/new-improved"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Grief-support platform</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Community platform for grief support.
+                </p>
+              </div>
+            </li>
+          </ul>
+          <button
+            class="show-more-btn"
+            type="button"
+            hidden
+            data-visible="4"
+            aria-expanded="false"
+            aria-controls="client-list"
+          >
+            <span class="show-more-label">View all</span>
+            <svg
+              class="chev"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4.5 6 7.5 9 4.5"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
         </section>
-
-        <!-- Writing -->
-        <section class="content-section" aria-labelledby="writing-title">
-          <h2 id="writing-title" class="section-title">/writing</h2>
+        <!-- Design -->
+        <section class="post-list">
+          <h2 class="post-list-title">Figma Design</h2>
           <ul class="project-list">
-            <li>
-              <div class="project-row">
-                <a
-                  href="https://atishaytuli07.github.io/Hinglish"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="project-name"
-                  >Asynchronous JS & BOM & DOM</a
-                >
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://www.figma.com/design/w4v7jpt2IbIFyO19qCwGo3/Workspace?node-id=26-4610&amp;t=hRr17zyS5UB8Ly9T-0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text"
+                      >Roadside Coder Redesign</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A full UI/UX redesign of the Roadside Coder app.
+                </p>
+                <span class="case-study-link is-soon">Case study · soon</span>
               </div>
             </li>
-
-            <li>
-              <div class="project-row">
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://hkl-global.vercel.app/prototype"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">HKL App</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  Product design for the HKL mobile app, with an interactive
+                  prototype.
+                </p>
                 <a
-                  href="https://atishaytuli.medium.com"
+                  class="case-study-link"
+                  href="https://app.notion.com/p/HKL-Community-App-36bc31e57d7580fe9792c6db688af87b?source=copy_link"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="project-name"
-                  >Medium Articles</a
-                >
+                  >Case study
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                      fill="currentColor"
+                      transform="rotate(45 6 6)"
+                    ></path></svg
+                ></a>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://www.figma.com/design/w4v7jpt2IbIFyO19qCwGo3/Workspace?node-id=2-9122&amp;t=hRr17zyS5UB8Ly9T-0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">DSOL</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  An HRM and jobs app, HR management plus job listings.
+                </p>
+                <span class="case-study-link is-soon">Case study · soon</span>
               </div>
             </li>
           </ul>
         </section>
 
-        <!-- Notes -->
-        <section class="content-section" aria-labelledby="notes-title">
-          <h2 id="notes-title" class="section-title">/notes</h2>
-          <div class="text-content">
-            <p>
-              I enjoy building interfaces that feel smooth, interactive, and
-              thoughtful. Along with frontend development, I also work on onPage SEO
-              & AEO so creative work doesn&apos;t just look good, it actually
-              gets discovered. I completed my B.Tech in 2025 with an 8.72 CGPA
-              and I&apos;m always exploring new tools, creative ideas, and AI.
-              If you were looking for me
-              <img
-                src="./images/img.webp"
-                alt="Atishay Tuli"
-                class="inline-avatar"
-                width="24"
-                height="24"
+        <!-- Creative coding -->
+        <section class="post-list">
+          <h2 class="post-list-title">Creative coding</h2>
+          <ul class="project-list" id="creative-list">
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/DUO"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">DUO Studios</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation of the DUO Studios site with bold typographic
+                  motion.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli.github.io/fishing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Fishing Adventure</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A playful scroll-driven interactive experience of my own.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://ochhii.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">OCHII</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A scroll-driven recreation study with GSAP and smooth motion.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/shery.js"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Botanicals</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  An immersive plant showcase built with Shery.js image effects.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://pourmojito.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Pour Mojito</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  An animated drinks landing page with scroll-synced visuals.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://exoape-uiclone.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">ExoApe</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation of the ExoApe agency site, focused on fluid
+                  transitions.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://refokus-drab.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">ReFokus</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation of the Refokus site with scroll-triggered
+                  interactions.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/cuberto"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Cuberto</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation of Cuberto&rsquo;s signature cursor and hover
+                  interactions.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://dozestudios.netlify.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Doze Studios</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation of the Doze Studios site with immersive scroll
+                  motion.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/rejouicee"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Rejouicee</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation study exploring GSAP timelines and reveals.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/twogood.co"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Two Good</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A recreation of the Two Good site with smooth section reveals.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://luxryslider.netlify.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Luxury Slider</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A smooth, draggable GSAP image slider with momentum.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://mycanvadesigns.netlify.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Canva Work</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A collection of design recreations and visual experiments.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2024</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://3natureslider.netlify.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Three.js Showcase</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A 3D nature slider built with Three.js and custom shaders.
+                </p>
+              </div>
+            </li>
+            <li class="project-item">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://atishaytuli07.github.io/21st-Century-Museum"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">21st 'C Museum</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  An interactive museum experience with horizontal scroll
+                  storytelling.
+                </p>
+              </div>
+            </li>
+          </ul>
+          <button
+            class="show-more-btn"
+            type="button"
+            hidden
+            data-visible="4"
+            aria-expanded="false"
+            aria-controls="creative-list"
+          >
+            <span class="show-more-label">View all</span>
+            <svg
+              class="chev"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4.5 6 7.5 9 4.5"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
+        </section>
+
+        <!-- Visuals - project screenshot scroller -->
+        <section class="photo-scroller-section">
+          <h2 class="photo-scroller-label">Visuals</h2>
+          <div
+            class="photo-scroller"
+            role="region"
+            aria-label="Project visuals, scroll horizontally"
+            tabindex="0"
+          >
+            <a
+              href="https://ochhii.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/ochii.jpg"
+                alt="OCHII project screenshot"
                 loading="lazy"
                 decoding="async"
-              />, you just found the right place. />
+            /></a>
+            <a
+              href="https://exoape-uiclone.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/exoape.jpg"
+                alt="ExoApe project screenshot"
+                loading="lazy"
+                decoding="async"
+            /></a>
+            <a
+              href="https://www.mosaiceffect.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/mosaic.jpg"
+                alt="Mosaic Effect Tool screenshot"
+                loading="lazy"
+                decoding="async"
+            /></a>
+            <a
+              href="https://pourmojito.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/pourmojito.jpg"
+                alt="Pour Mojito project screenshot"
+                loading="lazy"
+                decoding="async"
+            /></a>
+            <a
+              href="https://atishaytuli07.github.io/shery.js"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/botanicals.jpg"
+                alt="Botanicals project screenshot"
+                loading="lazy"
+                decoding="async"
+            /></a>
+            <a
+              href="https://atishaytuli07.github.io/twogood.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/twogood.jpg"
+                alt="Two Good project screenshot"
+                loading="lazy"
+                decoding="async"
+            /></a>
+            <a
+              href="https://atishaytuli07.github.io/21st-Century-Museum"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img
+                width="184"
+                height="248"
+                src="./images/photos/museum.jpg"
+                alt="21st Century Museum project screenshot"
+                loading="lazy"
+                decoding="async"
+            /></a>
+          </div>
+        </section>
+
+        <!-- AI experiments -->
+        <section class="post-list">
+          <h2 class="post-list-title">Vibe coding</h2>
+          <ul class="project-list" id="vibe-list">
+            <li class="project-item" data-preview="./images/photos/ai-01.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://3d-bag-customizer.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">3D Bag Customizer</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A real-time 3D bag customizer.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/ai-02.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://creative-devportfolio.lovable.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Developer Portfolio</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A clean, creative developer portfolio template.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/ai-03.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://creative-style.lovable.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Glass Creative Site</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A modern creative site with a glassmorphism aesthetic.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/ai-04.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://digital-company-portfolio.lovable.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Agency Portfolio</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A creative digital agency portfolio.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/ai-05.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://funa-ethereal.lovable.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Flaura</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  An ethereal 3D botanical website.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/ai-06.webp">
+              <div class="project-year"><span>2026</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://wander-tribe-now.lovable.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Trip Landing</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A travel and trip-discovery landing page.
+                </p>
+              </div>
+            </li>
+          </ul>
+          <button
+            class="show-more-btn"
+            type="button"
+            hidden
+            data-visible="3"
+            aria-expanded="false"
+            aria-controls="vibe-list"
+          >
+            <span class="show-more-label">View all</span>
+            <svg
+              class="chev"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4.5 6 7.5 9 4.5"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
+        </section>
+
+        <!-- Vibe coding carousel -->
+        <section class="photo-scroller-section">
+          <h2 class="photo-scroller-label">AI Visuals</h2>
+          <div
+            class="photo-scroller"
+            role="region"
+            aria-label="Image gallery, scroll horizontally"
+            tabindex="0"
+          >
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-01.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-02.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-03.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-04.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-05.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-06.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-07.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              width="184"
+              height="248"
+              src="./images/photos/vibe-08.webp"
+              alt="AI-generated artwork"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </section>
+
+        <!-- Just for fun -->
+        <section class="post-list">
+          <h2 class="post-list-title">Just for fun</h2>
+          <ul class="project-list">
+            <li
+              class="project-item"
+              data-preview="./images/photos/peeeepspop.webp"
+            >
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://peeeeps.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">Peeeeps Pop</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  676 illustrated peeps dancing together in your browser, built
+                  with Open Peeps SVG illustrations. Every character bobs,
+                  sways, and vibes with its own rhythm, and you control the
+                  motion, speed, and music. Featured on
+                  <a
+                    class="chip-link"
+                    href="https://onepagelove.com/peeeeps-pop"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="chip-link__text">One Page Love</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg></a
+                  >,
+                  <a
+                    class="chip-link"
+                    href="https://me.muz.li/atishaytuli07/peeeeps-pop-2"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="chip-link__text">Muzli</span
+                    ><svg
+                      class="chip-link__icon"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                        fill="currentColor"
+                      ></path></svg></a
+                  >, and Designer Daily Report.
+                </p>
+              </div>
+            </li>
+            <li class="project-item" data-preview="./images/photos/stfu.webp">
+              <div class="project-year"><span>2025</span></div>
+              <div class="project-body">
+                <div class="project-title">
+                  <a
+                    class="project-title-link"
+                    href="https://stuf-clone.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span class="project-title-text">stfu</span
+                    ><span class="project-title-arrow" aria-hidden="true"
+                      ><svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                          fill="var(--grey1)"
+                          transform="rotate(45 6 6)"
+                        ></path></svg></span
+                  ></a>
+                </div>
+                <p class="project-description">
+                  A tiny browser app with a kinetic UI that listens to nearby
+                  audio and plays it back after about two seconds, creating
+                  instant confusion and accidentally making people stop talking.
+                  No ML, no backend, no responsibility, just the Web Audio API,
+                  vibes, and an LLM.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </section>
+        <!-- Let’s talk (chat) -->
+        <section class="post-list">
+          <h2 class="post-list-title" id="lets-talk">Let’s talk</h2>
+          <div class="chat">
+            <p class="cb cb-you">yo your portfolio is clean af 🔥</p>
+            <p class="cb cb-you">what’s your story?</p>
+            <p class="cb cb-them">
+              haha thanks 🙏 honestly i’m fully self-taught.
             </p>
+            <p class="cb cb-them">
+              found something beautiful on the internet one day, got obsessed
+              figuring out how it worked, and never really stopped.
+            </p>
+            <p class="cb cb-them">
+              now i build premium, interactive sites that look good, feel fast,
+              and actually rank.
+            </p>
+            <p class="cb cb-you">
+              i built a site with AI but it’s kind of a mess 😅
+            </p>
+            <p class="cb cb-you">
+              can you clean it, fix it, and redesign it properly?
+            </p>
+            <p class="cb cb-them">
+              yes, don’t worry, i’ll save it 🙌 turning messy AI builds into
+              premium sites is literally my thing.
+            </p>
+            <p class="cb cb-you">that’s sick. how do i reach you?</p>
+            <p class="cb cb-them">fastest way is email, keep it short 👇</p>
+            <div class="chat-panel">
+              <div class="chat-line">
+                <span id="chat-email">atishaytuliiaf@gmail.com</span>
+              </div>
+              <button class="chat-btn" id="copy-email" type="button">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                  <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+                </svg>
+                <span class="chat-btn-label">Copy</span>
+                <kbd class="kbd">C</kbd>
+              </button>
+            </div>
+            <p class="cb cb-them">or find me around here 👋</p>
+            <div class="chat-panel">
+              <a
+                class="chat-btn"
+                href="https://www.linkedin.com/in/atishaytuli07/"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21H19v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H10V9Z"
+                  ></path>
+                </svg>
+                Connect on LinkedIn</a
+              >
+              <a
+                class="chat-btn"
+                href="https://github.com/atishaytuli07"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.62 8.2 11.18.6.12.82-.26.82-.58v-2.03c-3.33.72-4.03-1.6-4.03-1.6-.55-1.38-1.34-1.74-1.34-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.81 1.3 3.5.99.1-.77.42-1.3.76-1.6-2.66-.3-5.47-1.32-5.47-5.86 0-1.3.47-2.36 1.23-3.19-.12-.3-.53-1.51.12-3.15 0 0 1-.32 3.3 1.22a11.5 11.5 0 0 1 6 0c2.28-1.54 3.29-1.22 3.29-1.22.65 1.64.24 2.85.12 3.15.77.83 1.23 1.89 1.23 3.19 0 4.55-2.81 5.55-5.49 5.84.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5Z"
+                  ></path>
+                </svg>
+                Star me on GitHub</a
+              >
+            </div>
+            <p class="cb cb-you">nice, i’ll connect.</p>
+            <p class="cb cb-them">peace ✌️</p>
           </div>
         </section>
 
-        <section class="content-section" aria-labelledby="thank-you-title">
-          <h2 id="thank-you-title" class="section-title">/thank you</h2>
-          <div class="text-content">
-            <p>© 2026 atishaytuli</p>
-          </div>
+        <!-- Contact -->
+        <section class="post-list">
+          <h2 class="post-list-title">Contact</h2>
+          <ul class="contact-list">
+            <li class="contact-item">
+              <a
+                class="chip-link"
+                href="https://github.com/atishaytuli07"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="chip-link__text">GitHub</span
+                ><svg
+                  class="chip-link__icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                    fill="currentColor"
+                  ></path></svg
+              ></a>
+            </li>
+            <li class="contact-item">
+              <a
+                class="chip-link"
+                href="https://www.linkedin.com/in/atishaytuli07/"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="chip-link__text">LinkedIn</span
+                ><svg
+                  class="chip-link__icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                    fill="currentColor"
+                  ></path></svg
+              ></a>
+            </li>
+            <li class="contact-item">
+              <a
+                class="chip-link"
+                href="https://dribbble.com/atishaytuli07"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="chip-link__text">Dribbble</span
+                ><svg
+                  class="chip-link__icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                    fill="currentColor"
+                  ></path></svg
+              ></a>
+            </li>
+            <li class="contact-item">
+              <a
+                class="chip-link"
+                href="https://me.muz.li/atishaytuli07"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="chip-link__text">Muzli</span
+                ><svg
+                  class="chip-link__icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                    fill="currentColor"
+                  ></path></svg
+              ></a>
+            </li>
+            <li class="contact-item">
+              <a
+                class="chip-link"
+                href="https://uiverse.io/profile/atishaytuli07"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="chip-link__text">Uiverse</span
+                ><svg
+                  class="chip-link__icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                    fill="currentColor"
+                  ></path></svg
+              ></a>
+            </li>
+            <li class="contact-item">
+              <a
+                class="chip-link"
+                href="https://twitter.com/atishaytuli07"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="chip-link__text">X</span
+                ><svg
+                  class="chip-link__icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3.5 3C3.22386 3 3 3.22386 3 3.5C3 3.77614 3.22386 4 3.5 4V3ZM8.5 3.5H9C9 3.22386 8.77614 3 8.5 3V3.5ZM8 8.5C8 8.77614 8.22386 9 8.5 9C8.77614 9 9 8.77614 9 8.5H8ZM2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L2.64645 8.64645ZM3.5 4H8.5V3H3.5V4ZM8 3.5V8.5H9V3.5H8ZM8.14645 3.14645L2.64645 8.64645L3.35355 9.35355L8.85355 3.85355L8.14645 3.14645Z"
+                    fill="currentColor"
+                  ></path></svg
+              ></a>
+            </li>
+          </ul>
         </section>
+      </main>
 
-        <footer class="footer-content mobile-footer">
-          <nav class="footer-links" aria-label="Social Links">
-            <a
-              href="https://www.linkedin.com/in/atishaytuli07/"
-              title="LinkedIn"
-              rel="noopener noreferrer"
-              target="_blank"
-              >LinkedIn</a
-            >
-            <a
-              href="https://github.com/atishaytuli07"
-              title="GitHub"
-              rel="noopener noreferrer"
-              target="_blank"
-              >GitHub</a
-            >
-            <a
-              href="https://me.muz.li/atishaytuli07"
-              title="Muzli"
-              rel="noopener noreferrer"
-              target="_blank"
-              >Muzli</a
-            >
-            <a
-              href="https://drive.google.com/file/d/15MpGhSNANDpJ-q6XWBP4PBjo-9YrNM_9/view?usp=sharing"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Resume"
-              >Resume</a
-            >
-            <a
-              href="https://twitter.com/atishaytuli07"
-              title="X"
-              rel="noopener noreferrer"
-              target="_blank"
-              >X</a
-            >
-            <a
-              href="https://dribbble.com/atishaytuli07"
-              title="Dribbble"
-              rel="noopener noreferrer"
-              target="_blank"
-              >Dribbble</a
-            >
-            <a
-              href="https://www.behance.net/atishaytuli07"
-              title="Behance"
-              rel="noopener noreferrer"
-              target="_blank"
-              >Behance</a
-            >
-            <a
-              href="https://uiverse.io/profile/atishaytuli07"
-              title="Uiverse"
-              rel="noopener noreferrer"
-              target="_blank"
-              >Uiverse</a
-            >
-            <a
-              href="https://www.perplexity.ai/search/atishay-tuli-gu.OnXYtT_qnnwPLJWF77A#0"
-              title="AI"
-              rel="noopener noreferrer"
-              target="_blank"
-              >Ai</a
-            >
-          </nav>
-        </footer>
+      <!-- Footer with live clock -->
+      <footer class="site-footer">
+        <div>
+          <p>
+            <span id="clock" class="clock">
+              <span data-h>00</span><span class="clock-colon">:</span
+              ><span data-m>00</span><span class="clock-colon">:</span
+              ><span data-s>00</span> <span data-ampm>AM</span> · India
+            </span>
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <div class="tree tree-2" aria-hidden="true"></div>
+    <div class="tree tree-1" aria-hidden="true"></div>
+    <div class="cloud cloud-1" aria-hidden="true"></div>
+    <div class="cloud cloud-2" aria-hidden="true"></div>
+    <div class="bird" aria-hidden="true">
+      <div class="bird-lift">
+        <div class="bird-stars">
+          <span class="star"></span><span class="star"></span
+          ><span class="star"></span>
+        </div>
+        <div class="bird-sprite"></div>
       </div>
-    </main>
+    </div>
 
     <script src="./script.js" defer></script>
   </body>
