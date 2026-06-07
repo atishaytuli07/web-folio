@@ -273,3 +273,39 @@
     }
   });
 })();
+
+
+/* ----------------------------------------------------------------
+   Creative-coding video tiles: play only while on-screen (perf +
+   reliable autoplay), pause off-screen, and honour reduced motion.
+---------------------------------------------------------------- */
+(function () {
+  var vids = document.querySelectorAll(".video-scroller video");
+  if (!vids.length) return;
+  var reduce =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return; // keep posters static, no autoplay
+
+  if (!("IntersectionObserver" in window)) {
+    Array.prototype.forEach.call(vids, function (v) {
+      v.play().catch(function () {});
+    });
+    return;
+  }
+  var io = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.play().catch(function () {});
+        } else {
+          e.target.pause();
+        }
+      });
+    },
+    { threshold: 0.25 }
+  );
+  Array.prototype.forEach.call(vids, function (v) {
+    io.observe(v);
+  });
+})();

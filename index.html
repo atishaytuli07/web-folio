@@ -348,6 +348,24 @@
           0 0 0 1px rgba(0, 0, 0, 0.07),
           0 2px 5px rgba(0, 0, 0, 0.04);
       }
+      .video-scroller {
+        align-items: center;
+      }
+      .video-scroller .video-tile {
+        flex: 0 0 auto;
+        display: block;
+        line-height: 0;
+      }
+      .video-scroller video {
+        width: 300px;
+        height: 169px;
+        object-fit: cover;
+        border: 5px solid #fff;
+        border-radius: 10px;
+        background: #000;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 2px 5px rgba(0, 0, 0, 0.04);
+        display: block;
+      }
       /* "Seeing stars" effect while the bird is perched */
       .bird-stars {
         position: absolute;
@@ -2653,95 +2671,147 @@
         <section class="photo-scroller-section">
           <h2 class="photo-scroller-label">Visuals</h2>
           <div
-            class="photo-scroller"
+            class="photo-scroller video-scroller"
             role="region"
-            aria-label="Project visuals, scroll horizontally"
+            aria-label="Creative coding motion demos, scroll horizontally"
             tabindex="0"
           >
             <a
-              href="https://ochhii.vercel.app"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_gsap-motion-lottie-ugcPost-7424152451513233408-hr-_/"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/ochii.jpg"
-                alt="OCHII project screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP motion and Lottie animation (opens on LinkedIn)"
+              ><video
+                src="./videos/motion-lottie.mp4"
+                poster="./videos/motion-lottie.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
             <a
-              href="https://exoape-uiclone.vercel.app"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_gsap-textanimation-animation-ugcPost-7414719434864373760-Lcr1/"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/exoape.jpg"
-                alt="ExoApe project screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP text animation (opens on LinkedIn)"
+              ><video
+                src="./videos/text-animation.mp4"
+                poster="./videos/text-animation.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
             <a
-              href="https://www.mosaiceffect.in"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_gsap-hovereffect-javascrpit-ugcPost-7408080603633471488-4t4_/"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/mosaic.jpg"
-                alt="Mosaic Effect Tool screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP hover effect (opens on LinkedIn)"
+              ><video
+                src="./videos/hover-effect.mp4"
+                poster="./videos/hover-effect.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
             <a
-              href="https://pourmojito.vercel.app"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_gsap-smoothmotion-inertiaplugin-ugcPost-7406935116096348160-KkCq/"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/pourmojito.jpg"
-                alt="Pour Mojito project screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP smooth motion with Inertia (opens on LinkedIn)"
+              ><video
+                src="./videos/smooth-inertia.mp4"
+                poster="./videos/smooth-inertia.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
             <a
-              href="https://atishaytuli07.github.io/shery.js"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_gsap-svg-lenis-ugcPost-7403986627561201664-9-mn/"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/botanicals.jpg"
-                alt="Botanicals project screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP SVG animation with Lenis (opens on LinkedIn)"
+              ><video
+                src="./videos/svg-lenis.mp4"
+                poster="./videos/svg-lenis.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
             <a
-              href="https://atishaytuli07.github.io/twogood.co"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_gsap-mosaic-grid-ugcPost-7405562197017264129-kTsb/"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/twogood.jpg"
-                alt="Two Good project screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP mosaic grid animation (opens on LinkedIn)"
+              ><video
+                src="./videos/mosaic-grid.mp4"
+                poster="./videos/mosaic-grid.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
             <a
-              href="https://atishaytuli07.github.io/21st-Century-Museum"
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_creative-gsap-scrolltrigger-activity-7275524855142236160-TF8S"
               target="_blank"
               rel="noopener noreferrer"
-              ><img
-                width="184"
-                height="248"
-                src="./images/photos/museum.jpg"
-                alt="21st Century Museum project screenshot"
-                loading="lazy"
-                decoding="async"
-            /></a>
+              aria-label="GSAP ScrollTrigger scene (opens on LinkedIn)"
+              ><video
+                src="./videos/scrolltrigger.mp4"
+                poster="./videos/scrolltrigger.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
+            <a
+              class="video-tile"
+              href="https://www.linkedin.com/posts/atishaytuli07_webdevelopment-gsap-scrolltrigger-activity-7287083561227034624-KyVb"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GSAP ScrollTrigger web animation (opens on LinkedIn)"
+              ><video
+                src="./videos/webdev-scroll.mp4"
+                poster="./videos/webdev-scroll.webp"
+                width="300"
+                height="169"
+                muted
+                loop
+                playsinline
+                preload="none"
+            ></video
+            ></a>
           </div>
         </section>
 
