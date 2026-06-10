@@ -1,52 +1,9 @@
-/* Source: https://www.hamzaalabou.com/_next/static/css/5e40e1f9c171b957.css */
-@font-face {
-  font-family: graphik Fallback;
-  src: local("Arial");
-  ascent-override: 76.07%;
-  descent-override: 17.96%;
-  line-gap-override: 18.81%;
-  size-adjust: 106.34%;
-}
-.__className_2732ae {
-  font-family:
-    graphik,
-    graphik Fallback;
-}
-.__variable_2732ae {
-  --font-graphik: "graphik", "graphik Fallback";
-}
-@font-face {
-  font-family: gtAlpina Fallback;
-  src: local("Arial");
-  ascent-override: 91.04%;
-  descent-override: 24.62%;
-  line-gap-override: 0%;
-  size-adjust: 98.31%;
-}
-.__className_e61402 {
-  font-family:
-    gtAlpina,
-    gtAlpina Fallback;
-}
-.__variable_e61402 {
+/* Type system: Hanken Grotesk / Bricolage Grotesque / JetBrains Mono,
+   loaded from Google Fonts in <head>. */
+.site-body {
   --font-secondary: "Hanken Grotesk", -apple-system, system-ui, sans-serif;
-}
-@font-face {
-  font-family: Caveat Fallback;
-  src: local("Arial");
-  ascent-override: 124.77%;
-  descent-override: 38.99%;
-  line-gap-override: 0%;
-  size-adjust: 76.94%;
-}
-.__className_97f5e1 {
   font-family:
-    Caveat,
-    Caveat Fallback;
-  font-style: normal;
-}
-.__variable_97f5e1 {
-  --font-script: "Caveat", "Caveat Fallback";
+    "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 *,
 :after,
@@ -155,9 +112,7 @@
   --tw-contain-layout: ;
   --tw-contain-paint: ;
   --tw-contain-style: ;
-} /*
-! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
-*/
+}
 *,
 :after,
 :before {
@@ -723,7 +678,7 @@ video {
   --spacing-xl: 48px;
   --spacing-xxl: 64px;
   --font-primary:
-    var(--font-graphik), -apple-system, BlinkMacSystemFont, system-ui,
+    "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui,
     sans-serif;
   --background: #fff;
   --grey1: #111;
@@ -787,7 +742,7 @@ body {
     "liga" 1,
     "calt" 1;
   font-family:
-    var(--font-graphik),
+    "Hanken Grotesk",
     -apple-system,
     BlinkMacSystemFont,
     system-ui,

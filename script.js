@@ -1,5 +1,28 @@
 // portfolio script
 
+/* ----------------------------------------------------------------
+   Lenis smooth scroll  buttery inertia. Skipped for reduced motion;
+   native scroll events still fire, so the scroll-driven bird keeps working.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  if (typeof Lenis === "undefined") return;
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  )
+    return;
+  // autoRaf lets Lenis drive its own animation frame (official recommended
+  // setup). Exposed on window for future use (lenis.scrollTo / stop / start).
+  window.lenis = new Lenis({
+    autoRaf: true,
+    duration: 1.15,
+    easing: function (t) {
+      return Math.min(1, 1.001 - Math.pow(2, -10 * t));
+    },
+  });
+})();
+
 /*
    Live clock */
 (function () {
@@ -539,5 +562,45 @@
     function (f, i) {
       f.style.setProperty("--i", i);
     },
+  );
+})();
+
+/* ----------------------------------------------------------------
+   Subtle scroll parallax on the pixel clouds  a touch of depth as
+   you scroll out of the hero. Off for reduced motion.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  )
+    return;
+  const clouds = document.querySelectorAll(".cloud");
+  if (!clouds.length) return;
+  let ticking = false;
+  function update() {
+    const y = window.scrollY || window.pageYOffset || 0;
+    for (let i = 0; i < clouds.length; i++) {
+      // Drift gently down and a touch to the right as you scroll. The second
+      // cloud's larger x-factor lets it lead, so they separate a little.
+      clouds[i].style.transform =
+        "translate3d(" +
+        (y * (0.09 + i * 0.05)).toFixed(1) +
+        "px," +
+        (y * (0.14 + i * 0.07)).toFixed(1) +
+        "px,0)";
+    }
+    ticking = false;
+  }
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    },
+    { passive: true },
   );
 })();

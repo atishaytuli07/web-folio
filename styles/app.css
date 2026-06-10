@@ -18,7 +18,7 @@
         white-space: nowrap;
       }
 
-      /* Hover preview image that follows the cursor (like Hamza's) */
+      /* Hover preview image that follows the cursor */
       .hover-preview {
         position: fixed;
         top: 0;
@@ -455,7 +455,17 @@
         86%  { transform: translate(30px, -16px) rotate(-3deg); }
         100% { transform: translate(0, 0) rotate(-5deg); }
       }
-      @media (max-width: 900px) { .garden { display: none; } }
+      @media (max-width: 900px) {
+        /* Keep the butterfly on mobile (trees + clouds drop away). Tuck it into
+           the empty top-right corner; the margins leave room for the full
+           flight path so it never clips off-screen. */
+        .butterfly {
+          left: auto;
+          right: 50px;
+          top: 50px;
+          bottom: auto;
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
         .butterfly, .bf-inner, .bf-wing-l, .bf-wing-r { animation: none; }
         .butterfly { bottom: 70px; }
@@ -597,21 +607,6 @@
       :root {
         --accent: #3b5bff;
         color-scheme: light only;
-        --font-graphik:
-          "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui,
-          sans-serif;
-      }
-      .__variable_2732ae {
-        --font-graphik:
-          "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui,
-          sans-serif;
-      }
-      /* Body default uses our loaded Hanken Grotesk (overrides the vendored
-         'graphik' font-name, so no text falls back to the old hotlinked face). */
-      .__className_2732ae {
-        font-family:
-          "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui,
-          sans-serif;
       }
       .profile-info h1 {
         font-family: "Bricolage Grotesque", "Hanken Grotesk", sans-serif;
@@ -1787,3 +1782,23 @@
       @media (min-width: 1600px) { .page-shell, .cloud, .tree { zoom: 1.15; } }
       @media (min-width: 1920px) { .page-shell, .cloud, .tree { zoom: 1.3; } }
       @media (min-width: 2560px) { .page-shell, .cloud, .tree { zoom: 1.55; } }
+
+      /* Lenis smooth scroll  while active, it owns scrolling, so turn off the
+         native smooth-scroll to avoid double-easing. (Reduced-motion users get
+         no Lenis, so native behaviour is untouched for them.) */
+      html.lenis,
+      html.lenis body {
+        height: auto;
+      }
+      html.lenis {
+        scroll-behavior: auto !important;
+      }
+      .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+      }
+      .lenis.lenis-stopped {
+        overflow: clip;
+      }
+      .lenis.lenis-smooth iframe {
+        pointer-events: none;
+      }
