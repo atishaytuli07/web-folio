@@ -68,6 +68,7 @@
       body {
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* old Edge/IE */
+        overflow-x: clip; /* the page-shell zoom scales the fixed top-gradient past the edge */
       }
       html::-webkit-scrollbar,
       body::-webkit-scrollbar {
@@ -1779,3 +1780,10 @@
       @media (prefers-reduced-motion: reduce) {
         .dog-head, .dog-tail, .frog-eye, .frog-throat { animation: none; }
       }
+
+      /* Scale the whole layout up on large desktops so the 540px column isn't
+         lost in whitespace. zoom keeps proportions + line-length intact (vs just
+         widening, which would make text lines too long to read comfortably). */
+      @media (min-width: 1600px) { .page-shell, .cloud, .tree { zoom: 1.15; } }
+      @media (min-width: 1920px) { .page-shell, .cloud, .tree { zoom: 1.3; } }
+      @media (min-width: 2560px) { .page-shell, .cloud, .tree { zoom: 1.55; } }
