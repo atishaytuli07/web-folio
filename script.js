@@ -131,8 +131,26 @@
     });
 
     item.addEventListener("mousemove", function (e) {
-      targetX = e.clientX;
-      targetY = e.clientY - 14;
+      // The follow-the-cursor preview is centered on the pointer, so over the
+      // small "Case study" link it would sit on top and hide it. Tuck the
+      // preview away while the pointer is on that link so it stays visible and
+      // clickable; re-show (snapped to the cursor, no fly-in) when leaving it.
+      if (e.target.closest && e.target.closest(".case-study-link")) {
+        if (visible) {
+          preview.removeAttribute("data-show");
+          visible = false;
+        }
+        return;
+      }
+      if (!visible) {
+        preview.setAttribute("data-show", "true");
+        visible = true;
+        targetX = curX = e.clientX;
+        targetY = curY = e.clientY - 14;
+      } else {
+        targetX = e.clientX;
+        targetY = e.clientY - 14;
+      }
       start();
     });
 

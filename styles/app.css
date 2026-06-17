@@ -1345,6 +1345,16 @@
         flex-direction: column;
         gap: 10px;
       }
+      /* A card paired with its own case-study link (kept grouped in the grid). */
+      .fv-card-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .fv-case-study {
+        margin-top: 0;
+        padding-left: 4px;
+      }
       .fv-card {
         display: flex;
         align-items: center;
