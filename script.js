@@ -1,6 +1,47 @@
 // portfolio script
 
 /* ----------------------------------------------------------------
+   Dark mode toggle: system preference + manual override + persistence
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var KEY = "folio-theme";
+  var btn = document.querySelector(".theme-toggle");
+  var root = document.documentElement;
+
+  function getPreferred() {
+    var saved;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    if (saved === "dark" || saved === "light") return saved;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  function apply(theme) {
+    root.setAttribute("data-theme", theme);
+    try { localStorage.setItem(KEY, theme); } catch (e) {}
+  }
+
+  apply(getPreferred());
+
+  if (btn) {
+    btn.addEventListener("click", function () {
+      var current = root.getAttribute("data-theme");
+      apply(current === "dark" ? "light" : "dark");
+    });
+  }
+
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
+      var saved;
+      try { saved = localStorage.getItem(KEY); } catch (err) {}
+      if (!saved) apply(e.matches ? "dark" : "light");
+    });
+  }
+})();
+
+/* ----------------------------------------------------------------
    Lenis smooth scroll  buttery inertia. Skipped for reduced motion;
    native scroll events still fire, so the scroll-driven bird keeps working.
 ---------------------------------------------------------------- */

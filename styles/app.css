@@ -759,6 +759,18 @@
           background 0.16s ease;
       }
       .badge:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.95),
+          inset 0 -2px 3px color-mix(in srgb, var(--c) 15%, transparent),
+          0 4px 8px color-mix(in srgb, var(--c) 20%, transparent);
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.8),
+            rgba(255, 255, 255, 0.2)
+          ),
+          color-mix(in srgb, var(--c) 18%, rgba(255, 255, 255, 0.6));
       }
       .badge-arrow {
         flex-shrink: 0;
@@ -1811,4 +1823,126 @@
       }
       .lenis.lenis-smooth iframe {
         pointer-events: none;
+      }
+
+      /* === DARK MODE === */
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --body-bg: #0e0e12;
+          --body-color: #eaeaea;
+          --grey1: #eaeaea;
+          --grey2: #a0a0a8;
+          --grey3: #787880;
+          --wash1: #2a2a32;
+          --wash2: #1c1c22;
+          --border: #2a2a32;
+          --border-rule: #2a2a32;
+          --selection-color: #f0f0f0;
+          --selection-bg: #2a2a3a;
+          --focus-color: rgba(255, 255, 255, 0.5);
+          --color-gray-background: #0e0e12;
+          --color-gray-1200: #eaeaea;
+          --color-gray-1000: #a0a0a8;
+          --color-gray-900: #787880;
+          --color-gray-400: #2a2a32;
+          --color-text-paragraph: #a0a0a8;
+          --accent: #6b8aff;
+          --transparentBorder: rgba(255, 255, 255, 0.06);
+          color-scheme: dark;
+        }
+      }
+      [data-theme="dark"] {
+        --body-bg: #0e0e12;
+        --body-color: #eaeaea;
+        --grey1: #eaeaea;
+        --grey2: #a0a0a8;
+        --grey3: #787880;
+        --wash1: #2a2a32;
+        --wash2: #1c1c22;
+        --border: #2a2a32;
+        --border-rule: #2a2a32;
+        --selection-color: #f0f0f0;
+        --selection-bg: #2a2a3a;
+        --focus-color: rgba(255, 255, 255, 0.5);
+        --color-gray-background: #0e0e12;
+        --color-gray-1200: #eaeaea;
+        --color-gray-1000: #a0a0a8;
+        --color-gray-900: #787880;
+        --color-gray-400: #2a2a32;
+        --color-text-paragraph: #a0a0a8;
+        --accent: #6b8aff;
+        --transparentBorder: rgba(255, 255, 255, 0.06);
+        color-scheme: dark;
+      }
+
+      /* Theme toggle button */
+      .theme-toggle {
+        position: absolute;
+        top: 90px;
+        left: calc(50% + 200px);
+        z-index: 30;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: var(--wash2);
+        color: var(--grey2);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.15s ease, background 0.15s ease;
+      }
+      .theme-toggle:hover { opacity: 1; background: var(--border); }
+      .theme-toggle:active { transform: scale(0.92); }
+      .theme-toggle svg { width: 16px; height: 16px; }
+      .theme-toggle .icon-moon { display: none; }
+      [data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+      [data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: none; }
+        :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: block; }
+      }
+      @media (max-width: 900px) {
+        .theme-toggle { left: auto; right: 30px; top: 70px; }
+      }
+
+      /* Dark mode: top fade gradient */
+      [data-theme="dark"] .page-shell::before {
+        background: linear-gradient(
+          180deg,
+          #0e0e12,
+          hsla(240, 10%, 6%, 0.738) 19%,
+          hsla(240, 10%, 6%, 0.541) 34%,
+          hsla(240, 10%, 6%, 0.382) 47%,
+          hsla(240, 10%, 6%, 0.278) 56.5%,
+          hsla(240, 10%, 6%, 0.194) 65%,
+          hsla(240, 10%, 6%, 0.126) 73%,
+          hsla(240, 10%, 6%, 0.075) 80.2%,
+          hsla(240, 10%, 6%, 0.042) 86.1%,
+          hsla(240, 10%, 6%, 0.021) 91%,
+          hsla(240, 10%, 6%, 0.008) 95.2%,
+          hsla(240, 10%, 6%, 0.002) 98.2%,
+          hsla(240, 10%, 6%, 0)
+        );
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .page-shell::before {
+          background: linear-gradient(
+            180deg,
+            #0e0e12,
+            hsla(240, 10%, 6%, 0.738) 19%,
+            hsla(240, 10%, 6%, 0.541) 34%,
+            hsla(240, 10%, 6%, 0.382) 47%,
+            hsla(240, 10%, 6%, 0.278) 56.5%,
+            hsla(240, 10%, 6%, 0.194) 65%,
+            hsla(240, 10%, 6%, 0.126) 73%,
+            hsla(240, 10%, 6%, 0.075) 80.2%,
+            hsla(240, 10%, 6%, 0.042) 86.1%,
+            hsla(240, 10%, 6%, 0.021) 91%,
+            hsla(240, 10%, 6%, 0.008) 95.2%,
+            hsla(240, 10%, 6%, 0.002) 98.2%,
+            hsla(240, 10%, 6%, 0)
+          );
+        }
       }

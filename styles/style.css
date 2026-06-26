@@ -494,6 +494,9 @@ video {
   vertical-align: middle;
   position: relative;
   top: -1px;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}.chip-link:hover .chip-link__icon {
+  transform: translate(2px, -2px);
 }.article {
   gap: 32px;
 }.article,
@@ -683,12 +686,15 @@ video {
   inset: 0;
 }.project-title-link:hover .project-title-text {
   border-bottom-color: var(--grey1);
+}.project-title-link:hover .project-title-arrow {
+  transform: translate(2px, -2px);
 }.project-title-arrow {
   display: inline-block;
   margin-left: 2px;
   vertical-align: middle;
   position: relative;
   top: -1px;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }.project-description {
   font-size: 14px;
   color: var(--grey2);
