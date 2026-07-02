@@ -919,22 +919,21 @@
     resize();
     if (reduce) staticFrame();
   }
-  // Build the buffer once during idle time, right after parse (this script is
-  // deferred, so layout is ready). This keeps the heavy paint off BOTH the load
-  // path and the scroll path: previously buildBG ran synchronously the instant
-  // the track scrolled into view, which stalled the frame and made scrolling to
-  // the race stutter. Now, by the time it's on screen the buffer is ready and
-  // intersecting only starts the animation. (Not tied to the load event  that
-  // waits on all the lazy images and could fire after the user has scrolled.)
-  if ("requestIdleCallback" in window) requestIdleCallback(ensureBuilt, { timeout: 800 });
-  else setTimeout(ensureBuilt, 200);
+  // Build the buffer right now, synchronously at script eval. The script is
+  // deferred, so this runs after layout but BEFORE first paint  the ~8ms it
+  // costs is invisible there. Deferring it anywhere later puts it in conflict
+  // with something visible: inside the IntersectionObserver it stalled the
+  // frame mid-scroll, and in an idle callback it fired during the staggerIn
+  // entrance (0-1s after paint) and made the intro stutter. Pre-paint is the
+  // one slot where this work can never drop a visible frame.
+  ensureBuilt();
 
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
       function (es) {
         for (var i = 0; i < es.length; i++) {
           if (es[i].isIntersecting) {
-            ensureBuilt(); // normally a no-op (already built during idle)
+            ensureBuilt(); // normally a no-op (built pre-paint; rebuilds only if resized while hidden)
             start();
           } else stop();
         }
