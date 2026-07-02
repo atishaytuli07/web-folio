@@ -663,3 +663,272 @@
     { passive: true },
   );
 })();
+/* ----------------------------------------------------------------
+   Race track: a top-down oval racetrack on <canvas>, in the site's
+   pixel-art language. The sprites are the hand-drawn pixel tortoise and
+   rabbit (same rect data as the other pixel animals). The hare dashes
+   ahead, naps just short of the checkered finish, and the tortoise plods
+   past it to win. Field + track paint once to an offscreen buffer; each
+   frame redraws only the two sprites. Paused off-screen, static frame for
+   reduced motion, repainted on theme change.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  // tortoise 24x16, 15 rects |  rabbit 22x16, 37 rects
+  var TPAL=["#7a8c5c","#6a7c4c","#94a878","#9a8860","#2c2c2c","#c4b890"];
+  var TDAT=[[7.0,2.0,10.0,2.0,0],[5.0,4.0,14.0,2.0,0],[4.0,6.0,16.0,4.0,1],[5.0,10.0,14.0,2.0,0],[8.0,4.0,3.0,2.0,2],[13.0,4.0,3.0,2.0,2],[6.0,6.0,3.0,3.0,2],[10.0,6.0,4.0,3.0,2],[15.0,6.0,3.0,3.0,2],[20.0,5.0,3.0,4.0,3],[21.0,4.0,2.0,1.0,3],[22.0,6.0,1.0,1.0,4],[6.0,12.0,3.0,3.0,3],[15.0,12.0,3.0,3.0,3],[7.0,11.0,10.0,1.0,5]];
+  /* Upright pixel bunny, 14x16, facing right: tall ears (pink inner), round
+     head with eye + pink nose, chunky body, belly highlight, fluffy tail. */
+  var RPAL=["#f3f2ee","#d9d4ca","#e8b8c0","#2c2c2c","#fbfaf6","#b8ae9e"];
+  var RDAT=[[4,0,2,1,1],[4,1,2,4,1],[7,0,2,1,0],[7,1,2,5,0],[8,2,1,3,2],[6,5,6,1,0],[5,6,8,3,0],[6,9,7,1,0],[10,7,1,1,3],[13,7,1,1,2],[11,8,1,1,2],[3,10,8,1,0],[2,11,10,3,0],[3,14,8,1,0],[3,10,5,1,1],[5,12,5,2,4],[0,11,2,2,0],[0,11,1,1,4],[3,15,4,1,1],[9,15,3,1,1],[4,15,1,1,5]];
+  var wrap = document.querySelector(".race-track");
+  if (!wrap) return;
+  var canvas = wrap.querySelector(".race-canvas");
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext("2d");
+  var bg = document.createElement("canvas");
+  var bgc = bg.getContext("2d");
+  var W = 0, H = 0, dpr = 1, geom = {}, SC = 1.4, raf = null, running = false;
+  var SPEED = 0.045, seed = 1;
+  var reduce =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function rnd() {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  }
+  function pal() {
+    var d = document.documentElement.getAttribute("data-theme") === "dark";
+    return d
+      ? { grass: "#333d1f", gd: "#2b341a", gl: "#3e4a28", sand: "#57523e", sd: "#4b4735", sl: "#645e46",
+          specks: ["#7a5866", "#586a80", "#7a7248", "#9a978c", "#6f6382"],
+          chk1: "#d9d5c8", chk2: "#3a3a3a", sh: "rgba(0,0,0,0.35)", z: "#a0a0a8" }
+      : { grass: "#5c6c3d", gd: "#4e5e33", gl: "#697a47", sand: "#e8e1cd", sd: "#dbd2b8", sl: "#f3eddc",
+          specks: ["#d98fa8", "#8fb0d9", "#e6d488", "#f2efe6", "#b9a6d4"],
+          chk1: "#f3f2ee", chk2: "#2c2c2c", sh: "rgba(45,42,28,0.22)", z: "#787880" };
+  }
+  function stad(g, x, y, w, h) {
+    var r = Math.min(h / 2, w / 2);
+    g.moveTo(x + r, y);
+    g.lineTo(x + w - r, y);
+    g.arc(x + w - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+    g.lineTo(x + r, y + h);
+    g.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5);
+    g.closePath();
+  }
+  function buildBG() {
+    if (W <= 0 || H <= 0) return;
+    var p = pal();
+    bg.width = Math.round(W * dpr);
+    bg.height = Math.round(H * dpr);
+    bgc.setTransform(dpr, 0, 0, dpr, 0, 0);
+    bgc.clearRect(0, 0, W, H);
+    bgc.fillStyle = p.grass;
+    bgc.fillRect(0, 0, W, H);
+    seed = 98765;
+    var i, gr = Math.floor((W * H) / 22);
+    for (i = 0; i < gr; i++) {
+      bgc.fillStyle = rnd() < 0.5 ? p.gd : p.gl;
+      bgc.globalAlpha = 0.4 + rnd() * 0.4;
+      bgc.fillRect((rnd() * W) | 0, (rnd() * H) | 0, 2, 2);
+    }
+    bgc.globalAlpha = 1;
+    var sp = Math.floor((W * H) / 900);
+    for (i = 0; i < sp; i++) {
+      bgc.fillStyle = p.specks[(rnd() * p.specks.length) | 0];
+      bgc.globalAlpha = 0.55 + rnd() * 0.4;
+      bgc.fillRect((rnd() * W) | 0, (rnd() * H) | 0, 2, 2);
+    }
+    bgc.globalAlpha = 1;
+    var g = geom;
+    bgc.save();
+    bgc.beginPath();
+    stad(bgc, g.ox, g.oy, g.ow, g.oh);
+    stad(bgc, g.ix, g.iy, g.iw, g.ih);
+    bgc.fillStyle = p.sand;
+    bgc.fill("evenodd");
+    bgc.clip("evenodd");
+    seed = 54321;
+    var sg = Math.floor((W * H) / 16);
+    for (i = 0; i < sg; i++) {
+      bgc.fillStyle = rnd() < 0.5 ? p.sd : p.sl;
+      bgc.globalAlpha = 0.4 + rnd() * 0.35;
+      bgc.fillRect((rnd() * W) | 0, (rnd() * H) | 0, 2, 2);
+    }
+    // checkered finish line across the bottom straight
+    bgc.globalAlpha = 1;
+    var fx = Math.round(g.clx + g.clw * 0.5),
+      bw2 = g.bw,
+      cell = Math.max(3, Math.round(bw2 / 6)),
+      yTop = Math.round(g.oy + g.oh - bw2);
+    for (var r2 = 0; r2 < Math.ceil(bw2 / cell); r2++)
+      for (var c2 = 0; c2 < 2; c2++) {
+        bgc.fillStyle = (r2 + c2) % 2 ? p.chk2 : p.chk1;
+        bgc.fillRect(fx + c2 * cell - cell, yTop + r2 * cell, cell, Math.min(cell, bw2 - r2 * cell));
+      }
+    bgc.restore();
+    // feather the field into the page: erase a soft gradient on each edge
+    var fy = Math.max(10, Math.round(H * 0.13));
+    var fxr = Math.max(18, Math.round(W * 0.04));
+    bgc.globalCompositeOperation = "destination-out";
+    var gt = bgc.createLinearGradient(0, 0, 0, fy);
+    gt.addColorStop(0, "rgba(0,0,0,1)");
+    gt.addColorStop(1, "rgba(0,0,0,0)");
+    bgc.fillStyle = gt;
+    bgc.fillRect(0, 0, W, fy);
+    var gb = bgc.createLinearGradient(0, H, 0, H - fy);
+    gb.addColorStop(0, "rgba(0,0,0,1)");
+    gb.addColorStop(1, "rgba(0,0,0,0)");
+    bgc.fillStyle = gb;
+    bgc.fillRect(0, H - fy, W, fy);
+    var gl = bgc.createLinearGradient(0, 0, fxr, 0);
+    gl.addColorStop(0, "rgba(0,0,0,1)");
+    gl.addColorStop(1, "rgba(0,0,0,0)");
+    bgc.fillStyle = gl;
+    bgc.fillRect(0, 0, fxr, H);
+    var gright = bgc.createLinearGradient(W, 0, W - fxr, 0);
+    gright.addColorStop(0, "rgba(0,0,0,1)");
+    gright.addColorStop(1, "rgba(0,0,0,0)");
+    bgc.fillStyle = gright;
+    bgc.fillRect(W - fxr, 0, fxr, H);
+    bgc.globalCompositeOperation = "source-over";
+  }
+  function posT(t) {
+    var g = geom;
+    var s = (((t % 1) + 1) % 1) * g.perim,
+      rc = g.rc, cx = g.clx, cy = g.cly,
+      topY = cy, botY = cy + g.clh,
+      lCX = cx + rc, rCX = cx + g.clw - rc, mY = cy + rc;
+    if (s < g.st) return { x: lCX + s, y: topY, d: 1 };
+    s -= g.st;
+    if (s < g.se) {
+      var a = -Math.PI / 2 + s / rc;
+      return { x: rCX + rc * Math.cos(a), y: mY + rc * Math.sin(a), d: a < Math.PI / 2 ? 1 : -1 };
+    }
+    s -= g.se;
+    if (s < g.st) return { x: rCX - s, y: botY, d: -1 };
+    s -= g.st;
+    var a2 = Math.PI / 2 + s / rc;
+    return { x: lCX + rc * Math.cos(a2), y: mY + rc * Math.sin(a2), d: a2 > Math.PI ? 1 : -1 };
+  }
+  // hare: dash ahead, nap just before the finish, wake late, arrive behind
+  function rabT(p) {
+    if (p < 0.26) return (p / 0.26) * 0.62;
+    if (p < 0.8) return 0.62;
+    return 0.62 + ((p - 0.8) / 0.2) * 0.36;
+  }
+  function sprite(dat, palA, x, y, flip, wPix, hPix, dy) {
+    for (var i = 0; i < dat.length; i++) {
+      var r = dat[i];
+      var rx = flip ? wPix - r[0] - r[2] : r[0];
+      ctx.fillStyle = palA[r[4]];
+      ctx.fillRect(
+        Math.round(x + (rx - wPix / 2) * SC),
+        Math.round(y + (r[1] - hPix) * SC + dy),
+        Math.ceil(r[2] * SC),
+        Math.ceil(r[3] * SC)
+      );
+    }
+  }
+  function shadow(x, y, w, sh) {
+    ctx.fillStyle = sh;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 2, w * 0.5, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  function zGlyph(x, y, s, col, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = col;
+    ctx.fillRect(x, y, 3 * s, s);
+    ctx.fillRect(x + s, y + s, s, s);
+    ctx.fillRect(x, y + 2 * s, 3 * s, s);
+    ctx.globalAlpha = 1;
+  }
+  function draw(tT, tR, time) {
+    if (W <= 0) return;
+    var p = pal();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bg, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var pr = posT(tR), pt = posT(tT);
+    var napping = tR === 0.62 && tT < 0.995;
+    var hop = napping ? 0 : -Math.abs(Math.sin(time * 9)) * 3.5;
+    var items = [[pr, "r"], [pt, "t"]];
+    items.sort(function (A, B) { return A[0].y - B[0].y; });
+    for (var i = 0; i < items.length; i++) {
+      var P = items[i][0];
+      if (items[i][1] === "t") {
+        shadow(P.x, P.y, 24 * 0.9, p.sh);
+        sprite(TDAT, TPAL, P.x, P.y, P.d < 0, 24, 16, Math.sin(time * 7) > 0 ? 0 : -1);
+      } else {
+        shadow(P.x, P.y, 15, p.sh);
+        sprite(RDAT, RPAL, P.x, P.y, P.d < 0, 14, 16, hop);
+        if (napping) {
+          var t2 = time % 1.6,
+            a = t2 < 0.8 ? t2 / 0.8 : 1 - (t2 - 0.8) / 0.8;
+          zGlyph(P.x + 10, P.y - 16 * SC - 6, 2, p.z, 0.35 + a * 0.6);
+          zGlyph(P.x + 16, P.y - 16 * SC - 12, 2.6, p.z, 0.25 + a * 0.5);
+        }
+      }
+    }
+  }
+  function frame(t) {
+    if (!running) return;
+    var sec = t / 1000, ph = (sec * SPEED) % 1;
+    draw(ph, rabT(ph), sec);
+    raf = requestAnimationFrame(frame);
+  }
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = wrap.clientWidth;
+    H = wrap.clientHeight;
+    if (W <= 0 || H <= 0) return;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    var m = Math.round(H * 0.11), g = geom;
+    g.ox = m; g.oy = m; g.ow = W - 2 * m; g.oh = H - 2 * m;
+    var bw = Math.round(g.oh * 0.34);
+    g.bw = bw;
+    g.ix = m + bw; g.iy = m + bw; g.iw = g.ow - 2 * bw; g.ih = g.oh - 2 * bw;
+    g.clx = m + bw / 2; g.cly = m + bw / 2; g.clw = g.ow - bw; g.clh = g.oh - bw; g.rc = g.clh / 2;
+    g.st = g.clw - g.clh; g.se = Math.PI * g.rc; g.perim = 2 * g.st + 2 * g.se;
+    SC = Math.max(1, Math.min(1.6, bw / 24));
+    buildBG();
+  }
+  function staticFrame() { draw(0.86, 0.62, 0.4); }
+  function start() { if (reduce || running || W <= 0) return; running = true; raf = requestAnimationFrame(frame); }
+  function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+
+  resize();
+  if (reduce) staticFrame();
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(
+      function (es) {
+        for (var i = 0; i < es.length; i++) {
+          if (es[i].isIntersecting) {
+            if (W !== wrap.clientWidth || H !== wrap.clientHeight) { resize(); if (reduce) staticFrame(); }
+            start();
+          } else stop();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(wrap);
+  } else if (!reduce) start();
+
+  if ("MutationObserver" in window) {
+    var mo = new MutationObserver(function () { buildBG(); if (!running) staticFrame(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  var rz = null;
+  window.addEventListener(
+    "resize",
+    function () { if (rz) clearTimeout(rz); rz = setTimeout(function () { resize(); if (!running) staticFrame(); }, 160); },
+    { passive: true }
+  );
+})();

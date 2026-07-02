@@ -86,7 +86,7 @@
         padding: 8px 12px;
         border-radius: 6px;
         background: var(--grey1);
-        color: #fff;
+        color: var(--body-bg, #fff);
         font-size: 13px;
         line-height: 1;
         text-decoration: none;
@@ -289,9 +289,9 @@
       .photo-scroller img {
         width: 184px;
         height: 248px;
-        border: 5px solid #fff;
+        border: 5px solid var(--photo-frame, #fff);
         border-radius: 10px;
-        background: #fff;
+        background: var(--photo-frame, #fff);
         box-shadow:
           0 0 0 1px rgba(0, 0, 0, 0.07),
           0 2px 5px rgba(0, 0, 0, 0.04);
@@ -308,7 +308,7 @@
         width: 300px;
         height: 169px;
         object-fit: cover;
-        border: 5px solid #fff;
+        border: 5px solid var(--photo-frame, #fff);
         border-radius: 10px;
         background: #000;
         box-shadow:
@@ -495,7 +495,7 @@
         width: 106px;
         height: 106px;
         border-radius: 12px;
-        border: 4px solid #fff;
+        border: 4px solid var(--photo-frame, #fff);
         box-shadow:
           0 0 0 1px rgba(0, 0, 0, 0.08),
           0 2px 7px rgba(0, 0, 0, 0.06);
@@ -518,7 +518,7 @@
       }
       .cb-them {
         align-self: flex-start;
-        background: #f0f1f3;
+        background: var(--chat-bubble, #f0f1f3);
         color: var(--grey1);
         border-bottom-left-radius: 5px;
       }
@@ -537,7 +537,7 @@
         margin: 2px 0;
       }
       .chat-line {
-        background: #f0f1f3;
+        background: var(--chat-bubble, #f0f1f3);
         color: var(--grey1);
         padding: 10px 14px;
         border-radius: 14px;
@@ -553,8 +553,8 @@
         padding: 10px;
         border-radius: 12px;
         border: none;
-        background: #fff;
-        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+        background: var(--chat-surface, #fff);
+        box-shadow: inset 0 0 0 1px var(--surface-border, rgba(0, 0, 0, 0.1));
         color: var(--grey1);
         font-family: inherit;
         font-size: 14px;
@@ -565,8 +565,8 @@
           box-shadow 0.15s ease;
       }
       .chat-btn:hover {
-        background: #fafbfc;
-        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+        background: var(--chat-surface-hover, #fafbfc);
+        box-shadow: inset 0 0 0 1px var(--surface-border-hover, rgba(0, 0, 0, 0.18));
       }
       .chat-btn svg {
         flex-shrink: 0;
@@ -576,10 +576,10 @@
         font-size: 10px;
         padding: 1px 5px;
         border-radius: 5px;
-        background: #fff;
+        background: var(--chat-surface, #fff);
         color: var(--grey2);
         box-shadow:
-          inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+          inset 0 0 0 1px var(--surface-border, rgba(0, 0, 0, 0.15)),
           0 1px 0 rgba(0, 0, 0, 0.08);
       }
       .copy-toast {
@@ -588,7 +588,7 @@
         left: 50%;
         transform: translateX(-50%) translateY(10px);
         background: var(--grey1);
-        color: #fff;
+        color: var(--body-bg, #fff);
         font-size: 13px;
         padding: 8px 15px;
         border-radius: 999px;
@@ -887,13 +887,13 @@
       }
       .gh-cell {
         border-radius: 2px;
-        background: #eceef3;
+        background: var(--gh-empty, #eceef3);
       }
       .gh-pad {
         background: transparent;
       }
       .gh-l0 {
-        background: #eceef3;
+        background: var(--gh-empty, #eceef3);
       }
       .gh-l1 {
         background: #c6d2ff;
@@ -944,7 +944,7 @@
         align-items: center;
         padding: 2.5px;
         border-radius: 999px;
-        background: #f1f1f3;
+        background: var(--toggle-track, #f1f1f3);
         box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
         width: fit-content;
       }
@@ -972,7 +972,7 @@
         height: calc(100% - 6px);
         width: calc(50% - 3px);
         border-radius: 999px;
-        background: #fff;
+        background: var(--toggle-thumb, #fff);
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
         transition: transform 0.3s cubic-bezier(0.34, 1.1, 0.64, 1);
       }
@@ -988,6 +988,7 @@
       body.creative-mode .post-list,
       body.creative-mode .photo-scroller-section,
       body.creative-mode .gh-activity,
+      body.creative-mode .race-track,
       body.creative-mode .site-footer {
         display: none;
       }
@@ -1276,6 +1277,17 @@
         --fc-l: #2dd4bf;
         --fc-d: #0d9488;
       }
+      .folder--gold {
+        --fc-l: #fbbf24;
+        --fc-d: #d97706;
+      }
+      /* Achievement screenshots: landscape tiles inside the photo scroller */
+      .shots-scroller img {
+        width: 300px;
+        height: 169px;
+        object-fit: cover;
+        object-position: center top;
+      }
       .ch-blurb {
         margin-top: 14px;
         max-width: 60ch;
@@ -1303,7 +1315,7 @@
       }
       .fv-card--nolink:hover {
         transform: none;
-        border-color: #e7e7ec;
+        border-color: var(--surface-border, #e7e7ec);
         box-shadow: none;
       }
       @keyframes fvIn {
@@ -1373,9 +1385,9 @@
         justify-content: space-between;
         gap: 12px;
         padding: 13px 15px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
         border-radius: 12px;
-        background: #fafafa;
+        background: var(--chat-surface, #fafafa);
         text-decoration: none;
         transition:
           transform 0.16s ease,
@@ -1386,7 +1398,7 @@
       .fv-card:hover {
         transform: translateY(-2px);
         border-color: color-mix(in srgb, var(--accent) 42%, transparent);
-        background: #fff;
+        background: var(--chat-surface-hover, #fff);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
       }
       .fv-card-text {
@@ -1450,11 +1462,13 @@
         display: grid;
         place-items: center;
         border-radius: 13px;
-        background: #fff;
-        border: 1px solid #e4e4e7;
-        box-shadow:
+        background: var(--chat-surface, #fff);
+        border: 1px solid var(--surface-border, #e4e4e7);
+        box-shadow: var(
+          --sk-badge-shadow,
           inset 0 2px 5px rgba(0, 0, 0, 0.07),
-          inset 0 -1px 0 rgba(255, 255, 255, 0.7);
+          inset 0 -1px 0 rgba(255, 255, 255, 0.7)
+        );
         transition:
           transform 0.2s cubic-bezier(0.34, 1.4, 0.64, 1),
           box-shadow 0.2s ease,
@@ -1801,9 +1815,9 @@
       /* Scale the whole layout up on large desktops so the 540px column isn't
          lost in whitespace. zoom keeps proportions + line-length intact (vs just
          widening, which would make text lines too long to read comfortably). */
-      @media (min-width: 1600px) { .page-shell, .cloud, .tree { zoom: 1.15; } }
-      @media (min-width: 1920px) { .page-shell, .cloud, .tree { zoom: 1.3; } }
-      @media (min-width: 2560px) { .page-shell, .cloud, .tree { zoom: 1.55; } }
+      @media (min-width: 1600px) { .page-shell, .cloud, .tree, .theme-toggle { zoom: 1.15; } }
+      @media (min-width: 1920px) { .page-shell, .cloud, .tree, .theme-toggle { zoom: 1.3; } }
+      @media (min-width: 2560px) { .page-shell, .cloud, .tree, .theme-toggle { zoom: 1.55; } }
 
       /* Lenis smooth scroll  while active, it owns scrolling, so turn off the
          native smooth-scroll to avoid double-easing. (Reduced-motion users get
@@ -1823,6 +1837,47 @@
       }
       .lenis.lenis-smooth iframe {
         pointer-events: none;
+      }
+
+      /* === RACE TRACK  pixel tortoise & hare on a top-down oval (canvas) === */
+      .race-track {
+        position: relative;
+        height: 120px;
+        margin: 44px -80px;
+        /* soft corners only; the per-edge feather is painted in the canvas */
+        -webkit-mask-image: radial-gradient(120% 170% at 50% 50%, #000 55%, transparent 100%);
+        mask-image: radial-gradient(120% 170% at 50% 50%, #000 55%, transparent 100%);
+      }
+      .race-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        image-rendering: pixelated;
+      }
+      @media (max-width: 600px) {
+        .race-track { height: 92px; margin: 32px -20px; }
+      }
+      [data-theme="dark"] .badge {
+        color: color-mix(in srgb, var(--c) 55%, #e6e6ea);
+        border-color: color-mix(in srgb, var(--c) 45%, transparent);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+          color-mix(in srgb, var(--c) 22%, #1b1b21);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          0 1px 3px rgba(0, 0, 0, 0.4);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .badge {
+          color: color-mix(in srgb, var(--c) 55%, #e6e6ea);
+          border-color: color-mix(in srgb, var(--c) 45%, transparent);
+          background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+            color-mix(in srgb, var(--c) 22%, #1b1b21);
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            0 1px 3px rgba(0, 0, 0, 0.4);
+        }
       }
 
       /* === DARK MODE === */
@@ -1848,6 +1903,16 @@
           --color-text-paragraph: #a0a0a8;
           --accent: #6b8aff;
           --transparentBorder: rgba(255, 255, 255, 0.06);
+          --toggle-track: #23232c;
+          --toggle-thumb: #3a3a48;
+          --chat-bubble: #2a2a32;
+          --chat-surface: #23232c;
+          --chat-surface-hover: #2e2e3a;
+          --surface-border: rgba(255, 255, 255, 0.12);
+          --surface-border-hover: rgba(255, 255, 255, 0.22);
+          --photo-frame: #2b2b33;
+          --sk-badge-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.35);
+          --gh-empty: #1e1e26;
           color-scheme: dark;
         }
       }
@@ -1872,30 +1937,39 @@
         --color-text-paragraph: #a0a0a8;
         --accent: #6b8aff;
         --transparentBorder: rgba(255, 255, 255, 0.06);
+        --toggle-track: #23232c;
+        --toggle-thumb: #3a3a48;
+        --chat-bubble: #2a2a32;
+        --chat-surface: #23232c;
+        --chat-surface-hover: #2e2e3a;
+        --surface-border: rgba(255, 255, 255, 0.12);
+        --surface-border-hover: rgba(255, 255, 255, 0.22);
+        --photo-frame: #2b2b33;
+        --sk-badge-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.35);
+        --gh-empty: #1e1e26;
         color-scheme: dark;
       }
 
       /* Theme toggle button */
       .theme-toggle {
         position: absolute;
-        top: 90px;
-        left: calc(50% + 200px);
-        z-index: 30;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
+        top: 2px;
+        left: calc(50% + 226px);
+        z-index: 10;
+        width: 46px;
+        height: 46px;
+        padding: 0;
         border: none;
-        background: var(--wash2);
-        color: var(--grey2);
+        background: none;
+        cursor: pointer;
         display: grid;
         place-items: center;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: opacity 0.15s ease, background 0.15s ease;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+        transition: transform 0.2s cubic-bezier(0.34, 1.1, 0.64, 1);
       }
-      .theme-toggle:hover { opacity: 1; background: var(--border); }
-      .theme-toggle:active { transform: scale(0.92); }
-      .theme-toggle svg { width: 16px; height: 16px; }
+      .theme-toggle:hover { transform: scale(1.12); }
+      .theme-toggle:active { transform: scale(0.94); }
+      .theme-toggle svg { width: 42px; height: 42px; display: block; }
       .theme-toggle .icon-moon { display: none; }
       [data-theme="dark"] .theme-toggle .icon-sun { display: none; }
       [data-theme="dark"] .theme-toggle .icon-moon { display: block; }
