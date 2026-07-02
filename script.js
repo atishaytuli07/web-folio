@@ -27,8 +27,18 @@
 
   if (btn) {
     btn.addEventListener("click", function () {
-      var current = root.getAttribute("data-theme");
-      apply(current === "dark" ? "light" : "dark");
+      var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      // Crossfade the whole page between themes (View Transitions API). It's a
+      // GPU-composited snapshot fade, so it stays smooth regardless of how many
+      // elements change color. Old browsers and reduced-motion get the instant
+      // swap, which was the previous behavior.
+      var reduce =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (document.startViewTransition && !reduce) {
+        document.startViewTransition(function () { apply(next); });
+      } else {
+        apply(next);
+      }
     });
   }
 
