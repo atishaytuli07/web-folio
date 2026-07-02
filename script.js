@@ -677,10 +677,11 @@
   // tortoise 24x16, 15 rects |  rabbit 22x16, 37 rects
   var TPAL=["#7a8c5c","#6a7c4c","#94a878","#9a8860","#2c2c2c","#c4b890"];
   var TDAT=[[7.0,2.0,10.0,2.0,0],[5.0,4.0,14.0,2.0,0],[4.0,6.0,16.0,4.0,1],[5.0,10.0,14.0,2.0,0],[8.0,4.0,3.0,2.0,2],[13.0,4.0,3.0,2.0,2],[6.0,6.0,3.0,3.0,2],[10.0,6.0,4.0,3.0,2],[15.0,6.0,3.0,3.0,2],[20.0,5.0,3.0,4.0,3],[21.0,4.0,2.0,1.0,3],[22.0,6.0,1.0,1.0,4],[6.0,12.0,3.0,3.0,3],[15.0,12.0,3.0,3.0,3],[7.0,11.0,10.0,1.0,5]];
-  /* Upright pixel bunny, 14x16, facing right: tall ears (pink inner), round
-     head with eye + pink nose, chunky body, belly highlight, fluffy tail. */
-  var RPAL=["#f3f2ee","#d9d4ca","#e8b8c0","#2c2c2c","#fbfaf6","#b8ae9e"];
-  var RDAT=[[4,0,2,1,1],[4,1,2,4,1],[7,0,2,1,0],[7,1,2,5,0],[8,2,1,3,2],[6,5,6,1,0],[5,6,8,3,0],[6,9,7,1,0],[10,7,1,1,3],[13,7,1,1,2],[11,8,1,1,2],[3,10,8,1,0],[2,11,10,3,0],[3,14,8,1,0],[3,10,5,1,1],[5,12,5,2,4],[0,11,2,2,0],[0,11,1,1,4],[3,15,4,1,1],[9,15,3,1,1],[4,15,1,1,5]];
+  /* Albino bunny, 16x16, facing right: two tall upright ears (back shaded,
+     front white with pink inner), round head with a red eye + pink nose,
+     slightly elongated fluffy body with belly highlight, tail shade, feet. */
+  var RPAL=["#d9d4ca","#f3f2ee","#eeb9c4","#cf5d6e","#d97a86","#fbfaf6","#b8ae9e"];
+  var RDAT=[[6,0,1,1,0],[7,0,1,1,1],[10,0,3,1,1],[6,1,1,1,0],[7,1,1,1,1],[10,1,1,1,1],[11,1,1,1,2],[12,1,1,1,1],[6,2,1,1,0],[7,2,1,1,1],[10,2,1,1,1],[11,2,1,1,2],[12,2,1,1,1],[6,3,1,1,0],[7,3,1,1,1],[10,3,1,1,1],[11,3,1,1,2],[12,3,1,1,1],[6,4,1,1,0],[7,4,1,1,1],[10,4,1,1,1],[11,4,1,1,2],[12,4,1,1,1],[6,5,2,1,0],[8,5,5,1,1],[5,6,8,1,1],[4,7,10,1,1],[4,8,8,1,1],[12,8,1,1,3],[13,8,2,1,1],[3,9,12,1,1],[15,9,1,1,4],[2,10,13,1,1],[1,11,1,1,0],[2,11,13,1,1],[0,12,1,1,0],[1,12,1,1,5],[2,12,4,1,1],[6,12,3,1,5],[9,12,6,1,1],[0,13,1,1,0],[1,13,1,1,5],[2,13,3,1,1],[5,13,5,1,5],[10,13,4,1,1],[1,14,1,1,0],[2,14,10,1,1],[12,14,1,1,6],[2,15,2,1,6],[10,15,2,1,6]];
   var wrap = document.querySelector(".race-track");
   if (!wrap) return;
   var canvas = wrap.querySelector(".race-canvas");
@@ -688,7 +689,7 @@
   var ctx = canvas.getContext("2d");
   var bg = document.createElement("canvas");
   var bgc = bg.getContext("2d");
-  var W = 0, H = 0, dpr = 1, geom = {}, SC = 1.4, raf = null, running = false;
+  var W = 0, H = 0, dpr = 1, geom = {}, SC = 1.4, raf = null, running = false, lastDraw = 0;
   var SPEED = 0.045, seed = 1;
   var reduce =
     window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -768,8 +769,8 @@
       }
     bgc.restore();
     // feather the field into the page: erase a soft gradient on each edge
-    var fy = Math.max(10, Math.round(H * 0.13));
-    var fxr = Math.max(18, Math.round(W * 0.04));
+    var fy = Math.max(8, Math.round(H * 0.09));
+    var fxr = Math.max(12, Math.round(W * 0.028));
     bgc.globalCompositeOperation = "destination-out";
     var gt = bgc.createLinearGradient(0, 0, 0, fy);
     gt.addColorStop(0, "rgba(0,0,0,1)");
@@ -863,25 +864,29 @@
         shadow(P.x, P.y, 24 * 0.9, p.sh);
         sprite(TDAT, TPAL, P.x, P.y, P.d < 0, 24, 16, Math.sin(time * 7) > 0 ? 0 : -1);
       } else {
-        shadow(P.x, P.y, 15, p.sh);
-        sprite(RDAT, RPAL, P.x, P.y, P.d < 0, 14, 16, hop);
+        shadow(P.x, P.y, 16, p.sh);
+        sprite(RDAT, RPAL, P.x, P.y, P.d < 0, 16, 16, hop);
         if (napping) {
           var t2 = time % 1.6,
             a = t2 < 0.8 ? t2 / 0.8 : 1 - (t2 - 0.8) / 0.8;
-          zGlyph(P.x + 10, P.y - 16 * SC - 6, 2, p.z, 0.35 + a * 0.6);
-          zGlyph(P.x + 16, P.y - 16 * SC - 12, 2.6, p.z, 0.25 + a * 0.5);
+          zGlyph(P.x + 11, P.y - 16 * SC - 6, 2, p.z, 0.35 + a * 0.6);
+          zGlyph(P.x + 17, P.y - 16 * SC - 12, 2.6, p.z, 0.25 + a * 0.5);
         }
       }
     }
   }
   function frame(t) {
     if (!running) return;
+    raf = requestAnimationFrame(frame);
+    // Cap to ~30fps: the racers crawl (22s/lap), so 30 looks identical to 60
+    // and halves the per-frame blit + fill work while the track is on screen.
+    if (t - lastDraw < 32) return;
+    lastDraw = t;
     var sec = t / 1000, ph = (sec * SPEED) % 1;
     draw(ph, rabT(ph), sec);
-    raf = requestAnimationFrame(frame);
   }
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     W = wrap.clientWidth;
     H = wrap.clientHeight;
     if (W <= 0 || H <= 0) return;
@@ -889,12 +894,14 @@
     canvas.height = Math.round(H * dpr);
     canvas.style.width = W + "px";
     canvas.style.height = H + "px";
-    var m = Math.round(H * 0.11), g = geom;
-    g.ox = m; g.oy = m; g.ow = W - 2 * m; g.oh = H - 2 * m;
+    // smaller horizontal margin (wide track), larger vertical margin so the
+    // cream oval is shorter and there's more grass above/below it.
+    var mx = Math.round(H * 0.15), my = Math.round(H * 0.19), g = geom;
+    g.ox = mx; g.oy = my; g.ow = W - 2 * mx; g.oh = H - 2 * my;
     var bw = Math.round(g.oh * 0.34);
     g.bw = bw;
-    g.ix = m + bw; g.iy = m + bw; g.iw = g.ow - 2 * bw; g.ih = g.oh - 2 * bw;
-    g.clx = m + bw / 2; g.cly = m + bw / 2; g.clw = g.ow - bw; g.clh = g.oh - bw; g.rc = g.clh / 2;
+    g.ix = mx + bw; g.iy = my + bw; g.iw = g.ow - 2 * bw; g.ih = g.oh - 2 * bw;
+    g.clx = mx + bw / 2; g.cly = my + bw / 2; g.clw = g.ow - bw; g.clh = g.oh - bw; g.rc = g.clh / 2;
     g.st = g.clw - g.clh; g.se = Math.PI * g.rc; g.perim = 2 * g.st + 2 * g.se;
     SC = Math.max(1, Math.min(1.6, bw / 24));
     buildBG();
@@ -903,15 +910,31 @@
   function start() { if (reduce || running || W <= 0) return; running = true; raf = requestAnimationFrame(frame); }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
 
-  resize();
-  if (reduce) staticFrame();
+  // Paint the offscreen field/track buffer (~8k fillRects) only when it's not
+  // already sized to the element. First call builds; later calls are no-ops
+  // unless the element resized.
+  function ensureBuilt() {
+    if (W === wrap.clientWidth && H === wrap.clientHeight && W > 0) return;
+    if (!wrap.clientWidth) return;
+    resize();
+    if (reduce) staticFrame();
+  }
+  // Build the buffer once during idle time, right after parse (this script is
+  // deferred, so layout is ready). This keeps the heavy paint off BOTH the load
+  // path and the scroll path: previously buildBG ran synchronously the instant
+  // the track scrolled into view, which stalled the frame and made scrolling to
+  // the race stutter. Now, by the time it's on screen the buffer is ready and
+  // intersecting only starts the animation. (Not tied to the load event  that
+  // waits on all the lazy images and could fire after the user has scrolled.)
+  if ("requestIdleCallback" in window) requestIdleCallback(ensureBuilt, { timeout: 800 });
+  else setTimeout(ensureBuilt, 200);
 
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
       function (es) {
         for (var i = 0; i < es.length; i++) {
           if (es[i].isIntersecting) {
-            if (W !== wrap.clientWidth || H !== wrap.clientHeight) { resize(); if (reduce) staticFrame(); }
+            ensureBuilt(); // normally a no-op (already built during idle)
             start();
           } else stop();
         }
@@ -919,7 +942,10 @@
       { threshold: 0.1 }
     );
     io.observe(wrap);
-  } else if (!reduce) start();
+  } else {
+    ensureBuilt();
+    if (!reduce) start();
+  }
 
   if ("MutationObserver" in window) {
     var mo = new MutationObserver(function () { buildBG(); if (!running) staticFrame(); });

@@ -1842,11 +1842,10 @@
       /* === RACE TRACK  pixel tortoise & hare on a top-down oval (canvas) === */
       .race-track {
         position: relative;
-        height: 120px;
-        margin: 44px -80px;
-        /* soft corners only; the per-edge feather is painted in the canvas */
-        -webkit-mask-image: radial-gradient(120% 170% at 50% 50%, #000 55%, transparent 100%);
-        mask-image: radial-gradient(120% 170% at 50% 50%, #000 55%, transparent 100%);
+        height: 148px;
+        margin: 40px 0;
+        border-radius: 18px;
+        overflow: hidden;
       }
       .race-canvas {
         width: 100%;
@@ -1855,7 +1854,7 @@
         image-rendering: pixelated;
       }
       @media (max-width: 600px) {
-        .race-track { height: 92px; margin: 32px -20px; }
+        .race-track { height: 116px; margin: 30px 0; }
       }
       [data-theme="dark"] .badge {
         color: color-mix(in srgb, var(--c) 55%, #e6e6ea);
