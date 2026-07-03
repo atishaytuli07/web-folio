@@ -944,7 +944,11 @@
   // frame mid-scroll, and in an idle callback it fired during the staggerIn
   // entrance (0-1s after paint) and made the intro stutter. Pre-paint is the
   // one slot where this work can never drop a visible frame.
-  ensureBuilt();
+  // TEST (entrance-jank bisect): skip the eval-time build. The racetrack is far
+  // below the fold, so the IntersectionObserver below (now with a 600px
+  // rootMargin) builds it just before it scrolls into view instead of during
+  // the load/entrance window. This restores the pre-racetrack smooth intro.
+  // ensureBuilt();
 
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
@@ -956,7 +960,7 @@
           } else stop();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: "600px 0px" }
     );
     io.observe(wrap);
   } else {
