@@ -937,30 +937,32 @@
     resize();
     if (reduce) staticFrame();
   }
-  // Build the buffer right now, synchronously at script eval. The script is
-  // deferred, so this runs after layout but BEFORE first paint  the ~8ms it
-  // costs is invisible there. Deferring it anywhere later puts it in conflict
-  // with something visible: inside the IntersectionObserver it stalled the
-  // frame mid-scroll, and in an idle callback it fired during the staggerIn
-  // entrance (0-1s after paint) and made the intro stutter. Pre-paint is the
-  // one slot where this work can never drop a visible frame.
-  // TEST (entrance-jank bisect): skip the eval-time build. The racetrack is far
-  // below the fold, so the IntersectionObserver below (now with a 600px
-  // rootMargin) builds it just before it scrolls into view instead of during
-  // the load/entrance window. This restores the pre-racetrack smooth intro.
-  // ensureBuilt();
+  // The offscreen buffer is ~8k fillRects  too heavy to build during anything
+  // visible. Three timings were tried and each hurt something: at script eval
+  // it janked the staggerIn entrance; in the IntersectionObserver (even with a
+  // rootMargin) it stalled the frame as you scrolled toward it. The one calm
+  // slot is AFTER the entrance finishes (~1s) but BEFORE you scroll down: build
+  // it then, during idle, while the racetrack is still far off-screen. By the
+  // time it scrolls into view the buffer already exists, so the observer only
+  // has to start the animation  no build on the scroll path at all.
+  var idle =
+    window.requestIdleCallback ||
+    function (f) { return setTimeout(f, 1); };
+  setTimeout(function () { idle(function () { ensureBuilt(); }); }, 1400);
 
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
       function (es) {
         for (var i = 0; i < es.length; i++) {
           if (es[i].isIntersecting) {
-            ensureBuilt(); // normally a no-op (built pre-paint; rebuilds only if resized while hidden)
+            ensureBuilt(); // fallback: builds only if a fast scroll beat the idle timer
             start();
           } else stop();
         }
       },
-      { threshold: 0.1, rootMargin: "600px 0px" }
+      // Small margin: start the animation just before it enters view. The build
+      // is already done by now (idle timer above), so this no longer stalls.
+      { threshold: 0.1, rootMargin: "150px 0px" }
     );
     io.observe(wrap);
   } else {

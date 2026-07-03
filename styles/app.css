@@ -265,10 +265,19 @@
          deferred). `auto <h>` is a placeholder height only until a section
          renders once, then the real size is remembered. The hero is excluded so
          FCP is unaffected; the race canvas is excluded so its clientWidth is
-         measurable at eval. */
-      .post-list,
-      .gh-activity,
-      .photo-scroller-section,
+         measurable at eval.
+         EXCLUDED (would be visibly clipped): content-visibility forces
+         `contain: paint`, which clips anything overflowing the section box. So
+         we must NOT apply it to sections with intentional overflow:
+           - .photo-scroller-section (Visuals / AI Visuals) breaks out to
+             full-bleed via margin: calc(-50vw + 50%) -> clipping trims it back
+             to the column.
+           - .post-list.has-mascot perches a dog/frog ABOVE the section
+             (bottom: calc(100% - 3px)) -> clipping eats the mascot.
+           - .gh-activity has pandas peeking out its edges (.gh-peek-eat at
+             left: -15px) -> clipping trims the panda.
+         Hence only plain post-lists + gold-mine + footers below. */
+      .post-list:not(.has-mascot),
       .gold-mine,
       .creative-footer,
       .site-footer {
