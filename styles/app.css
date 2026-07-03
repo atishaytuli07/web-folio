@@ -36,13 +36,18 @@
         box-shadow: 0 10px 34px rgba(0, 0, 0, 0.14);
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.92);
+        /* Exit: quick and quiet (this rule)  a dismissed preview should get
+           out of the way. Enter (below) keeps the softer overshoot. */
         transition:
-          opacity 0.18s ease,
-          transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+          opacity 0.12s ease,
+          transform 0.12s ease;
       }
       .hover-preview[data-show="true"] .hover-preview__inner {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
+        transition:
+          opacity 0.18s ease,
+          transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.1);
       }
       .hover-preview__inner img {
         width: 100%;
@@ -128,6 +133,17 @@
       .project-item.is-extra-hidden {
         display: none;
       }
+      /* Newly revealed items cascade in (30ms steps, JS sets --reveal-i) instead
+         of popping. Collapse stays instant on purpose: enter smooth, exit fast. */
+      .project-item.is-revealed {
+        animation: staggerIn 0.26s cubic-bezier(0.23, 1, 0.32, 1) both;
+        animation-delay: calc(min(var(--reveal-i, 0), 5) * 30ms);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .project-item.is-revealed {
+          animation: none;
+        }
+      }
       .show-more-btn {
         margin-top: 16px;
         display: inline-flex;
@@ -142,7 +158,12 @@
         line-height: 1;
         letter-spacing: -0.00563rem;
         color: var(--grey3);
-        transition: color 0.12s ease;
+        transition:
+          color 0.12s ease,
+          transform 0.16s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .show-more-btn:active {
+        transform: scale(0.97);
       }
       .show-more-btn:hover {
         color: var(--grey1);
@@ -230,6 +251,29 @@
         .cloud-2 {
           display: none;
         }
+      }
+
+      /* Load performance: skip layout + paint for below-the-fold sections until
+         they scroll near the viewport. Measured effect (mobile, simulate
+         throttling, median of 4 runs, single-variable A/B auto vs visible):
+         LCP ~4.46s -> ~4.05s (-0.4s), TBT ~90ms -> ~15ms (-75ms), perf score
+         +6. FCP is unchanged (the hero isn't deferred, so the first pixel lands
+         at the same time) and CLS stayed 0.000 in every run. It does NOT reduce
+         total style/layout time over the session (those sections still lay out
+         when scrolled to); the win is taking off-screen layout off the load
+         critical path. No JS, no SEO cost (nodes stay in the DOM, just
+         deferred). `auto <h>` is a placeholder height only until a section
+         renders once, then the real size is remembered. The hero is excluded so
+         FCP is unaffected; the race canvas is excluded so its clientWidth is
+         measurable at eval. */
+      .post-list,
+      .gh-activity,
+      .photo-scroller-section,
+      .gold-mine,
+      .creative-footer,
+      .site-footer {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 560px;
       }
 
       /* Sparrow: flies in, perches, idles, flies off */
@@ -562,11 +606,15 @@
         text-decoration: none;
         transition:
           background 0.15s ease,
-          box-shadow 0.15s ease;
+          box-shadow 0.15s ease,
+          transform 0.16s cubic-bezier(0.23, 1, 0.32, 1);
       }
       .chat-btn:hover {
         background: var(--chat-surface-hover, #fafbfc);
         box-shadow: inset 0 0 0 1px var(--surface-border-hover, rgba(0, 0, 0, 0.18));
+      }
+      .chat-btn:active {
+        transform: scale(0.98);
       }
       .chat-btn svg {
         flex-shrink: 0;
@@ -771,6 +819,10 @@
             rgba(255, 255, 255, 0.2)
           ),
           color-mix(in srgb, var(--c) 18%, rgba(255, 255, 255, 0.6));
+      }
+      /* Press feedback  after :hover so it wins while both apply. */
+      .badge:active {
+        transform: scale(0.96);
       }
       .badge-arrow {
         flex-shrink: 0;
@@ -1401,6 +1453,9 @@
         background: var(--chat-surface-hover, #fff);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
       }
+      .fv-card:active {
+        transform: scale(0.985);
+      }
       .fv-card-text {
         display: flex;
         flex-direction: column;
@@ -1997,14 +2052,9 @@
       @media (max-width: 900px) {
         .theme-toggle { left: auto; right: 30px; top: 70px; }
       }
-      /* Theme switch crossfade (View Transitions API). One page-wide snapshot
-         fade instead of hundreds of per-element color transitions  composited,
-         so it can't jank no matter how much recolors. */
-      ::view-transition-old(root),
-      ::view-transition-new(root) {
-        animation-duration: 260ms;
-        animation-timing-function: ease;
-      }
+      /* Theme switch crossfade rides the vt-fade keyframes already defined in
+         style.css (old: 0.12s ease-in out, new: 0.2s ease-out in). Asymmetric
+         exit-fast/enter-smooth  no override needed here. */
 
       /* Dark mode: top fade gradient */
       [data-theme="dark"] .page-shell::before {

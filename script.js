@@ -231,6 +231,14 @@
     function apply(collapsed) {
       for (let i = visible; i < total; i++) {
         items[i].classList.toggle("is-extra-hidden", collapsed);
+        // Cascade newly revealed items in; removing the class on collapse
+        // resets the animation so a re-expand plays it again.
+        if (collapsed) {
+          items[i].classList.remove("is-revealed");
+        } else {
+          items[i].style.setProperty("--reveal-i", String(i - visible));
+          items[i].classList.add("is-revealed");
+        }
       }
       btn.setAttribute("aria-expanded", String(!collapsed));
       label.textContent = collapsed
