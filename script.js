@@ -26,19 +26,85 @@
   apply(getPreferred());
 
   if (btn) {
+    // Circular theme reveal, "drain" architecture: NOTHING re-renders after
+    // the animation ends. Earlier versions grew a disc of the new colour and
+    // applied the theme at the END - but the end-of-animation re-render is
+    // exactly what one GPU session kept botching (on-page diagnostics showed
+    // the DOM correct while the screen presented stale/ghost frames). Now the
+    // order is inverted:
+    //   click -> screen is covered instantly by a disc in the OLD theme's
+    //   colour (looks unchanged) -> theme applies immediately, so the whole
+    //   page re-renders NOW, hidden, with the full animation as raster
+    //   headroom -> the disc shrinks into the sun/moon (compositor-only
+    //   transform:scale), revealing content that has been sitting fully
+    //   rendered for half a second. Daylight drains into the moon; night
+    //   drains into the sun. When the animation finishes nothing happens at
+    //   all - a scale(0) layer is removed - so there is no late re-render
+    //   left to glitch. Theme state flips at click time and never depends on
+    //   animation callbacks. pointer-events:none keeps the switch clickable.
+    var activeDisc = null, discAnim = null;
+    function dropDisc() {
+      if (discAnim) { try { discAnim.cancel(); } catch (e) {} discAnim = null; }
+      // Remove ALL reveal discs, not just the tracked one, so nothing can be
+      // stranded covering the screen by fast toggling.
+      var ds = document.querySelectorAll(".theme-reveal");
+      for (var i = 0; i < ds.length; i++) ds[i].remove();
+      activeDisc = null;
+    }
+
     btn.addEventListener("click", function () {
-      var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      // Crossfade the whole page between themes (View Transitions API). It's a
-      // GPU-composited snapshot fade, so it stays smooth regardless of how many
-      // elements change color. Old browsers and reduced-motion get the instant
-      // swap, which was the previous behavior.
+      var cur = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      var next = cur === "dark" ? "light" : "dark";
       var reduce =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (document.startViewTransition && !reduce) {
-        document.startViewTransition(function () { apply(next); });
-      } else {
-        apply(next);
-      }
+      dropDisc();
+      if (reduce || !root.animate) { apply(next); return; }
+
+      var b = btn.getBoundingClientRect();
+      var x = b.left + b.width / 2;
+      var y = b.top + b.height / 2;
+      var R = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      ) + 4;
+      // Cover colour = the theme we're LEAVING (mirrors the --body-bg tokens;
+      // not probed via [data-theme] div - light lives in :root, so a probe
+      // would inherit the current theme's value and come out wrong).
+      var oldBg = cur === "dark" ? "#0e0e12" : "#ffffff";
+
+      var disc = document.createElement("div");
+      disc.className = "theme-reveal";
+      disc.style.left = x - R + "px";
+      disc.style.top = y - R + "px";
+      disc.style.width = disc.style.height = 2 * R + "px";
+      disc.style.background = oldBg;
+      disc.style.transform = "scale(1)"; // cover instantly (base CSS is scale(0))
+      document.body.appendChild(disc);
+      activeDisc = disc;
+
+      // Apply the theme NOW, under full cover: the expensive page re-render
+      // happens at the start, with the whole shrink as raster headroom.
+      apply(next);
+      void root.offsetHeight;
+
+      // 800ms: a shrink reads faster than a grow (it starts at full cover and
+      // has no fade tail), so it gets extra time to feel unhurried. Pure
+      // decoration by now - the theme is already applied - so duration is a
+      // taste knob with zero correctness impact.
+      var DUR = 800;
+      discAnim = disc.animate(
+        { transform: ["scale(1)", "scale(0)"] },
+        { duration: DUR, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
+      );
+      var finish = function () {
+        // Removing a scale(0) layer - nothing on screen changes.
+        if (disc.parentNode) disc.remove();
+        if (activeDisc === disc) { activeDisc = null; discAnim = null; }
+      };
+      discAnim.onfinish = finish;
+      // Watchdog: even if the finish event never fires, the disc dies. The
+      // theme is already applied, so worst case is purely cosmetic.
+      setTimeout(finish, DUR + 400);
     });
   }
 
@@ -65,13 +131,40 @@
     return;
   // autoRaf lets Lenis drive its own animation frame (official recommended
   // setup). Exposed on window for future use (lenis.scrollTo / stop / start).
+  // lerp-based smoothing: the scroll tracks input with a short per-frame
+  // catch-up (0.1 = ~snappy but still smooth), instead of a fixed 1.15s glide
+  // that read as floaty. autoRaf still drives Lenis's own frame loop.
   window.lenis = new Lenis({
     autoRaf: true,
-    duration: 1.15,
-    easing: function (t) {
-      return Math.min(1, 1.001 - Math.pow(2, -10 * t));
-    },
+    lerp: 0.1,
   });
+})();
+
+/* ----------------------------------------------------------------
+   Scroll state: <html> carries .is-scrolling while the page moves.
+   CSS uses it to freeze the main-thread mascot animations so scroll
+   frames stay cheap; the video tiles use it to defer play().
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var t = 0;
+  var on = false;
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!on) {
+        on = true;
+        root.classList.add("is-scrolling");
+      }
+      clearTimeout(t);
+      t = setTimeout(function () {
+        on = false;
+        root.classList.remove("is-scrolling");
+      }, 180);
+    },
+    { passive: true },
+  );
 })();
 
 /*
@@ -90,7 +183,12 @@
     return n < 10 ? "0" + n : "" + n;
   }
 
+  // Only write to the DOM while the footer is on screen — each write
+  // invalidates layout, and nobody sees a clock that's scrolled away.
+  let visible = true;
+
   function tick() {
+    if (!visible) return;
     const now = new Date();
     let h = now.getHours();
     const ampm = h >= 12 ? "PM" : "AM";
@@ -103,6 +201,15 @@
 
   tick();
   setInterval(tick, 1000);
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      for (let i = 0; i < entries.length; i++) {
+        visible = entries[i].isIntersecting;
+      }
+      if (visible) tick(); // catch up the moment it scrolls back in
+    }).observe(root);
+  }
 })();
 
 /*
@@ -118,6 +225,12 @@
   )
     return;
 
+  // Wiring ~30 items + building the preview node isn't needed for first
+  // paint; defer it off the entrance animation's critical path.
+  const idle = window.requestIdleCallback || function (f) { setTimeout(f, 80); };
+  idle(init);
+
+  function init() {
   const items = document.querySelectorAll(".project-item[data-preview]");
   if (!items.length) return;
 
@@ -141,9 +254,16 @@
     raf = null,
     visible = false;
 
+  // Reduced motion: the preview still appears (it's informative), but it
+  // tracks the cursor 1:1 instead of gliding after it. Factor 1 closes the
+  // whole distance in one frame, so the loop below snaps and idles.
+  const followK = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? 1
+    : 0.18;
+
   function loop() {
-    curX += (targetX - curX) * 0.18;
-    curY += (targetY - curY) * 0.18;
+    curX += (targetX - curX) * followK;
+    curY += (targetY - curY) * followK;
     // Keep ticking only while there's distance left to close. When the cursor
     // stops, snap to the exact target and let the loop idle (start() restarts
     // it on the next mousemove)  no wasted 60fps frames while hovering still.
@@ -210,6 +330,116 @@
       visible = false;
     });
   });
+  }
+})();
+
+/* ----------------------------------------------------------------
+   Smooth cursor (hpbrn-style): an outlined arrow that leans into its
+   direction of travel and becomes a pointing hand over interactives.
+   Position/rotation run on a spring in one rAF loop, writing only
+   transform (compositor-friendly); the arrow<->hand swap and theming
+   are CSS (.is-hand, tokens). Fine pointers only; reduced motion and
+   touch keep the native cursor.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  if (
+    !window.matchMedia ||
+    !window.matchMedia("(hover: hover) and (pointer: fine)").matches ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  )
+    return;
+
+  var el = document.createElement("div");
+  el.className = "smooth-cursor";
+  el.setAttribute("aria-hidden", "true");
+  // Cursor art borrowed with love from hpbrn.cc; colours ride this site's
+  // theme tokens so dark mode flips fill/stroke automatically.
+  el.innerHTML =
+    '<svg class="cursor-arrow" width="25" height="27" viewBox="0 0 50 54" fill="none">' +
+    '<path d="M42.6817 41.1495L27.5103 6.79925C26.7269 5.02557 24.2082 5.02558 23.3927 6.79925L7.59814 41.1495C6.75833 42.9759 8.52712 44.8902 10.4125 44.1954L24.3757 39.0496C24.8829 38.8627 25.4385 38.8627 25.9422 39.0496L39.8121 44.1954C41.6849 44.8902 43.4884 42.9759 42.6817 41.1495Z" ' +
+    'fill="var(--body-bg)" stroke="var(--grey1)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/></svg>' +
+    '<svg class="cursor-hand" width="27" height="27" viewBox="0 0 54 54" fill="none">' +
+    '<path d="M20.5 31V10.5C20.5 6.5 23 4 26 4C29 4 31.5 6.5 31.5 10.5V22V15C31.5 11.5 34 9.5 37 9.5C40 9.5 42 12 42 15.5V24V18C42 14.5 44.5 12.5 47.5 12.5C50.5 12.5 51.5 15 51.5 18.5V33C51.5 45 43 52 32 52H28C21.5 52 17 48.5 13 44L4.5 34.5C1.5 31 2 27.5 4.5 25C7 22.5 10.5 23 13 25.5L20.5 33Z" ' +
+    'fill="var(--body-bg)" stroke="var(--grey1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.body.appendChild(el);
+  document.documentElement.classList.add("has-smooth-cursor");
+
+  // Real spring physics, not exponential lerp. A lerp's velocity is
+  // discontinuous - it decelerates in steps and "arrives" - while a spring's
+  // velocity only ever bends, which is exactly the buttery feel of
+  // framer-motion's useSpring (what hpbrn runs). Integrated with dt so the
+  // feel is identical on 60Hz and 144Hz displays; dt is clamped so a stalled
+  // frame can't make the spring explode.
+  var STIFF = 420, DAMP = 34;             // spring knobs: higher STIFF = snappier,
+                                          // lower DAMP (vs ~2*sqrt(STIFF)) = livelier
+  var tx = 0, ty = 0;                     // pointer target
+  var px = 0, py = 0, vx = 0, vy = 0;     // sprung position + velocity
+  var rot = 0, rotTarget = 0;             // leaned / unwrapped target angle
+  var sc = 1, scTarget = 1;               // press squash
+  var raf = null, seen = false, last = 0;
+
+  function frame(now) {
+    var dt = Math.min(0.032, (now - last) / 1000) || 0.016;
+    last = now;
+    // position spring
+    vx += ((tx - px) * STIFF - vx * DAMP) * dt;
+    vy += ((ty - py) * STIFF - vy * DAMP) * dt;
+    px += vx * dt;
+    py += vy * dt;
+    // Lean into the direction of travel, weighted by speed: at rest the
+    // angle simply holds (no threshold, so nothing ever snaps or fidgets).
+    var speed = Math.hypot(vx, vy);
+    if (speed > 1) {
+      var a = Math.atan2(vy, vx) * 180 / Math.PI + 90;
+      // unwrap: rotate the short way instead of spinning 350deg
+      var delta = ((a - rotTarget + 540) % 360) - 180;
+      rotTarget += delta * Math.min(1, speed / 400);
+    }
+    rot += (rotTarget - rot) * (1 - Math.exp(-dt * 12));
+    sc += (scTarget - sc) * (1 - Math.exp(-dt * 20));
+    el.style.transform =
+      "translate3d(" + (px - 12.5) + "px," + (py - 2.5) + "px,0) rotate(" +
+      rot.toFixed(2) + "deg) scale(" + sc.toFixed(3) + ")";
+    var settled =
+      speed < 0.5 &&
+      Math.abs(tx - px) < 0.05 && Math.abs(ty - py) < 0.05 &&
+      Math.abs(rotTarget - rot) < 0.05 && Math.abs(scTarget - sc) < 0.003;
+    raf = settled ? null : requestAnimationFrame(frame);
+  }
+  function start() {
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+  }
+
+  document.addEventListener(
+    "mousemove",
+    function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!seen) {
+        seen = true;
+        px = tx; py = ty; vx = vy = 0;
+        el.classList.add("is-visible");
+      }
+      start();
+    },
+    { passive: true }
+  );
+  // Hand over anything interactive (covers the folders, toggles, links,
+  // buttons and the keyboard-focusable scrollers).
+  var HAND = "a,button,summary,[role=button],input,select,textarea,[tabindex='0']";
+  document.addEventListener("pointerover", function (e) {
+    var t = e.target;
+    el.classList.toggle("is-hand", !!(t && t.closest && t.closest(HAND)));
+  });
+  document.addEventListener("mousedown", function () { scTarget = 0.82; start(); });
+  document.addEventListener("mouseup", function () { scTarget = 1; start(); });
+  // Hide when the pointer leaves the window; the next move re-shows it.
+  document.documentElement.addEventListener("mouseleave", function () {
+    el.classList.remove("is-visible");
+  });
+  document.documentElement.addEventListener("mouseenter", function () {
+    if (seen) el.classList.add("is-visible");
+  });
 })();
 
 /*
@@ -241,9 +471,10 @@
         }
       }
       btn.setAttribute("aria-expanded", String(!collapsed));
-      label.textContent = collapsed
-        ? "View all (" + hiddenCount + " more)"
-        : "Show less";
+      if (label)
+        label.textContent = collapsed
+          ? "View all (" + hiddenCount + " more)"
+          : "Show less";
     }
 
     btn.hidden = false;
@@ -273,7 +504,12 @@
 
 /*
    Sparrow: sits while you scroll (up or down); takes off and
-   glides once you pause. */
+   glides once you pause. The glide is a CSS animation, so a flying
+   bird costs zero main-thread work per frame (the old rAF loop wrote
+   a transform every frame, forcing a full render commit even while
+   the page was otherwise idle). JS only starts/stops the animation;
+   a negative animation-delay resumes the flight from wherever the
+   bird sat down, so nothing jumps. */
 (function () {
   "use strict";
   const bird = document.querySelector(".bird");
@@ -287,25 +523,18 @@
   const sprite = bird.querySelector(".bird-sprite");
 
   const SPEED = 0.08; // px per ms (gentle glide)
-  let x = -70;
   let flying = false;
-  let lastT = 0;
-  let raf = 0;
   let scrollTimer = 0;
-  let vw = window.innerWidth;
 
-  function paint() {
-    bird.style.transform = "translate3d(" + x + "px,0,0)";
+  function span() {
+    return window.innerWidth + 150; // -70px start to 100vw+80px end
   }
 
-  function tick(t) {
-    let dt = t - lastT;
-    lastT = t;
-    if (dt > 50) dt = 50; // clamp (tab switch / throttle)
-    x += SPEED * dt;
-    if (x > vw + 80) x = -70; // wrap off-screen, no visible jump
-    paint();
-    raf = requestAnimationFrame(tick);
+  function currentX() {
+    const m = getComputedStyle(bird).transform;
+    if (!m || m === "none") return -70;
+    const parts = m.split(",");
+    return parseFloat(parts[4]) || -70;
   }
 
   function startFly() {
@@ -314,15 +543,21 @@
     bird.classList.remove("is-sitting");
     lift.classList.add("is-up");
     sprite.classList.add("is-flying");
-    lastT = performance.now();
-    raf = requestAnimationFrame(tick);
+    const dur = span() / SPEED;
+    const x = currentX();
+    bird.style.setProperty("--glide-dur", dur + "ms");
+    bird.style.animationDelay = (-((x + 70) / span()) * dur).toFixed(0) + "ms";
+    bird.style.transform = "";
+    bird.classList.add("is-gliding");
   }
 
   function sit() {
     if (!flying) return;
     flying = false;
-    cancelAnimationFrame(raf);
-    raf = 0;
+    // Freeze in place: pin the animated position as an inline transform
+    // before removing the animation, so the bird doesn't snap back.
+    bird.style.transform = "translate3d(" + currentX() + "px,0,0)";
+    bird.classList.remove("is-gliding");
     lift.classList.remove("is-up");
     sprite.classList.remove("is-flying");
     bird.classList.add("is-sitting");
@@ -338,15 +573,6 @@
     { passive: true },
   );
 
-  window.addEventListener(
-    "resize",
-    function () {
-      vw = window.innerWidth;
-    },
-    { passive: true },
-  );
-
-  paint();
   startFly();
 })();
 
@@ -356,18 +582,23 @@
   "use strict";
   const EMAIL = "atishaytuliiaf@gmail.com";
   const copyBtn = document.getElementById("copy-email");
-  let toast;
+  // Live region built up-front and empty: screen readers only announce
+  // changes inside an existing live region, so a lazily-created one would
+  // stay silent on the first copy. role="status" = polite announcement.
+  // (.copy-toast is opacity:0 until .show, so the empty node is invisible.)
+  const toast = document.createElement("div");
+  toast.className = "copy-toast";
+  toast.setAttribute("role", "status");
+  document.body.appendChild(toast);
+  let toastT = 0;
   function showToast() {
-    if (!toast) {
-      toast = document.createElement("div");
-      toast.className = "copy-toast";
-      toast.textContent = "Email copied";
-      document.body.appendChild(toast);
-    }
+    toast.textContent = "Email copied";
     toast.classList.add("show");
-    clearTimeout(toast._t);
-    toast._t = setTimeout(function () {
+    clearTimeout(toastT);
+    toastT = setTimeout(function () {
       toast.classList.remove("show");
+      // Clear so the next copy is a fresh change and re-announces.
+      toast.textContent = "";
     }, 1600);
   }
   function copyEmail() {
@@ -393,10 +624,16 @@
       !e.ctrlKey &&
       !e.altKey
     ) {
-      const tag = (
-        e.target && e.target.tagName ? e.target.tagName : ""
-      ).toLowerCase();
-      if (tag === "input" || tag === "textarea") return;
+      const t = e.target;
+      const tag = (t && t.tagName ? t.tagName : "").toLowerCase();
+      // Never hijack "c" while the user is typing anywhere editable.
+      if (
+        tag === "input" ||
+        tag === "textarea" ||
+        tag === "select" ||
+        (t && t.isContentEditable)
+      )
+        return;
       copyEmail();
     }
   });
@@ -421,15 +658,32 @@
     });
     return;
   }
+  // Starting a video is expensive (decoder spin-up); doing it mid-scroll
+  // caused a visible hitch since Lenis scrolling rides the main thread.
+  // Plays queue while .is-scrolling and flush once the page settles.
+  const visible = new Set();
+  let flushTimer = 0;
+  function flush() {
+    clearTimeout(flushTimer);
+    if (document.documentElement.classList.contains("is-scrolling")) {
+      flushTimer = setTimeout(flush, 200);
+      return;
+    }
+    visible.forEach(function (v) {
+      if (v.paused) v.play().catch(function () {});
+    });
+  }
   const io = new IntersectionObserver(
     function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
-          e.target.play().catch(function () {});
+          visible.add(e.target);
         } else {
+          visible.delete(e.target);
           e.target.pause();
         }
       });
+      flush();
     },
     { threshold: 0.25 },
   );
@@ -551,6 +805,9 @@
     hideViews();
     foldersEl.removeAttribute("hidden");
   }
+  // Remember which folder opened the current view so Back can hand
+  // keyboard focus straight back to it instead of dropping it at <body>.
+  let lastFolder = null;
   Array.prototype.forEach.call(
     document.querySelectorAll(".folder[data-cat]"),
     function (f) {
@@ -559,6 +816,7 @@
           '.folder-view[data-cat="' + f.getAttribute("data-cat") + '"]',
         );
         if (!view) return;
+        lastFolder = f;
         foldersEl.setAttribute("hidden", "");
         hideViews();
         view.removeAttribute("hidden");
@@ -573,7 +831,12 @@
   Array.prototype.forEach.call(
     viewsEl.querySelectorAll(".fv-back"),
     function (b) {
-      b.addEventListener("click", showFolders);
+      b.addEventListener("click", function () {
+        showFolders();
+        // Only Back restores focus; the minimal-mode switch also calls
+        // showFolders but must not focus a folder that's about to hide.
+        if (lastFolder) lastFolder.focus();
+      });
     },
   );
   Array.prototype.forEach.call(
@@ -611,23 +874,64 @@
 
 /* ----------------------------------------------------------------
    Split the creative name into letters so it can reveal on toggle.
+   Runs immediately when the saved mode is creative (the reveal needs
+   the letters before first paint); otherwise it waits for idle so it
+   stays off the entrance animation's critical path.
 ---------------------------------------------------------------- */
 (function () {
   "use strict";
   const name = document.querySelector(".ch-name");
   if (!name) return;
-  const words = name.querySelectorAll("span");
-  let idx = 0;
-  Array.prototype.forEach.call(words, function (word) {
-    const text = word.textContent;
-    word.textContent = "";
-    for (let i = 0; i < text.length; i++) {
-      const c = document.createElement("span");
-      c.className = "rv-char";
-      c.textContent = text[i];
-      c.style.setProperty("--i", idx++);
-      word.appendChild(c);
-    }
+  function split() {
+    const words = name.querySelectorAll("span");
+    let idx = 0;
+    Array.prototype.forEach.call(words, function (word) {
+      const text = word.textContent;
+      word.textContent = "";
+      for (let i = 0; i < text.length; i++) {
+        const c = document.createElement("span");
+        c.className = "rv-char";
+        c.textContent = text[i];
+        c.style.setProperty("--i", idx++);
+        word.appendChild(c);
+      }
+    });
+  }
+  let saved = null;
+  try {
+    saved = localStorage.getItem("folio-mode");
+  } catch (e) {}
+  if (saved === "creative") {
+    split();
+  } else {
+    (window.requestIdleCallback || function (f) { setTimeout(f, 80); })(split);
+  }
+})();
+
+/* ----------------------------------------------------------------
+   Decorative mascots (dog, frog, birds' nest) pause their animations
+   while off-screen. Their keyframes animate SVG internals, which run
+   on the main thread every frame — no reason to pay that for pixels
+   nobody can see.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  if (!("IntersectionObserver" in window)) return;
+  const els = document.querySelectorAll(".section-mascot, .birds-nest");
+  if (!els.length) return;
+  const io = new IntersectionObserver(
+    function (entries) {
+      for (let i = 0; i < entries.length; i++) {
+        entries[i].target.classList.toggle(
+          "anim-paused",
+          !entries[i].isIntersecting,
+        );
+      }
+    },
+    { rootMargin: "80px 0px" },
+  );
+  Array.prototype.forEach.call(els, function (el) {
+    io.observe(el);
   });
 })();
 
@@ -716,15 +1020,20 @@
     seed = (seed * 1664525 + 1013904223) >>> 0;
     return seed / 4294967296;
   }
+  // Palette cached per theme: draw() runs ~30x/s and only needs two fields,
+  // so re-reading the data-theme attribute and allocating a fresh object per
+  // frame was pure churn. The theme MutationObserver below clears the cache.
+  var palCache = null;
   function pal() {
+    if (palCache) return palCache;
     var d = document.documentElement.getAttribute("data-theme") === "dark";
-    return d
+    return (palCache = d
       ? { grass: "#333d1f", gd: "#2b341a", gl: "#3e4a28", sand: "#57523e", sd: "#4b4735", sl: "#645e46",
           specks: ["#7a5866", "#586a80", "#7a7248", "#9a978c", "#6f6382"],
           chk1: "#d9d5c8", chk2: "#3a3a3a", sh: "rgba(0,0,0,0.35)", z: "#a0a0a8" }
       : { grass: "#5c6c3d", gd: "#4e5e33", gl: "#697a47", sand: "#e8e1cd", sd: "#dbd2b8", sl: "#f3eddc",
           specks: ["#d98fa8", "#8fb0d9", "#e6d488", "#f2efe6", "#b9a6d4"],
-          chk1: "#f3f2ee", chk2: "#2c2c2c", sh: "rgba(45,42,28,0.22)", z: "#787880" };
+          chk1: "#f3f2ee", chk2: "#2c2c2c", sh: "rgba(45,42,28,0.22)", z: "#787880" });
   }
   function stad(g, x, y, w, h) {
     var r = Math.min(h / 2, w / 2);
@@ -831,10 +1140,18 @@
     return { x: lCX + rc * Math.cos(a2), y: mY + rc * Math.sin(a2), d: a2 > Math.PI ? 1 : -1 };
   }
   // hare: dash ahead, nap just before the finish, wake late, arrive behind
+  var NAP_SPOT = 0.62; // track position where the hare snoozes
   function rabT(p) {
-    if (p < 0.26) return (p / 0.26) * 0.62;
-    if (p < 0.8) return 0.62;
-    return 0.62 + ((p - 0.8) / 0.2) * 0.36;
+    if (p < 0.26) return (p / 0.26) * NAP_SPOT;
+    if (p < 0.8) return NAP_SPOT;
+    return NAP_SPOT + ((p - 0.8) / 0.2) * 0.36;
+  }
+  // Nap window as an explicit phase range  draw() used to infer the nap by
+  // float-comparing rabT's OUTPUT (tR === 0.62), which only worked because the
+  // literal is returned unchanged; any arithmetic refactor of rabT would have
+  // silently killed the nap. Callers now say so directly.
+  function isNapPhase(p) {
+    return p >= 0.26 && p < 0.8;
   }
   function sprite(dat, palA, x, y, flip, wPix, hPix, dy) {
     for (var i = 0; i < dat.length; i++) {
@@ -863,7 +1180,7 @@
     ctx.fillRect(x, y + 2 * s, 3 * s, s);
     ctx.globalAlpha = 1;
   }
-  function draw(tT, tR, time) {
+  function draw(tT, tR, time, napping) {
     if (W <= 0) return;
     var p = pal();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -872,7 +1189,6 @@
     ctx.drawImage(bg, 0, 0);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     var pr = posT(tR), pt = posT(tT);
-    var napping = tR === 0.62 && tT < 0.995;
     var hop = napping ? 0 : -Math.abs(Math.sin(time * 9)) * 3.5;
     var items = [[pr, "r"], [pt, "t"]];
     items.sort(function (A, B) { return A[0].y - B[0].y; });
@@ -901,7 +1217,7 @@
     if (t - lastDraw < 32) return;
     lastDraw = t;
     var sec = t / 1000, ph = (sec * SPEED) % 1;
-    draw(ph, rabT(ph), sec);
+    draw(ph, rabT(ph), sec, isNapPhase(ph));
   }
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -924,7 +1240,10 @@
     SC = Math.max(1, Math.min(1.6, bw / 24));
     buildBG();
   }
-  function staticFrame() { draw(0.86, 0.62, 0.4); }
+  // Reduced-motion tableau: tortoise closing in while the hare naps. This
+  // (tortoise 0.86, hare at the nap spot) is a posed scene, not a live race
+  // state  hence napping is passed explicitly rather than derived.
+  function staticFrame() { draw(0.86, NAP_SPOT, 0.4, true); }
   function start() { if (reduce || running || W <= 0) return; running = true; raf = requestAnimationFrame(frame); }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
 
@@ -971,7 +1290,7 @@
   }
 
   if ("MutationObserver" in window) {
-    var mo = new MutationObserver(function () { buildBG(); if (!running) staticFrame(); });
+    var mo = new MutationObserver(function () { palCache = null; buildBG(); if (!running) staticFrame(); });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   }
   var rz = null;
