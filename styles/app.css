@@ -2597,6 +2597,30 @@
           filter: blur(6px);
         }
       }
+      /* Mobile GPUs rasterize filter:blur at low color precision, so the
+         half-transparent half-blurred crossfade frames smear the text color
+         into a tinted ghost (both themes). Desktop blurs in high precision
+         and looks fine. On touch devices keep the identical word-by-word
+         rhythm but crossfade with opacity only  no blur, no smear. */
+      @media (hover: none) {
+        .role-line .rw {
+          filter: none;
+          animation-name: roleSwapFade;
+        }
+      }
+      @keyframes roleSwapFade {
+        0% {
+          opacity: 0;
+        }
+        6%,
+        44% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0;
+        }
+      }
 
       /* Touch: no hover = no frame/popup; keep the quiet resting styles only */
       @media (hover: none) {
