@@ -1947,26 +1947,75 @@
       @media (max-width: 600px) {
         .race-track { height: 116px; margin: 30px 0; }
       }
+      /* Dark badges: pastel text (hue mixed toward WHITE, not grey  grey
+         muddies it), a quiet 16% tinted fill, and no gloss gradient or inner
+         white line (light-mode skeuomorphs that read as haze on dark). */
       [data-theme="dark"] .badge {
-        color: color-mix(in srgb, var(--c) 55%, #e6e6ea);
-        border-color: color-mix(in srgb, var(--c) 45%, transparent);
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
-          color-mix(in srgb, var(--c) 22%, #1b1b21);
-        box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.06),
-          0 1px 3px rgba(0, 0, 0, 0.4);
+        color: color-mix(in srgb, var(--c) 42%, #fff);
+        border-color: color-mix(in srgb, var(--c) 38%, transparent);
+        background: color-mix(in srgb, var(--c) 16%, #17171c);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      }
+      [data-theme="dark"] .badge:hover {
+        background: color-mix(in srgb, var(--c) 24%, #17171c);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+      }
+      /* Dark folders: the real fix is the SURFACE, not the sheen. In light
+         mode the card works via white surface + real shadows; in dark, black
+         shadows vanish and the 2.5% surface mix is invisible against the page,
+         so the card had no elevation cues at all (which is why any sheen value
+         looked wrong  it was the only "card" signal left). Dark elevation =
+         lighter surface: step the card up to a real surface tone and deepen
+         the drop-shadows so the sheet stack seats. Sheen stays quiet (8%). */
+      [data-theme="dark"] .folder {
+        --fcard: color-mix(in srgb, var(--grey1) 7.5%, var(--body-bg));
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45))
+          drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5));
+      }
+      /* No top-sheen in dark: the lifted surface carries the card now, and
+         any inset highlight reads as a separator line across the label. */
+      [data-theme="dark"] .folder-tabzone,
+      [data-theme="dark"] .folder-label {
+        box-shadow: none;
+      }
+      /* Mode toggle, dark: inactive label steps up to grey2 so it reads as a
+         tappable second option, not a disabled ghost. Active stays grey1. */
+      [data-theme="dark"] .mode-btn:not(.is-active) {
+        color: var(--grey2);
+      }
+      /* Dark text hierarchy: bio copy steps down from heading-bright so the
+         page reads title -> body -> description -> meta instead of one wall
+         of near-white. (Light mode keeps grey1  near-black body is normal.)
+         :not(.cb) keeps chat bubbles out  they set their own text colors
+         (white on the accent bubbles) and must not be dimmed. */
+      [data-theme="dark"] .homepage .article p:not(.cb):not(.profile-role) {
+        color: #b7b7bf;
       }
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) .badge {
-          color: color-mix(in srgb, var(--c) 55%, #e6e6ea);
-          border-color: color-mix(in srgb, var(--c) 45%, transparent);
-          background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
-            color-mix(in srgb, var(--c) 22%, #1b1b21);
-          box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.06),
-            0 1px 3px rgba(0, 0, 0, 0.4);
+          color: color-mix(in srgb, var(--c) 42%, #fff);
+          border-color: color-mix(in srgb, var(--c) 38%, transparent);
+          background: color-mix(in srgb, var(--c) 16%, #17171c);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        :root:not([data-theme="light"]) .badge:hover {
+          background: color-mix(in srgb, var(--c) 24%, #17171c);
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+        }
+        :root:not([data-theme="light"]) .folder {
+          --fcard: color-mix(in srgb, var(--grey1) 7.5%, var(--body-bg));
+          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45))
+            drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5));
+        }
+        :root:not([data-theme="light"]) .folder-tabzone,
+        :root:not([data-theme="light"]) .folder-label {
+          box-shadow: none;
+        }
+        :root:not([data-theme="light"]) .mode-btn:not(.is-active) {
+          color: var(--grey2);
+        }
+        :root:not([data-theme="light"]) .homepage .article p:not(.cb):not(.profile-role) {
+          color: #b7b7bf;
         }
       }
 
@@ -1976,7 +2025,7 @@
           --body-bg: #0e0e12;
           --body-color: #eaeaea;
           --grey1: #eaeaea;
-          --grey2: #a0a0a8;
+          --grey2: #94949d;
           --grey3: #787880;
           --wash1: #2a2a32;
           --wash2: #1c1c22;
@@ -1987,10 +2036,10 @@
           --focus-color: rgba(255, 255, 255, 0.5);
           --color-gray-background: #0e0e12;
           --color-gray-1200: #eaeaea;
-          --color-gray-1000: #a0a0a8;
+          --color-gray-1000: #94949d;
           --color-gray-900: #787880;
           --color-gray-400: #2a2a32;
-          --color-text-paragraph: #a0a0a8;
+          --color-text-paragraph: #94949d;
           --accent: #6b8aff;
           --transparentBorder: rgba(255, 255, 255, 0.06);
           --toggle-track: #23232c;
@@ -2010,7 +2059,7 @@
         --body-bg: #0e0e12;
         --body-color: #eaeaea;
         --grey1: #eaeaea;
-        --grey2: #a0a0a8;
+        --grey2: #94949d;
         --grey3: #787880;
         --wash1: #2a2a32;
         --wash2: #1c1c22;
@@ -2021,10 +2070,10 @@
         --focus-color: rgba(255, 255, 255, 0.5);
         --color-gray-background: #0e0e12;
         --color-gray-1200: #eaeaea;
-        --color-gray-1000: #a0a0a8;
+        --color-gray-1000: #94949d;
         --color-gray-900: #787880;
         --color-gray-400: #2a2a32;
-        --color-text-paragraph: #a0a0a8;
+        --color-text-paragraph: #94949d;
         --accent: #6b8aff;
         --transparentBorder: rgba(255, 255, 255, 0.06);
         --toggle-track: #23232c;
@@ -2198,4 +2247,530 @@
             hsla(240, 10%, 6%, 0)
           );
         }
+      }
+
+      /* === Live bio keywords: words that behave like small UIs ===
+         Three, deliberately: Figma (selection frame), GSAP (flowing squiggle),
+         SEO (receipts card with a chart drawing itself). Everything CSS-only,
+         themed via existing tokens, gated off touch, reduced-motion aware. */
+      .kw {
+        position: relative;
+        color: var(--grey1);
+        font-weight: 500;
+        cursor: default;
+      }
+      .kw-figma,
+      .kw-gsap,
+      .kw-react,
+      .kw-seo,
+      .kw-aeo,
+      .kw-music {
+        border-bottom: 1px dashed var(--grey3);
+      }
+
+      /* Figma: hover draws the canonical selection frame + corner handles */
+      .kw-figma::before,
+      .kw-figma::after {
+        content: "";
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.12s ease;
+      }
+      .kw-figma::before {
+        inset: -1px -4px;
+        border: 1.2px solid #0d99ff;
+      }
+      .kw-figma::after {
+        inset: -4px -7px;
+        background:
+          linear-gradient(#fff, #fff) left 1px top 1px / 4px 4px,
+          linear-gradient(#fff, #fff) right 1px top 1px / 4px 4px,
+          linear-gradient(#fff, #fff) left 1px bottom 1px / 4px 4px,
+          linear-gradient(#fff, #fff) right 1px bottom 1px / 4px 4px,
+          linear-gradient(#0d99ff, #0d99ff) left top / 6px 6px,
+          linear-gradient(#0d99ff, #0d99ff) right top / 6px 6px,
+          linear-gradient(#0d99ff, #0d99ff) left bottom / 6px 6px,
+          linear-gradient(#0d99ff, #0d99ff) right bottom / 6px 6px;
+        background-repeat: no-repeat;
+      }
+      .kw-figma:hover {
+        border-bottom-color: transparent;
+      }
+      .kw-figma:hover::before,
+      .kw-figma:hover::after {
+        opacity: 1;
+      }
+
+      /* GSAP: an always-on accent squiggle that flows on hover. The svg is
+         2x the word width inside a clipping span; the hover loop shifts the
+         WHOLE svg by -50% (4 full wave periods, so the loop is seamless).
+         Animating the svg element (not the inner path) keeps the animation
+         on the compositor  inner-SVG transforms can repaint per frame. */
+      .kw-gsap:hover {
+        border-bottom-color: transparent; /* the squiggle takes the underline's place */
+      }
+      .kw-waveclip {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -6px;
+        height: 6px;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+      .kw-gsap:hover .kw-waveclip {
+        opacity: 1;
+      }
+      .kw-wave {
+        display: block;
+        width: 200%;
+        height: 100%;
+      }
+      .kw-wave path {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 1.7;
+        stroke-linecap: round;
+      }
+      .kw-gsap:hover .kw-wave {
+        animation: kwFlow 0.8s linear infinite;
+      }
+      @keyframes kwFlow {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* Hover cards: compact Gustavo-style  small thumb left, text right.
+         .kw-pop is the floating shell; --seo and --music are the layouts. */
+      .kw-pop {
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% + 9px);
+        z-index: 60;
+        display: flex;
+        white-space: nowrap;
+        background: var(--chat-surface, #fff);
+        border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-50%) translateY(6px) scale(0.96);
+        transform-origin: bottom center;
+        transition:
+          opacity 0.16s ease,
+          transform 0.22s cubic-bezier(0.34, 1.3, 0.64, 1);
+      }
+      .kw:hover .kw-pop {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      .kw-pop--seo {
+        align-items: center;
+        gap: 9px;
+        padding: 8px 13px 8px 8px;
+      }
+      .kw-pop-thumb {
+        flex: none;
+        width: 44px;
+        height: 32px;
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        background: color-mix(in srgb, #22c55e 10%, transparent);
+      }
+      .kw-pop-text {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .kw-chart {
+        width: 38px;
+        height: 26px;
+      }
+      .kw-chart-line {
+        fill: none;
+        stroke: #22c55e;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 55;
+        stroke-dashoffset: 55;
+      }
+      .kw-seo:hover .kw-chart-line {
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 0.55s ease-out 0.08s;
+      }
+      .kw-chart-dot {
+        fill: #22c55e;
+        opacity: 0;
+        transition: opacity 0.2s ease 0.55s;
+      }
+      .kw-seo:hover .kw-chart-dot {
+        opacity: 1;
+      }
+      /* soft gradient area under the line, fading in after the line draws */
+      .kw-chart-area {
+        opacity: 0;
+        transition: opacity 0.3s ease 0.4s;
+      }
+      .kw-seo:hover .kw-chart-area {
+        opacity: 1;
+      }
+      /* sonar ping on the peak  runs only while hovered */
+      .kw-chart-ring {
+        fill: none;
+        stroke: #22c55e;
+        stroke-width: 1;
+        opacity: 0;
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+      .kw-seo:hover .kw-chart-ring {
+        animation: kwPing 1.5s ease-out 0.6s infinite;
+      }
+      @keyframes kwPing {
+        0% {
+          opacity: 0.7;
+          transform: scale(1);
+        }
+        70%,
+        100% {
+          opacity: 0;
+          transform: scale(2.4);
+        }
+      }
+      .kw-pop-line {
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--grey1);
+      }
+      .kw-pop-sub {
+        font-size: 11px;
+        line-height: 1.35;
+        color: var(--grey3);
+      }
+
+      /* Music: same card anatomy as the last-played pattern  thumb + track,
+         muted footer strip. The vinyl spins only while hovered. */
+      .kw-pop--music {
+        flex-direction: column;
+        overflow: hidden;
+      }
+      /* artwork sits flush against the card's edge  the card's own corner
+         radius rounds it on that side (reference look), everything tight */
+      .kw-mrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px 0 0;
+      }
+      .kw-mthumb {
+        position: relative;
+        flex: none;
+        width: 46px;
+        height: 46px;
+        display: block;
+      }
+      .kw-mart {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* the little disc ring over the art, like a record label */
+      .kw-mthumb::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.55) 0 3px,
+          rgba(255, 255, 255, 0.12) 3.5px
+        );
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+      }
+      /* tiny equalizer beside the track name  plays only while hovered */
+      .kw-eq {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 9px;
+        margin-left: 6px;
+      }
+      .kw-eq span {
+        width: 2px;
+        height: 100%;
+        border-radius: 1px;
+        background: var(--accent);
+        transform: scaleY(0.3);
+        transform-origin: bottom;
+        animation: kwEq 0.9s ease-in-out infinite;
+        animation-play-state: paused;
+      }
+      .kw-eq span:nth-child(2) {
+        animation-delay: -0.3s;
+      }
+      .kw-eq span:nth-child(3) {
+        animation-delay: -0.6s;
+      }
+      .kw-music:hover .kw-eq span {
+        animation-play-state: running;
+      }
+      @keyframes kwEq {
+        0%,
+        100% {
+          transform: scaleY(0.3);
+        }
+        50% {
+          transform: scaleY(1);
+        }
+      }
+
+      /* === Role subtitle: blur-fade cycle between two titles. Both lines
+         stack in one grid cell (width = the longer one, no layout shift);
+         each dissolves out through a blur while the other reforms. The
+         animated values sit on long plateaus, so between swaps the browser
+         has nothing to repaint  no continuous cost. === */
+      .profile-role.role-swap {
+        display: inline-grid;
+      }
+      /* screen-reader-only text (the animated words are aria-hidden) */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .role-line {
+        grid-area: 1 / 1;
+        white-space: nowrap;
+      }
+      /* word-by-word: each word runs the same 8s cycle, offset ~0.14s from
+         the previous, so titles dissolve and reform as a cascade */
+      .role-line .rw {
+        display: inline-block;
+        opacity: 0;
+        filter: blur(6px);
+        animation: roleSwap 8s ease-in-out infinite;
+      }
+      .role-line-a .rw:nth-child(2) {
+        animation-delay: 0.14s;
+      }
+      .role-line-a .rw:nth-child(3) {
+        animation-delay: 0.28s;
+      }
+      .role-line-b .rw {
+        animation-delay: -4s;
+      }
+      .role-line-b .rw:nth-child(2) {
+        animation-delay: -3.86s;
+      }
+      @keyframes roleSwap {
+        0% {
+          opacity: 0;
+          filter: blur(6px);
+        }
+        6%,
+        44% {
+          opacity: 1;
+          filter: blur(0px);
+        }
+        50%,
+        100% {
+          opacity: 0;
+          filter: blur(6px);
+        }
+      }
+
+      /* Touch: no hover = no frame/popup; keep the quiet resting styles only */
+      @media (hover: none) {
+        .kw-figma::before,
+        .kw-figma::after,
+        .kw-pop {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .kw-gsap:hover .kw-wave,
+        .kw-eq span,
+        .kw-seo:hover .kw-chart-ring,
+        .kw-coder-head,
+        .kw-coder-hand,
+        .role-line .rw {
+          animation: none;
+        }
+        /* static subtitle: first role only, sharp and visible */
+        .role-line-a .rw {
+          opacity: 1;
+          filter: none;
+        }
+        .role-line-b {
+          display: none;
+        }
+        .kw-chart-line {
+          stroke-dasharray: none;
+          stroke-dashoffset: 0;
+        }
+        .kw-pop {
+          transition: opacity 0.12s ease;
+          transform: translateX(-50%);
+        }
+        .kw-seo:hover .kw-pop {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* AEO: answer-engine card  Claude / ChatGPT / Perplexity logos, the
+         whole card is a link to a live "who is Atishay Tuli" AI search.
+         Unlike the other cards this one is clickable, so pointer-events
+         re-enable while its keyword is hovered (the card is a child of the
+         keyword, so moving the cursor onto it keeps it open). */
+      /* No card at all: just the logo cluster, rising from BEHIND the word
+         (z-index -1 puts it under the text plane while it emerges). */
+      .kw-pop--aeo {
+        background: none;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        z-index: -1;
+        bottom: calc(100% + 3px);
+        text-decoration: none;
+        /* center over the WORD without left:50% (unreliable against inline
+           fragment boxes): pin to both edges and auto-center the cluster */
+        left: 0;
+        right: 0;
+        margin-inline: auto;
+        width: fit-content;
+        transform: translateY(14px) scale(0.9);
+      }
+      .kw-aeo:hover .kw-pop--aeo {
+        /* generic .kw:hover rule reintroduces translateX(-50%); cancel it */
+        transform: translateY(0) scale(1);
+      }
+      /* SEO / AEO: the WORDS are the links (cards are display-only sugar) */
+      a.kw {
+        cursor: pointer;
+        text-decoration: none;
+      }
+      a.kw:focus-visible {
+        outline: 2px solid var(--focus-color);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      .kw-pop--seo {
+        text-decoration: none;
+      }
+      .kw-pop--seo:hover .kw-pop-sub {
+        color: var(--accent);
+      }
+      /* Framer Motion: same squiggle as GSAP, deliberately slower. */
+      .kw-fm {
+        white-space: nowrap;
+      }
+      .kw-fm:hover .kw-wave {
+        animation-duration: 2.4s;
+      }
+
+      /* React: a pixel coder at their desk (house mascot style) rises from
+         behind the word  head bobs, hand taps, code lines type onto the
+         screen. All animations run only while hovered. */
+      .kw-coder {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin-inline: auto;
+        width: 30px;
+        bottom: calc(100% + 1px);
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 0.16s ease,
+          transform 0.22s cubic-bezier(0.34, 1.3, 0.64, 1);
+      }
+      .kw-coder svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        shape-rendering: crispEdges;
+      }
+      .kw-react:hover .kw-coder {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .kw-coder-head {
+        animation: kwCoderBob 1.4s steps(1) infinite;
+        animation-play-state: paused;
+      }
+      .kw-coder-hand {
+        animation: kwCoderTap 0.24s steps(1) infinite;
+        animation-play-state: paused;
+      }
+      /* right hand taps on the off-beat */
+      .kw-coder-hand-r {
+        animation-delay: 0.12s;
+      }
+      .kw-react:hover .kw-coder-head,
+      .kw-react:hover .kw-coder-hand {
+        animation-play-state: running;
+      }
+      @keyframes kwCoderBob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(1px);
+        }
+      }
+      @keyframes kwCoderTap {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(1px);
+        }
+      }
+      /* three raw logos, unframed: overlapped -2px, edge ones fanned outward */
+      .kw-ai-logos {
+        display: flex;
+        align-items: center;
+        flex: none;
+      }
+      .kw-ai-logos img {
+        display: block;
+        width: 22px;
+        height: 22px;
+      }
+      .kw-ai-logos img + img {
+        margin-left: -2px;
+      }
+      .kw-ai-logos img:first-child {
+        transform: rotate(-10deg) translateY(1px);
+      }
+      .kw-ai-logos img:nth-child(2) {
+        position: relative;
+        z-index: 1;
+      }
+      .kw-ai-logos img:last-child {
+        transform: rotate(10deg) translateY(1px);
       }
