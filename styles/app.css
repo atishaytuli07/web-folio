@@ -1845,11 +1845,19 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.4),
           0 2px 6px hsl(var(--h) 70% 45% / 0.32);
       }
-          @media (max-width: 600px) {
-        .folders { grid-template-columns: repeat(2, 1fr); }
-      }
-      @media (max-width: 380px) {
-        .folders { grid-template-columns: 1fr; }
+      /* Mobile: one folder per row. At two-up (~160px each) the rotated
+         sheets overflow their stage into the neighbor column. Capped and
+         centered so a full-width folder reads as a card, not a billboard. */
+      @media (max-width: 600px) {
+        .folders {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+        .folders .folder {
+          width: 100%;
+          max-width: 360px;
+          margin-inline: auto;
+        }
       }
 
       /* Section mascots: a dog perched over Client works, a frog over Vibe coding */
@@ -2797,4 +2805,57 @@
       }
       .kw-ai-logos img:last-child {
         transform: rotate(10deg) translateY(1px);
+      }
+
+      /* Achievement shots: caption under each screenshot */
+      .shots-scroller figure.win-shot {
+        margin: 0;
+        flex: none;
+      }
+      .win-cap {
+        display: block;
+        margin-top: 7px;
+        max-width: 300px;
+        font-size: 11.5px;
+        line-height: 1.45;
+        color: var(--grey3);
+        white-space: normal;
+      }
+
+      /* Logo-less icon tiles: the gradient drifts slowly. A conic layer twice
+         the tile size rotates underneath (pure transform  compositor only);
+         first and last stops match, so the loop is seamless. */
+      .fv-card-icon--mono {
+        position: relative;
+        overflow: hidden;
+      }
+      .fv-card-icon--mono::before {
+        content: "";
+        position: absolute;
+        inset: -45%;
+        /* gentle hue walk with small lightness steps + a blur on the layer
+           itself  the blur rasterizes once, then only rotates, so the
+           softness costs nothing per frame */
+        background: conic-gradient(
+          from 0deg,
+          hsl(calc(var(--h) - 18) 88% 66%),
+          hsl(calc(var(--h) - 6) 86% 61%),
+          hsl(var(--h) 84% 58%),
+          hsl(calc(var(--h) + 16) 82% 55%),
+          hsl(calc(var(--h) + 32) 80% 58%),
+          hsl(calc(var(--h) + 16) 84% 62%),
+          hsl(calc(var(--h) - 18) 88% 66%)
+        );
+        filter: blur(7px);
+        animation: monoDrift 10s linear infinite;
+      }
+      @keyframes monoDrift {
+        to {
+          transform: rotate(1turn);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fv-card-icon--mono::before {
+          animation: none;
+        }
       }

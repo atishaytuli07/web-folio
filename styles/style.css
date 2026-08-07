@@ -522,7 +522,7 @@ video {
   flex-shrink: 0;
   position: relative;
   overflow: visible;
-}@media (max-width: 768px){.page-header * {
+}@media (max-width: 768px){.page-header *:not(.rw) {
     opacity: 1 !important;
     transform: none !important;
     will-change: auto !important;
