@@ -2574,8 +2574,12 @@
       .role-line .rw {
         display: inline-block;
         opacity: 0;
-        filter: blur(6px);
-        animation: roleSwap 8s ease-in-out infinite;
+        /* Opacity-only on purpose: the original blur dissolve re-rasterized
+           five text layers at every transition, which produced a periodic
+           scroll hitch in the hero (confirmed by A/B feel-test). The word-
+           by-word cascade carries the effect; opacity keeps it compositor-
+           cheap on every device. */
+        animation: roleSwapFade 8s ease-in-out infinite;
       }
       .role-line-a .rw:nth-child(2) {
         animation-delay: 0.14s;
@@ -2588,33 +2592,6 @@
       }
       .role-line-b .rw:nth-child(2) {
         animation-delay: -3.86s;
-      }
-      @keyframes roleSwap {
-        0% {
-          opacity: 0;
-          filter: blur(6px);
-        }
-        6%,
-        44% {
-          opacity: 1;
-          filter: blur(0px);
-        }
-        50%,
-        100% {
-          opacity: 0;
-          filter: blur(6px);
-        }
-      }
-      /* Mobile GPUs rasterize filter:blur at low color precision, so the
-         half-transparent half-blurred crossfade frames smear the text color
-         into a tinted ghost (both themes). Desktop blurs in high precision
-         and looks fine. On touch devices keep the identical word-by-word
-         rhythm but crossfade with opacity only  no blur, no smear. */
-      @media (hover: none) {
-        .role-line .rw {
-          filter: none;
-          animation-name: roleSwapFade;
-        }
       }
       @keyframes roleSwapFade {
         0% {

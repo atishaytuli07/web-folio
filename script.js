@@ -255,15 +255,23 @@
     visible = false;
 
   // Reduced motion: the preview still appears (it's informative), but it
-  // tracks the cursor 1:1 instead of gliding after it. Factor 1 closes the
-  // whole distance in one frame, so the loop below snaps and idles.
-  const followK = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ? 1
-    : 0.18;
+  // tracks the cursor 1:1 instead of gliding after it.
+  const reduceFollow = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  // Time-based smoothing (exponential, time-constant TAU ms): the old
+  // per-frame lerp converged twice as fast on 120Hz screens, so the glide
+  // felt stiff on high-refresh displays. dt-based closing is identical at
+  // any frame rate, and TAU 110 sits a touch silkier than the old 60Hz feel.
+  const TAU = 110;
+  let lastT = 0;
 
-  function loop() {
-    curX += (targetX - curX) * followK;
-    curY += (targetY - curY) * followK;
+  function loop(t) {
+    const dt = lastT ? Math.min(t - lastT, 50) : 16.7;
+    lastT = t;
+    const k = reduceFollow ? 1 : 1 - Math.exp(-dt / TAU);
+    curX += (targetX - curX) * k;
+    curY += (targetY - curY) * k;
     // Keep ticking only while there's distance left to close. When the cursor
     // stops, snap to the exact target and let the loop idle (start() restarts
     // it on the next mousemove)  no wasted 60fps frames while hovering still.
@@ -275,6 +283,7 @@
       curY = targetY;
       preview.style.transform = "translate3d(" + curX + "px," + curY + "px,0)";
       raf = null;
+      lastT = 0;
     }
   }
 
