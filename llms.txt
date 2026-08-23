@@ -1,0 +1,30 @@
+# Atishay Tuli
+
+> Atishay Tuli is a design engineer and creative frontend developer from India. He designs in Figma, builds in React and Next.js, and specializes in web animation with GSAP, Framer Motion, and Lenis. He works as a Jr. Frontend Developer at Designing Solutions (joined as an intern in January 2025) and has shipped 15+ client sites there, plus freelance work for clients like Traya International and Mountain Bird Bagpackers.
+
+Portfolio: https://www.creativeatishay.in
+
+## Products
+
+- MakeMyAISite (https://www.makemyaisite.com): turns a LinkedIn profile or resume PDF into a live portfolio website in about 30 seconds, with a jobs tab that matches users to real openings. 40,000+ visitors, 6,500+ users, ranks #2 on Google for "linkedin to portfolio maker".
+- Woblo (https://woblo.in): a free Chrome extension that extracts any website's colors, fonts, and images as ready-to-copy code for Tailwind, CSS, or Figma. 20,000+ installs, 4.9 stars on the Chrome Web Store.
+- Will You Be My Valentine (https://willyoubmyvalentine.vercel.app): a playful interactive experience that went viral with 37.5k+ visitors, no ads, no budget. Top 10 trending on Muzli.
+- AI Best Prompts (https://www.aibestprompts.in): a free copy-paste prompt library for Claude, ChatGPT, Gemini, and more. 21.7k+ clicks, launched on Product Hunt and Peerlist.
+- design.md (https://github.com/atishaytuli07/design.md): open source. Paste a URL, get a DESIGN.md, tokens, and a design-system CSS file built for AI coding agents (Claude Code, Cursor, v0) to read before they build. 70+ GitHub stars. He built the site and the token-extraction engine.
+
+## Recognition
+
+- Portfolio of the Day on Designer Daily Report; portfolio trending on Muzli.
+- Work featured on One Page Love, Muzli, Savee, and Super Site Hunt — all organic.
+- Perfect 100 Lighthouse score in every category on his portfolio.
+
+## Skills
+
+Design engineering, frontend development, creative development, UI design in Figma, React, Next.js, GSAP, Framer Motion, Lenis, Three.js, Tailwind CSS, Sanity CMS, on-page SEO and AEO.
+
+## Contact
+
+- Email: atishaytuliiaf@gmail.com
+- GitHub: https://github.com/atishaytuli07
+- LinkedIn: https://www.linkedin.com/in/atishaytuli07/
+- X/Twitter: https://twitter.com/atishaytuli07

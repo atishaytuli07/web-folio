@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- A marigold, the flower the whole scene is strung with. -->
+  <rect width="64" height="64" rx="14" fill="#1a0e08"/>
+  <g fill="#FFAF00">
+    <circle cx="32" cy="15" r="7"/><circle cx="32" cy="49" r="7"/>
+    <circle cx="15" cy="32" r="7"/><circle cx="49" cy="32" r="7"/>
+    <circle cx="20" cy="20" r="6.5"/><circle cx="44" cy="20" r="6.5"/>
+    <circle cx="20" cy="44" r="6.5"/><circle cx="44" cy="44" r="6.5"/>
+  </g>
+  <circle cx="32" cy="32" r="11" fill="#FFC72D"/>
+</svg>

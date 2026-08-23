@@ -1486,6 +1486,14 @@
         margin-top: 0;
         padding-left: 4px;
       }
+      /* Sibling links that belong to one archive card (e.g. the four pages of
+         the desi series) sit under it, aligned with the case-study link. */
+      .fv-card-group .os-links {
+        margin-top: 0;
+        padding-left: 4px;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
       .fv-card {
         display: flex;
         align-items: center;
@@ -1649,6 +1657,11 @@
       .gold-mine {
         margin-top: 80px;
       }
+      /* Nested inside the Achievements folder the numbers follow the folder
+         description directly, so they don't need a section-sized gap above. */
+      .folder-view .gold-mine {
+        margin-top: 4px;
+      }
       .gm-head {
         margin-bottom: 20px;
       }
@@ -1668,11 +1681,58 @@
       .gold-mine .chat {
         max-width: 460px;
       }
-      .gold-mine .cb {
+      /* Receipts: hard numbers in a tile grid. Each tile carries its own --i
+         so the existing .is-revealed observer staggers them like the bubbles
+         it replaced. */
+      .gm-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 10px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .gm-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 14px 15px;
+        border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
+        border-radius: 12px;
+        background: var(--chat-surface, #fafafa);
+      }
+      .gm-num {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 800;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: var(--grey1);
+        font-variant-numeric: tabular-nums;
+      }
+      .gm-cap {
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 12.5px;
+        line-height: 1.4;
+        color: var(--grey2);
+      }
+      .gm-note {
+        margin-top: 16px;
+        max-width: 62ch;
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--grey3);
+      }
+      .gold-mine .cb,
+      .gold-mine .gm-stat,
+      .gold-mine .gm-note {
         opacity: 0;
         transform: translateY(10px);
       }
-      .gold-mine.is-revealed .cb {
+      .gold-mine.is-revealed .cb,
+      .gold-mine.is-revealed .gm-stat,
+      .gold-mine.is-revealed .gm-note {
         animation: gmBubble 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         animation-delay: calc(var(--i) * 0.08s);
       }
@@ -1683,11 +1743,15 @@
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        .gold-mine .cb {
+        .gold-mine .cb,
+        .gold-mine .gm-stat,
+        .gold-mine .gm-note {
           opacity: 1;
           transform: none;
         }
-        .gold-mine.is-revealed .cb {
+        .gold-mine.is-revealed .cb,
+        .gold-mine.is-revealed .gm-stat,
+        .gold-mine.is-revealed .gm-note {
           animation: none;
         }
       }
@@ -1829,6 +1893,13 @@
         height: 22px;
         object-fit: contain;
         display: block;
+      }
+
+      /* Some brand marks are white on transparent (Annotations), so they
+         disappear on the default white tile. Give those a dark ground. */
+      .fv-card-icon--dark {
+        background: #17171a;
+        border-color: transparent;
       }
 
       .fv-card-icon--mono {
@@ -2266,6 +2337,15 @@
         color: var(--grey1);
         font-weight: 500;
         cursor: default;
+        /* Own stacking context: the AEO cluster tucks its logos behind the
+           word with z-index:-1, which without this escaped the word and
+           slid behind the whole paragraph. Isolating keeps the -1 inside. */
+        isolation: isolate;
+      }
+      /* And a hovered keyword (popup open) must stack above neighboring
+         lines and later .kw spans in the same paragraph. */
+      .kw:hover {
+        z-index: 70;
       }
       .kw-figma,
       .kw-gsap,
@@ -2592,6 +2672,9 @@
       }
       .role-line-b .rw:nth-child(2) {
         animation-delay: -3.86s;
+      }
+      .role-line-b .rw:nth-child(3) {
+        animation-delay: -3.72s;
       }
       @keyframes roleSwapFade {
         0% {

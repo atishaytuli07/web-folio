@@ -1,54 +1,63 @@
-## WebFolio 🚀
+# web-folio
 
-Welcome to **WebFolio** ✨, a modern and interactive portfolio website showcasing my **web development projects**, creative tools, and guides. 
+My portfolio. Live at [creativeatishay.in](https://www.creativeatishay.in).
 
-This project highlights : 
-- **Full-stack web development projects** 
-- **Creative tools and innovations** 
-- **Revision guides** 
-- **Flip Profile Image** 
+One HTML file, hand-written CSS, vanilla JavaScript. No framework, no build step, no dependencies except [Lenis](https://lenis.darkroom.engineering/) for smooth scrolling. Everything else on the page, including the animations, the folder system, and the pixel art, is written by hand.
 
-### Purpose ✨
+## Two modes
 
-WebFolio is designed to present a curated showcase of my web development work, demonstrating my skills in building robust, user-friendly, and aesthetically pleasing applications. 
+The site has a toggle at the top:
 
-![without_flip](images/W1.png)
-![with_flip](images/W2.png)
+- **Minimal** is the pitch: who I am, where I work, my best projects with real numbers, and how to reach me.
+- **Creative** is the archive: every project I have ever shipped, organized into folders you can open in place. Products, full-stack builds, 17 client works, Figma case studies, site recreations, open source, and the receipts (screenshots of every feature and trending moment).
 
-### How to Use 📌
+Same document, two audiences. The mode you pick is remembered.
 
-1. Clone the repository :
- 
-   ```bash
-   git clone https://github.com/atishaytuli07/webfolio.git
+## How it is built
 
-2. Navigate to project directory :
- 
-   ```bash
-   cd webfolio
+- **Vanilla everything.** `index.html` + three stylesheets + one `script.js` (about 1,300 lines). Each interactive piece is a small self-contained IIFE: the mode toggle, the folder system, the show-more collapses, the GitHub contribution graph, the tortoise-and-hare race on a canvas, the sparrow that sits while you scroll and takes off when you pause.
+- **Pixel art as inline SVG.** The birds, the panda eating the contribution graph, the dog, the frog, the butterfly, and the nest are drawn rect-by-rect as inline SVG, so they ship with the document and scale crisply with `image-rendering: pixelated`.
+- **Self-hosted fonts.** Latin subsets of Bricolage Grotesque (display), Hanken Grotesk (body), and JetBrains Mono (metrics), served same-origin with preloads for the two faces the first paint needs.
 
-3. Open Index.html : 
+## Performance
 
-   ```bash
-   open index.html
+The site is built to hold a perfect Lighthouse score, and the tricks are commented in the source:
 
-4. Click on the Live Server :
- 
-   ```bash
-   go live
+- The LCP image is preloaded with `fetchpriority="high"` because it is a CSS background the browser cannot discover early on its own.
+- Below-the-fold sections use `content-visibility: auto` so first paint skips their layout entirely.
+- All archive images are lazy: only 6 of ~90 images load before you scroll or open a folder.
+- Animations are compositor-friendly on purpose: sprite frames advance by transform instead of background-position, the role cascade is opacity-only, and the flying bird is a CSS animation instead of a rAF loop. The reasons are in the comments where each decision lives.
+- The whole document gzips to about 26 KB.
 
-### Customization ✍️
+## Accessibility
 
-You can also use this WebFolio to Showcase your projects just do some chnages :
+Skip link, `sr-only` text behind every decorative animation, `aria-hidden` on the pixel art, keyboard-focusable scrollers, visible focus styles, and a `prefers-reduced-motion` pass that stills every animation and shows static equivalents.
 
-- **Update Images** Replace atishaytuli.png and memoji.png in the assets/ folder with your own images.
-- **Edit Content** Modify the index.html file to update project details, links, and personal information.
-- **Change Styles** Adjust the style section in the <head> or use a separate styles.css file for further customizations.
-- **Here you go** Now you can use this Webfolio to showcase your work. 
+## Run it
 
-### Acknowledgement 🙌
+No build step. Clone and serve the folder with anything static:
 
-**Tailwind CSS**  For the beautiful and efficient utility-first styling.
-**JavaScript**  For enabling interactivity.
+```bash
+git clone https://github.com/atishaytuli07/web-folio.git
+cd web-folio
+npx serve .        # or python -m http.server, or VS Code Live Server
+```
 
-thank you, Happy Coding !!
+Opening `index.html` directly also works for a quick look, though a server is closer to production behavior.
+
+## Structure
+
+```
+index.html          the whole site, both modes
+styles/style.css    base tokens and layout
+styles/app.css      components, modes, animations (the bulk)
+styles/fonts.css    @font-face declarations
+script.js           all interactivity, small IIFEs
+scripts/lenis.min.js
+fonts/  images/  videos/
+llms.txt            machine-readable summary for AI crawlers
+```
+
+---
+
+Design and code by [Atishay Tuli](https://www.creativeatishay.in). If something in here is useful to you, take it.
