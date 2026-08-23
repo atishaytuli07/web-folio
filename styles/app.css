@@ -2352,6 +2352,7 @@
       .kw-react,
       .kw-seo,
       .kw-aeo,
+      .kw-ds,
       .kw-music {
         border-bottom: 1px dashed var(--grey3);
       }
@@ -2704,6 +2705,8 @@
         .kw-seo:hover .kw-chart-ring,
         .kw-coder-head,
         .kw-coder-hand,
+        .kw-cafe-steam,
+        .kw-cafe-mug,
         .role-line .rw {
           animation: none;
         }
@@ -2772,12 +2775,71 @@
       .kw-pop--seo:hover .kw-pop-sub {
         color: var(--accent);
       }
-      /* Framer Motion: same squiggle as GSAP, deliberately slower. */
-      .kw-fm {
+      /* Designing Solutions: coffee break at the office  a pixel mug rises
+         from behind the phrase, steam drifts only while hovered. Same
+         anatomy as the React coder. */
+      .kw-ds {
         white-space: nowrap;
       }
-      .kw-fm:hover .kw-wave {
-        animation-duration: 2.4s;
+      .kw-cafe {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin-inline: auto;
+        width: 30px;
+        bottom: calc(100% + 1px);
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 0.16s ease,
+          transform 0.22s cubic-bezier(0.34, 1.3, 0.64, 1);
+      }
+      .kw-cafe svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        shape-rendering: crispEdges;
+      }
+      .kw-ds:hover .kw-cafe {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .kw-cafe-steam {
+        opacity: 0;
+        animation: kwSteam 1.6s linear infinite;
+        animation-play-state: paused;
+      }
+      .kw-cafe-s2 {
+        animation-delay: 0.5s;
+      }
+      .kw-cafe-s3 {
+        animation-delay: 1s;
+      }
+      .kw-ds:hover .kw-cafe-steam {
+        animation-play-state: running;
+      }
+      @keyframes kwSteam {
+        0% {
+          opacity: 0;
+          transform: translateY(2px);
+        }
+        35% {
+          opacity: 0.9;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-3px);
+        }
+      }
+      .kw-cafe-mug {
+        animation: kwCoderBob 2.2s steps(1) infinite;
+        animation-play-state: paused;
+        transform-box: fill-box;
+      }
+      .kw-ds:hover .kw-cafe-mug {
+        animation-play-state: running;
       }
 
       /* React: a pixel coder at their desk (house mascot style) rises from
