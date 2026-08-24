@@ -1309,3 +1309,95 @@
     { passive: true }
   );
 })();
+
+/* ----------------------------------------------------------------
+   Discovery teaser: the intro's hover effects are invisible until you
+   find one, so shortly after load two of them introduce themselves -
+   the React coder pops up and taps, then the coffee steams over
+   Designing Solutions. A two-beat wink ("someone's coding... coffee
+   break") that says the dashed words are alive. Once per session;
+   skipped for reduced motion, cancelled the moment the visitor
+   discovers a keyword themselves, and each beat only plays while its
+   word is on screen. Runs well after load, so it can't touch LCP.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var beats = [
+    { el: document.querySelector(".kw-react"), hold: 1500 },
+    { el: document.querySelector(".kw-ds"), hold: 1600 },
+  ].filter(function (b) {
+    return b.el;
+  });
+  if (!beats.length) return;
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  )
+    return;
+  try {
+    if (sessionStorage.getItem("kwDemoShown")) return;
+  } catch (e) {}
+
+  var discovered = false;
+  var article = document.querySelector(".article");
+  function spot(e) {
+    if (e.target.closest && e.target.closest(".kw")) {
+      discovered = true;
+      article.removeEventListener("mouseover", spot);
+    }
+  }
+  if (article) article.addEventListener("mouseover", spot, { passive: true });
+  function unlisten() {
+    if (article) article.removeEventListener("mouseover", spot);
+  }
+
+  function onScreen(el) {
+    var r = el.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
+  }
+
+  function play(i) {
+    if (discovered || i >= beats.length) {
+      unlisten();
+      return;
+    }
+    var b = beats[i];
+    // Skip beats that scrolled away; never animate off-viewport.
+    if (!onScreen(b.el)) return play(i + 1);
+    b.el.classList.add("kw-demo");
+    setTimeout(function () {
+      b.el.classList.remove("kw-demo");
+      // A breath between beats, so it reads as two winks, not a reel.
+      setTimeout(function () {
+        play(i + 1);
+      }, 350);
+    }, b.hold);
+  }
+
+  function start() {
+    // Opened in a background tab (recruiters batch-open candidates):
+    // hold the demo until the visitor actually looks, or it plays to
+    // nobody and marks itself as shown.
+    if (document.hidden) {
+      document.addEventListener(
+        "visibilitychange",
+        function onVis() {
+          if (!document.hidden) {
+            document.removeEventListener("visibilitychange", onVis);
+            setTimeout(start, 1200);
+          }
+        }
+      );
+      return;
+    }
+    try {
+      sessionStorage.setItem("kwDemoShown", "1");
+    } catch (e) {}
+    play(0);
+  }
+  function schedule() {
+    setTimeout(start, 2200);
+  }
+  if (document.readyState === "complete") schedule();
+  else window.addEventListener("load", schedule, { once: true });
+})();

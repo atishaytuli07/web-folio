@@ -2802,7 +2802,8 @@
         height: auto;
         shape-rendering: crispEdges;
       }
-      .kw-ds:hover .kw-cafe {
+      .kw-ds:hover .kw-cafe,
+      .kw-ds.kw-demo .kw-cafe {
         opacity: 1;
         transform: translateY(0);
       }
@@ -2817,7 +2818,8 @@
       .kw-cafe-s3 {
         animation-delay: 1s;
       }
-      .kw-ds:hover .kw-cafe-steam {
+      .kw-ds:hover .kw-cafe-steam,
+      .kw-ds.kw-demo .kw-cafe-steam {
         animation-play-state: running;
       }
       @keyframes kwSteam {
@@ -2838,7 +2840,8 @@
         animation-play-state: paused;
         transform-box: fill-box;
       }
-      .kw-ds:hover .kw-cafe-mug {
+      .kw-ds:hover .kw-cafe-mug,
+      .kw-ds.kw-demo .kw-cafe-mug {
         animation-play-state: running;
       }
 
@@ -2866,7 +2869,8 @@
         height: auto;
         shape-rendering: crispEdges;
       }
-      .kw-react:hover .kw-coder {
+      .kw-react:hover .kw-coder,
+      .kw-react.kw-demo .kw-coder {
         opacity: 1;
         transform: translateY(0);
       }
@@ -2883,7 +2887,9 @@
         animation-delay: 0.12s;
       }
       .kw-react:hover .kw-coder-head,
-      .kw-react:hover .kw-coder-hand {
+      .kw-react:hover .kw-coder-hand,
+      .kw-react.kw-demo .kw-coder-head,
+      .kw-react.kw-demo .kw-coder-hand {
         animation-play-state: running;
       }
       @keyframes kwCoderBob {
