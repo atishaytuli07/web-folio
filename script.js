@@ -1329,8 +1329,11 @@
     return b.el;
   });
   if (!beats.length) return;
+  // Hover teaser: only where hover exists (same gate as the cursor preview).
+  // On touch there's nothing to discover and the sprites would just blink.
   if (
-    window.matchMedia &&
+    !window.matchMedia ||
+    !window.matchMedia("(hover: hover) and (pointer: fine)").matches ||
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
   )
     return;
@@ -1339,11 +1342,21 @@
   } catch (e) {}
 
   var discovered = false;
+  var shown = false;
+  var current = null; // element of the beat currently on stage
+  var holdTimer = 0;
+  var gapTimer = 0;
   var article = document.querySelector(".article");
   function spot(e) {
     if (e.target.closest && e.target.closest(".kw")) {
       discovered = true;
       article.removeEventListener("mouseover", spot);
+      // Cancel the beat in flight too, so the visitor's own hover isn't
+      // sharing the stage with the scripted one.
+      clearTimeout(holdTimer);
+      clearTimeout(gapTimer);
+      if (current) current.classList.remove("kw-demo");
+      current = null;
     }
   }
   if (article) article.addEventListener("mouseover", spot, { passive: true });
@@ -1365,10 +1378,21 @@
     // Skip beats that scrolled away; never animate off-viewport.
     if (!onScreen(b.el)) return play(i + 1);
     b.el.classList.add("kw-demo");
-    setTimeout(function () {
+    current = b.el;
+    // Mark as shown only once something is actually on stage. Setting it
+    // earlier consumed the session's one demo even when every beat was
+    // skipped (e.g. Creative mode restored, article display:none).
+    if (!shown) {
+      shown = true;
+      try {
+        sessionStorage.setItem("kwDemoShown", "1");
+      } catch (e) {}
+    }
+    holdTimer = setTimeout(function () {
       b.el.classList.remove("kw-demo");
+      current = null;
       // A breath between beats, so it reads as two winks, not a reel.
-      setTimeout(function () {
+      gapTimer = setTimeout(function () {
         play(i + 1);
       }, 350);
     }, b.hold);
@@ -1390,9 +1414,6 @@
       );
       return;
     }
-    try {
-      sessionStorage.setItem("kwDemoShown", "1");
-    } catch (e) {}
     play(0);
   }
   function schedule() {

@@ -435,10 +435,10 @@
           39% 35%
         );
         animation: birdOrbit 1.8s linear infinite;
-        animation-play-state: paused;
+        animation-name: none; /* no idle layers; the orbit is named while perched */
       }
       .bird.is-sitting .star {
-        animation-play-state: running;
+        animation-name: birdOrbit;
       }
       .star:nth-child(2) {
         animation-delay: -0.6s;
@@ -836,8 +836,9 @@
             rgba(255, 255, 255, 0.12)
           ),
           color-mix(in srgb, var(--c) 14%, rgba(255, 255, 255, 0.5));
-        -webkit-backdrop-filter: blur(8px) saturate(1.7);
-        backdrop-filter: blur(8px) saturate(1.7);
+        /* no backdrop-filter: each one is a composited layer that re-blurs
+           its backdrop every scroll frame, and over a flat page bg the blur
+           is invisible  measured as pure GPU cost (layer audit). */
         box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.85),
           inset 0 -2px 3px color-mix(in srgb, var(--c) 9%, transparent),
@@ -2605,7 +2606,7 @@
         transform: scaleY(0.3);
         transform-origin: bottom;
         animation: kwEq 0.9s ease-in-out infinite;
-        animation-play-state: paused;
+        animation-name: none;
       }
       .kw-eq span:nth-child(2) {
         animation-delay: -0.3s;
@@ -2614,7 +2615,7 @@
         animation-delay: -0.6s;
       }
       .kw-music:hover .kw-eq span {
-        animation-play-state: running;
+        animation-name: kwEq;
       }
       @keyframes kwEq {
         0%,
@@ -2695,7 +2696,9 @@
       @media (hover: none) {
         .kw-figma::before,
         .kw-figma::after,
-        .kw-pop {
+        .kw-pop,
+        .kw-coder,
+        .kw-cafe {
           display: none;
         }
       }
@@ -2802,15 +2805,15 @@
         height: auto;
         shape-rendering: crispEdges;
       }
-      .kw-ds:hover .kw-cafe,
-      .kw-ds.kw-demo .kw-cafe {
+      /* :is(:hover, .kw-demo) = real hover OR the scripted teaser, one state */
+      .kw-ds:is(:hover, .kw-demo) .kw-cafe {
         opacity: 1;
         transform: translateY(0);
       }
       .kw-cafe-steam {
         opacity: 0;
         animation: kwSteam 1.6s linear infinite;
-        animation-play-state: paused;
+        animation-name: none; /* no idle layer; named on hover */
       }
       .kw-cafe-s2 {
         animation-delay: 0.5s;
@@ -2818,9 +2821,8 @@
       .kw-cafe-s3 {
         animation-delay: 1s;
       }
-      .kw-ds:hover .kw-cafe-steam,
-      .kw-ds.kw-demo .kw-cafe-steam {
-        animation-play-state: running;
+      .kw-ds:is(:hover, .kw-demo) .kw-cafe-steam {
+        animation-name: kwSteam;
       }
       @keyframes kwSteam {
         0% {
@@ -2837,12 +2839,11 @@
       }
       .kw-cafe-mug {
         animation: kwCoderBob 2.2s steps(1) infinite;
-        animation-play-state: paused;
+        animation-name: none;
         transform-box: fill-box;
       }
-      .kw-ds:hover .kw-cafe-mug,
-      .kw-ds.kw-demo .kw-cafe-mug {
-        animation-play-state: running;
+      .kw-ds:is(:hover, .kw-demo) .kw-cafe-mug {
+        animation-name: kwCoderBob;
       }
 
       /* React: a pixel coder at their desk (house mascot style) rises from
@@ -2869,28 +2870,32 @@
         height: auto;
         shape-rendering: crispEdges;
       }
-      .kw-react:hover .kw-coder,
-      .kw-react.kw-demo .kw-coder {
+      .kw-react:is(:hover, .kw-demo) .kw-coder {
         opacity: 1;
         transform: translateY(0);
       }
+      /* Idle sprites carry NO animation (animation-name: none), not a paused
+         one: Chrome promotes any element with an active animation to its own
+         composited layer even when paused and invisible, and every layer is
+         re-committed on every scroll frame. The name is set on hover only;
+         durations/delays live in the shorthand so they survive the swap. */
       .kw-coder-head {
         animation: kwCoderBob 1.4s steps(1) infinite;
-        animation-play-state: paused;
+        animation-name: none;
       }
       .kw-coder-hand {
         animation: kwCoderTap 0.24s steps(1) infinite;
-        animation-play-state: paused;
+        animation-name: none;
       }
       /* right hand taps on the off-beat */
       .kw-coder-hand-r {
         animation-delay: 0.12s;
       }
-      .kw-react:hover .kw-coder-head,
-      .kw-react:hover .kw-coder-hand,
-      .kw-react.kw-demo .kw-coder-head,
-      .kw-react.kw-demo .kw-coder-hand {
-        animation-play-state: running;
+      .kw-react:is(:hover, .kw-demo) .kw-coder-head {
+        animation-name: kwCoderBob;
+      }
+      .kw-react:is(:hover, .kw-demo) .kw-coder-hand {
+        animation-name: kwCoderTap;
       }
       @keyframes kwCoderBob {
         0%,
@@ -2986,4 +2991,15 @@
         .fv-card-icon--mono::before {
           animation: none;
         }
+      }
+
+      /* Horizontal strips: each tile renders only when it nears the strip's
+         visible window. Without this the whole 9,000px-wide strip rasterized
+         at once as the section scrolled into view (measured: a 105ms GPU
+         stall  the "stuck" moment). `auto` sizes are placeholders only
+         until a tile paints once; the page's vertical layout is unaffected
+         because the strip's height comes from its visible tiles. */
+      .photo-scroller > * {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 300px auto 250px;
       }
