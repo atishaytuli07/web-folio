@@ -1337,12 +1337,11 @@
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
   )
     return;
-  try {
-    if (sessionStorage.getItem("kwDemoShown")) return;
-  } catch (e) {}
+  // Plays on every load (no once-per-session flag): real visitors rarely
+  // reload within a tab, and the teaser cancels itself the moment someone
+  // hovers a keyword, so repeating it costs nothing and helps discovery.
 
   var discovered = false;
-  var shown = false;
   var current = null; // element of the beat currently on stage
   var holdTimer = 0;
   var gapTimer = 0;
@@ -1379,15 +1378,6 @@
     if (!onScreen(b.el)) return play(i + 1);
     b.el.classList.add("kw-demo");
     current = b.el;
-    // Mark as shown only once something is actually on stage. Setting it
-    // earlier consumed the session's one demo even when every beat was
-    // skipped (e.g. Creative mode restored, article display:none).
-    if (!shown) {
-      shown = true;
-      try {
-        sessionStorage.setItem("kwDemoShown", "1");
-      } catch (e) {}
-    }
     holdTimer = setTimeout(function () {
       b.el.classList.remove("kw-demo");
       current = null;
@@ -1401,7 +1391,7 @@
   function start() {
     // Opened in a background tab (recruiters batch-open candidates):
     // hold the demo until the visitor actually looks, or it plays to
-    // nobody and marks itself as shown.
+    // nobody.
     if (document.hidden) {
       document.addEventListener(
         "visibilitychange",

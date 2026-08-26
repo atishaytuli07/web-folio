@@ -7,9 +7,9 @@ Portfolio: https://www.creativeatishay.in
 ## Products
 
 - MakeMyAISite (https://www.makemyaisite.com): turns a LinkedIn profile or resume PDF into a live portfolio website in about 30 seconds, with a jobs tab that matches users to real openings. 40,000+ visitors, 6,500+ users, ranks #2 on Google for "linkedin to portfolio maker".
-- Woblo (https://woblo.in): a free Chrome extension that extracts any website's colors, fonts, and images as ready-to-copy code for Tailwind, CSS, or Figma. 20,000+ installs, 4.9 stars on the Chrome Web Store.
+- Woblo (https://woblo.in): a free Chrome extension that extracts any website's colors, fonts, and images as ready-to-copy code for Tailwind, CSS, or Figma. 30,000+ installs, 4.9 stars on the Chrome Web Store.
 - Will You Be My Valentine (https://willyoubmyvalentine.vercel.app): a playful interactive experience that went viral with 37.5k+ visitors, no ads, no budget. Top 10 trending on Muzli.
-- AI Best Prompts (https://www.aibestprompts.in): a free copy-paste prompt library for Claude, ChatGPT, Gemini, and more. 21.7k+ clicks, launched on Product Hunt and Peerlist.
+- AI Best Prompts (https://www.aibestprompts.in): a free copy-paste prompt library for Claude, ChatGPT, Gemini, and more. 28.4k+ Google impressions, launched on Product Hunt and Peerlist.
 - design.md (https://github.com/atishaytuli07/design.md): open source. Paste a URL, get a DESIGN.md, tokens, and a design-system CSS file built for AI coding agents (Claude Code, Cursor, v0) to read before they build. 70+ GitHub stars. He built the site and the token-extraction engine.
 
 ## Recognition
