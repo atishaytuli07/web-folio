@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0e12" media="(prefers-color-scheme: dark)" />
+
+    <title>Typography</title>
+    <meta
+      name="description"
+      content="The heading and body fonts behind twelve beautifully typeset websites, identified from their live CSS  with previews of the pairings that are free to use."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.creativeatishay.in/typography" />
+    <link rel="icon" href="../images/favicon.png" type="image/png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Typography" />
+    <meta
+      property="og:description"
+      content="The heading and body fonts behind twelve beautifully typeset websites, identified from their live CSS  with previews of the pairings that are free to use."
+    />
+    <meta property="og:url" content="https://www.creativeatishay.in/typography" />
+    <meta property="og:image" content="https://www.creativeatishay.in/images/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Typography" />
+    <meta
+      name="twitter:description"
+      content="The heading and body fonts behind twelve beautifully typeset websites, identified from their live CSS  with previews of the pairings that are free to use."
+    />
+    <meta name="twitter:image" content="https://www.creativeatishay.in/images/og-image.png" />
+
+    <!-- faces are fetched lazily as rows scroll in; warm the sockets early -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+
+    <link rel="stylesheet" href="../styles/fonts.css" />
+    <link rel="stylesheet" href="./typography.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Typography",
+        "description": "The heading and body fonts behind twelve beautifully typeset websites, identified from their live CSS  with previews of the pairings that are free to use.",
+        "url": "https://www.creativeatishay.in/typography",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Atishay Tuli",
+          "url": "https://www.creativeatishay.in"
+        },
+        "author": { "@type": "Person", "name": "Atishay Tuli", "url": "https://www.creativeatishay.in" }
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#list">Skip to the pairings</a>
+
+    <div class="page-shell">
+      <header>
+        <a class="back" href="/"><span aria-hidden="true">&larr;</span> Atishay Tuli</a>
+        <h1>Typography</h1>
+        <p class="lede">The heading and body fonts behind twelve beautifully typeset websites, identified from their live CSS  with previews of the pairings that are free to use.</p>
+      </header>
+
+      <section class="controls" aria-label="Preview controls">
+        <div class="control-row">
+          <label class="vh" for="specimen-text">Preview text</label>
+          <input
+            id="specimen-text"
+            type="text"
+            value="Aail1jgx"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <label class="vh" for="size">Preview size</label>
+          <input id="size" type="range" min="20" max="110" value="56" step="1" />
+          <output class="size-val" id="size-val" for="size">56</output>
+        </div>
+
+        <div class="filters" id="filters" role="group" aria-label="Filter pairings">
+          <button class="pill" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="pill" type="button" data-filter="free" aria-pressed="false">Free only</button>
+        </div>
+      </section>
+
+      <main>
+        <ul class="list" id="list"></ul>
+
+        <noscript>
+          <p>Live previews need JavaScript. The pairings:</p>
+          <ul>
+            <li><a href="https://www.agentcard.sh">Agentcard</a>  Geist Pixel + Geist</li>
+            <li><a href="https://playbackstudio.framer.website/">Playback Studio</a>  Switzer + Inter</li>
+            <li><a href="https://constantine.framer.ai/">Constantine</a>  Bebas Neue + Inter Tight</li>
+            <li><a href="https://openscreenshot.app/">Open Screenshot</a>  Inter + JetBrains Mono</li>
+            <li><a href="https://niacreative.co/">Nia Creative</a>  Inter + Geist Mono</li>
+            <li><a href="https://deeo.studio/">Deeo Studio</a>  PP Editorial New + PP Neue Montreal</li>
+            <li><a href="https://www.brikken.co/">Brikken</a>  PP Neue Montreal + Sometype Mono</li>
+            <li><a href="https://hobro.digital/">Hobro Digital</a>  Freight Big Pro + PP Neue Montreal</li>
+            <li><a href="https://www.dsgn-dept.com/">Dsgn Dept.</a>  Teodor + Sofia Pro</li>
+            <li><a href="https://www.aardvarkbookclub.com/">Aardvark Book Club</a>  Champ + Degular</li>
+            <li><a href="https://www.studioloop.com.br/">Studio Loop</a>  Neoforma (bespoke)</li>
+            <li><a href="https://aprilleihuanani.com/">April Leihuanani</a>  obfuscated</li>
+          </ul>
+        </noscript>
+      </main>
+
+      <footer class="site-foot">
+        <p>Licensed faces are named, not re-served. <a href="/">Back to the portfolio</a></p>
+      </footer>
+    </div>
+
+    <script type="application/json" id="pairings">
+[{"id":"agentcard","site":"Agentcard","url":"https://www.agentcard.sh","status":"free","heading":{"name":"Geist Pixel","source":"google","family":"Geist+Pixel","stack":"'Geist Pixel'","get":"https://fonts.google.com/specimen/Geist+Pixel"},"body":{"name":"Geist","source":"google","family":"Geist:wght@400;500","stack":"'Geist'","get":"https://fonts.google.com/specimen/Geist"}},{"id":"playbackstudio","site":"Playback Studio","url":"https://playbackstudio.framer.website/","status":"free","heading":{"name":"Switzer","source":"fontshare","family":"switzer@400,500,700","stack":"'Switzer'","get":"https://www.fontshare.com/fonts/switzer"},"body":{"name":"Inter","source":"google","family":"Inter:wght@400;500","stack":"'Inter'","get":"https://fonts.google.com/specimen/Inter"}},{"id":"constantine","site":"Constantine","url":"https://constantine.framer.ai/","status":"free","heading":{"name":"Bebas Neue","source":"google","family":"Bebas+Neue","stack":"'Bebas Neue'","get":"https://fonts.google.com/specimen/Bebas+Neue"},"body":{"name":"Inter Tight","source":"google","family":"Inter+Tight:wght@400;500","stack":"'Inter Tight'","get":"https://fonts.google.com/specimen/Inter+Tight"}},{"id":"openscreenshot","site":"Open Screenshot","url":"https://openscreenshot.app/","status":"free","heading":{"name":"Inter","source":"google","family":"Inter:wght@500;600","stack":"'Inter'","get":"https://fonts.google.com/specimen/Inter"},"body":{"name":"JetBrains Mono","source":"google","family":"JetBrains+Mono:wght@400;500","stack":"'JetBrains Mono'","get":"https://fonts.google.com/specimen/JetBrains+Mono"}},{"id":"niacreative","site":"Nia Creative","url":"https://niacreative.co/","status":"free","heading":{"name":"Inter","source":"google","family":"Inter:wght@600;700","stack":"'Inter'","get":"https://fonts.google.com/specimen/Inter"},"body":{"name":"Geist Mono","source":"google","family":"Geist+Mono:wght@400","stack":"'Geist Mono'","get":"https://fonts.google.com/specimen/Geist+Mono"}},{"id":"deeo","site":"Deeo Studio","url":"https://deeo.studio/","status":"commercial","heading":{"name":"PP Editorial New","get":"https://pangrampangram.com/products/editorial-new","stack":"'PP Editorial New'","local":"pp-editorial-new.woff2"},"body":{"name":"PP Neue Montreal","get":"https://pangrampangram.com/products/neue-montreal","stack":"'PP Neue Montreal'","local":"pp-neue-montreal.woff2"}},{"id":"brikken","site":"Brikken","url":"https://www.brikken.co/","status":"commercial","heading":{"name":"PP Neue Montreal","get":"https://pangrampangram.com/products/neue-montreal","stack":"'PP Neue Montreal'","local":"pp-neue-montreal.woff2"},"body":{"name":"Sometype Mono","get":"","stack":"'Sometype Mono'","local":"sometype-mono.woff2"}},{"id":"hobro","site":"Hobro Digital","url":"https://hobro.digital/","status":"commercial","heading":{"name":"Freight Big Pro Light Italic","get":"","stack":"'Freight Big Pro'","local":"freight-big-pro.woff2"},"body":{"name":"PP Neue Montreal","get":"https://pangrampangram.com/products/neue-montreal","stack":"'PP Neue Montreal'","local":"pp-neue-montreal.woff2"}},{"id":"dsgn-dept","site":"Dsgn Dept.","url":"https://www.dsgn-dept.com/","status":"commercial","heading":{"name":"Teodor","get":"https://newglyph.com/typefaces/teodor/","stack":"'Teodor'","local":"teodor.woff2"},"body":{"name":"Sofia Pro","get":"","stack":"'Sofia Pro'","local":"sofia-pro.woff2"}},{"id":"aardvark","site":"Aardvark Book Club","url":"https://www.aardvarkbookclub.com/","status":"commercial","heading":{"name":"Champ","get":"","stack":"'Champ'","local":"champ.woff2"},"body":{"name":"Degular","get":"https://ohnotype.co/fonts/degular","stack":"'Degular'","local":"degular.woff2"}},{"id":"studioloop","site":"Studio Loop","url":"https://www.studioloop.com.br/","status":"custom","heading":{"name":"Neoforma Serif","get":""},"body":{"name":"Neoforma Sans","get":""}},{"id":"aprilleihuanani","site":"April Leihuanani","url":"https://aprilleihuanani.com/","status":"custom","heading":{"name":"Not public","get":""},"body":{"name":"Not public","get":""}}]
+    </script>
+    <script src="./typography.js" defer></script>
+  </body>
+</html>
