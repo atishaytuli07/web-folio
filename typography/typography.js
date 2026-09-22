@@ -88,11 +88,15 @@
      name-only by default. If the matching .woff2 exists in
      ./fonts-local/ (gitignored, this machine only) the row silently
      upgrades to a real specimen. Missing file -> unchanged, no error. */
-  // Only ever attempt local faces on a dev host. In production this is a
-  // no-op, so the deployed page makes zero requests for files that were
-  // never shipped (and logs zero 404s).
-  var IS_LOCAL = /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostname) ||
-                 location.protocol === "file:";
+  // Only ever attempt local faces on a dev host, and only when explicitly
+  // asked for with ?local=1. In production this is a no-op, so the deployed
+  // page never requests files that were never shipped. The opt-in matters
+  // because every row already has a specimen now: probing for absent .woff2
+  // files would just spray 404s into the console for no visible gain.
+  var IS_LOCAL =
+    (/^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostname) ||
+     location.protocol === "file:") &&
+    /[?&]local=1(&|$)/.test(location.search);
 
   function tryLocal(pair, row) {
     if (!IS_LOCAL || !window.FontFace || !document.fonts) return;
@@ -102,7 +106,7 @@
     Promise.all(
       faces.map(function (f) {
         var family = f.stack.replace(/'/g, "");
-        var ff = new FontFace(family, "url('./fonts-local/" + f.local + "')");
+        var ff = new FontFace(family, "url('/typography/fonts-local/" + f.local + "')");
         return ff
           .load()
           .then(function (done) { document.fonts.add(done); return true; })
@@ -143,8 +147,11 @@
         )
       : null;
 
-  /* ---------- render ---------- */
-  var STATUS = { free: "Free", commercial: "Commercial", custom: "Bespoke" };
+  /* ---------- render ----------
+     A row shows four things and nothing else: the specimen, the two font
+     names, that they are a pair, and the site they came from. Licensed and
+     bespoke faces cannot be re-served, so those rows show a screenshot of
+     the site in place of live type — same shape, same four things. */
 
   function faceLink(face) {
     var name = esc(face.name);
@@ -155,27 +162,35 @@
 
   function rowHTML(p) {
     var free = p.status === "free";
-    var headStyle = free ? ' style="font-family:' + esc(p.heading.stack) + ',system-ui,sans-serif"' : "";
-    var bodyStyle = free ? ' style="font-family:' + esc(p.body.stack) + ',system-ui,sans-serif"' : "";
 
-    // Free pairings get a live specimen. Licensed ones state the names
-    // plainly — the status word already explains why there's no preview.
-    var specimen = free
-      ? '<p class="spec-head"' + headStyle + ">" + esc(state.text || DEFAULT_TEXT) + "</p>" +
-        '<p class="spec-body"' + bodyStyle + ">" + esc(BODY_TEXT) + "</p>"
-      : '<p class="spec-names">' + esc(p.heading.name) +
-        '<span class="spec-plus">+</span>' + esc(p.body.name) + "</p>";
+    var specimen;
+    if (free) {
+      specimen =
+        '<p class="spec-head" style="font-family:' + esc(p.heading.stack) + ',system-ui,sans-serif">' +
+          esc(state.text || DEFAULT_TEXT) + "</p>" +
+        '<p class="spec-body" style="font-family:' + esc(p.body.stack) + ',system-ui,sans-serif">' +
+          esc(BODY_TEXT) + "</p>";
+    } else {
+      // width/height + aspect-ratio reserve the box before the file lands, so
+      // lazy-loading these never shifts the page. The box is 340px wide, so
+      // the 800w file covers 2x screens and 1x screens take the 400w one.
+      var half = p.shot.replace(/\.webp$/, "-400.webp");
+      specimen =
+        '<img class="shot" src="' + esc(p.shot) + '"' +
+        ' srcset="' + esc(half) + ' 400w, ' + esc(p.shot) + ' 800w"' +
+        ' sizes="(max-width: 372px) calc(100vw - 32px), 340px"' +
+        ' width="800" height="500" loading="lazy" decoding="async"' +
+        ' alt="' + esc(p.site) + ', set in ' + esc(p.heading.name) +
+        ' and ' + esc(p.body.name) + '" />';
+    }
 
     return (
       '<li class="row" data-id="' + esc(p.id) + '" data-status="' + esc(p.status) + '">' +
-        '<div class="row-head">' +
-          '<a class="row-site" href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">' +
-            esc(p.site) + '<span class="arr" aria-hidden="true">&#8599;</span></a>' +
-          '<span class="status status--' + esc(p.status) + '">' + esc(STATUS[p.status] || p.status) + "</span>" +
-        "</div>" +
         '<div class="specimen">' + specimen + "</div>" +
-        '<p class="pairing"><span class="lbl">H</span>' + faceLink(p.heading) +
-          '<span class="sep">/</span><span class="lbl">B</span>' + faceLink(p.body) + "</p>" +
+        '<p class="pairing">' + faceLink(p.heading) +
+          '<span class="plus" aria-hidden="true">+</span>' + faceLink(p.body) + "</p>" +
+        '<a class="row-site" href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">' +
+          esc(p.site) + '<span class="arr" aria-hidden="true">&#8599;</span></a>' +
       "</li>"
     );
   }

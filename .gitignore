@@ -1,0 +1,5 @@
+
+# Local-only font files for /typography previews.
+# Licensed faces stay on this machine and never deploy.
+typography/fonts-local/*
+!typography/fonts-local/README.md
