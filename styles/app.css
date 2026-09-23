@@ -986,20 +986,28 @@
       .gh-pad {
         background: transparent;
       }
+      /* One accent drives the whole scale: each level is --accent laid over the
+         empty-cell colour at 30/52/76/100%. It follows the theme on its own —
+         the old hand-picked hexes were never overridden for dark, so dark mode
+         was showing the light ramp. The hex lines are fallbacks for browsers
+         without color-mix(). */
       .gh-l0 {
         background: var(--gh-empty, #eceef3);
       }
       .gh-l1 {
         background: #c6d2ff;
+        background: color-mix(in srgb, var(--accent) 30%, var(--gh-empty, #eceef3));
       }
       .gh-l2 {
         background: #93a8ff;
+        background: color-mix(in srgb, var(--accent) 52%, var(--gh-empty, #eceef3));
       }
       .gh-l3 {
         background: #6079ff;
+        background: color-mix(in srgb, var(--accent) 76%, var(--gh-empty, #eceef3));
       }
       .gh-l4 {
-        background: #3b5bff;
+        background: var(--accent);
       }
       .gh-foot {
         display: flex;
@@ -1018,6 +1026,283 @@
         height: 8px;
         border-radius: 2px;
         display: inline-block;
+      }
+      .gh-total {
+        margin-right: auto;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Column-by-column reveal the first time the grid scrolls into view.
+         A curtain in the page colour sits over the grid and shrinks off to
+         the right a column every 12ms. It animates transform, so it runs on
+         the compositor and keeps stepping even while the main thread is busy
+         (a clip-path version froze mid-reveal after a mode switch). The page
+         behind the grid is a flat --body-bg, so the curtain is invisible.
+         Pandas sit above it: .gh-body makes no stacking context. */
+      .gh-body::before {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 68px; /* the grid: 7 rows of 8px + 6 gaps of 2px */
+        background: var(--body-bg);
+        pointer-events: none;
+        transform-origin: 100% 50%;
+        transform: scaleX(0);
+      }
+      .gh-body.gh-wait::before {
+        transform: scaleX(1);
+      }
+      .gh-body.gh-sweep::before {
+        animation: gh-sweep calc(var(--gh-cols, 50) * 12ms) steps(var(--gh-cols, 50), end) both;
+      }
+      @keyframes gh-sweep {
+        from { transform: scaleX(1); }
+        to { transform: scaleX(0); }
+      }
+
+      /* Day tooltip. Lives on <body> so it can clamp to the viewport edge. */
+      .gh-tip {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        pointer-events: none;
+        white-space: nowrap;
+        padding: 4px 8px;
+        border-radius: 8px;
+        background: var(--grey1);
+        color: var(--body-bg);
+        font: 500 11px/1.4 "Hanken Grotesk", sans-serif;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+        /* display:none while hidden, not just opacity:0. Chrome gives every
+           position:fixed element its own GPU layer, so an invisible tooltip
+           would sit on the GPU for the whole visit (and force the repo row it
+           overlapped onto one too). allow-discrete + @starting-style keep the
+           fade in and out; browsers without them just show and hide it. */
+        display: none;
+        opacity: 0;
+        scale: 0.94;
+        transform-origin: 50% 100%;
+        transition:
+          opacity 0.14s cubic-bezier(0.22, 1, 0.36, 1),
+          scale 0.14s cubic-bezier(0.22, 1, 0.36, 1),
+          display 0.14s allow-discrete;
+      }
+      .gh-tip.is-on {
+        display: block;
+        opacity: 1;
+        scale: 1;
+      }
+      @starting-style {
+        .gh-tip.is-on {
+          opacity: 0;
+          scale: 0.94;
+        }
+      }
+
+      /* "Most active in" sheet. Collapsed it is a 46px bar under the legend;
+         open, it grows up over the grid. The bar's space is reserved up front
+         (padding on .gh-body) so the fetch landing never shifts the page. */
+      /* The sheet is tinted from --accent, so it reads as part of the cobalt
+         grid rather than a neutral box, and follows the theme on its own. */
+      .gh-activity {
+        --gh-sheet: #eef1ff;
+        --gh-sheet: color-mix(in srgb, var(--accent) 8%, var(--body-bg, #fff));
+      }
+      .gh-body {
+        position: relative;
+        padding-bottom: 58px;
+      }
+      .gh-activity.gh-no-repos .gh-body {
+        padding-bottom: 0;
+      }
+      .gh-repos {
+        position: absolute;
+        inset: -8px -10px 0;
+        z-index: 4;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 14px;
+        background: var(--gh-sheet);
+        /* clip-path, not height: it animates without re-running layout, and
+           the clipped-away part stops taking hits, so the grid under a closed
+           sheet still gets its tooltips */
+        clip-path: inset(calc(100% - 46px) 0 0 0 round 14px);
+        transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .gh-repos.is-open {
+        clip-path: inset(0 0 0 0 round 14px);
+      }
+      .gh-repos[hidden] {
+        display: none;
+      }
+      .gh-repo-bar {
+        margin-top: auto;
+        flex: 0 0 46px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 8px 0 14px;
+      }
+      .gh-repo-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 13px;
+        color: var(--grey2);
+      }
+      .gh-stack {
+        display: flex;
+      }
+      .gh-stack .gh-av + .gh-av {
+        margin-left: -8px;
+      }
+      .gh-repos.is-open .gh-stack {
+        visibility: hidden;
+      }
+      .gh-av {
+        flex: 0 0 24px;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 50%;
+        background: var(--accent);
+        /* body-bg, not white: 5.2:1 on light cobalt, 6.3:1 on the dark one */
+        color: var(--body-bg);
+        box-shadow: 0 0 0 2px var(--gh-sheet);
+        font: 600 11px/1 "Hanken Grotesk", sans-serif;
+        text-transform: uppercase;
+      }
+      .gh-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .gh-repo-toggle {
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: var(--body-bg);
+        color: var(--accent);
+        cursor: pointer;
+        transition:
+          background-color 0.18s ease,
+          scale 0.16s cubic-bezier(0.34, 1.1, 0.64, 1);
+      }
+      .gh-repo-toggle:hover {
+        background: color-mix(in srgb, var(--accent) 12%, var(--body-bg));
+      }
+      .gh-repo-toggle:active {
+        scale: 0.94;
+      }
+      .gh-repo-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .gh-repo-toggle svg {
+        width: 26px;
+        height: 26px;
+        transition: rotate 0.55s cubic-bezier(0.34, 1.3, 0.64, 1);
+      }
+      .gh-repos.is-open .gh-repo-toggle svg {
+        rotate: 180deg;
+      }
+      .gh-repo-list {
+        /* after the toggle in the DOM (so Tab goes toggle -> rows), but
+           drawn above the bar */
+        order: -1;
+        list-style: none;
+        margin: 0;
+        padding: 6px 4px 0;
+        /* Closed rows don't paint at all, not just sit at opacity 0: faded
+           content still counts for GPU overlap tests, and the rows over the
+           reveal's curtain were being promoted to layers. The delay lets the
+           close fade finish first. */
+        visibility: hidden;
+        transition: visibility 0s linear 0.2s;
+      }
+      .gh-repos.is-open .gh-repo-list {
+        visibility: visible;
+        transition-delay: 0s;
+      }
+      .gh-repo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 5px 10px;
+        border-radius: 10px;
+        color: var(--grey1);
+        text-decoration: none;
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 13px;
+        transition: background-color 0.18s ease;
+      }
+      .gh-repo:hover {
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+      }
+      .gh-repo:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+      }
+      /* Row avatars are the stack avatars' landing spots (see the FLIP in
+         script.js), so they switch instantly; only the text fades in. */
+      .gh-repo .gh-av {
+        visibility: hidden;
+      }
+      .gh-repos.is-open .gh-repo .gh-av {
+        visibility: visible;
+      }
+      .gh-repo-name {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .gh-repo-count {
+        color: var(--grey2);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+      .gh-repo-name,
+      .gh-repo-count {
+        opacity: 0;
+        translate: 0 16px;
+        transition:
+          opacity 0.18s ease,
+          translate 0.18s ease;
+      }
+      .gh-repos.is-open .gh-repo-name,
+      .gh-repos.is-open .gh-repo-count {
+        opacity: 1;
+        translate: 0 0;
+        transition:
+          opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+          translate 0.55s cubic-bezier(0.34, 1.3, 0.64, 1);
+        transition-delay: calc(80ms + var(--i, 0) * 45ms);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gh-repos,
+        .gh-repo-toggle svg,
+        .gh-repo-name,
+        .gh-repo-count,
+        .gh-tip {
+          transition: none !important;
+        }
       }
 
       /* ============ MODE TOGGLE ============ */

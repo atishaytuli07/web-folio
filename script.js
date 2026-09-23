@@ -702,16 +702,33 @@
 })();
 
 /* ----------------------------------------------------------------
-   GitHub contribution graph: fetch real public contributions on load
-   and render them as a cobalt grid. On failure, keep the heading and
-   link and just drop the graph (never hide the whole section).
+   GitHub activity: real contributions as a cobalt grid, a styled day
+   tooltip, a column-by-column reveal, and a "Most active in" sheet of
+   the repos pushed to lately. Each piece fails on its own: if the
+   calendar can't load, the section falls back to heading + link; if
+   only the repos can't, the sheet just never appears.
 ---------------------------------------------------------------- */
 (function () {
   "use strict";
   const graph = document.getElementById("gh-graph");
   if (!graph) return;
   const section = graph.closest(".gh-activity");
-  fetch("https://github-contributions-api.jogruber.de/v4/atishaytuli07?y=last")
+  const USER = "atishaytuli07";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const DATE_FMT = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const NUM_FMT = new Intl.NumberFormat("en-US");
+
+  function describe(count, date) {
+    const noun = count === 1 ? "contribution" : "contributions";
+    const when = DATE_FMT.format(new Date(date + "T00:00:00"));
+    return (count || "No") + " " + noun + " on " + when;
+  }
+
+  fetch("https://github-contributions-api.jogruber.de/v4/" + USER + "?y=last")
     .then(function (r) {
       if (!r.ok) throw 0;
       return r.json();
@@ -722,29 +739,381 @@
       const first = new Date(days[0].date + "T00:00:00");
       const pad = first.getDay();
       const frag = document.createDocumentFragment();
+      let total = 0;
       for (let i = 0; i < pad; i++) {
         const e = document.createElement("span");
         e.className = "gh-cell gh-pad";
         frag.appendChild(e);
       }
-      days.forEach(function (d) {
+      days.forEach(function (d, n) {
         const c = document.createElement("span");
         c.className = "gh-cell gh-l" + (d.level || 0);
-        c.setAttribute("title", d.count + " on " + d.date);
+        c.dataset.count = d.count;
+        c.dataset.date = d.date;
+        // grid slot (pads included): lets the tooltip place itself from
+        // arithmetic instead of measuring the cell
+        c.dataset.i = pad + n;
+        total += d.count;
         frag.appendChild(c);
       });
       graph.appendChild(frag);
+      // The year is a few px wider than the column on desktop and much wider
+      // on phones, so keep it scrolled to today, the way GitHub does, and tell
+      // the reveal how many columns fit. Both need sizes, and reading sizes at
+      // the wrong moment forces a whole-page layout (~18ms right after the
+      // Creative -> Minimal switch). A ResizeObserver runs just after layout,
+      // when reading is free, and it also fires when the section is first
+      // shown after loading in Creative mode, and on window resize.
+      const body = graph.parentElement;
+      const fit = function (width) {
+        graph.scrollLeft = graph.scrollWidth;
+        if (body) body.style.setProperty("--gh-cols", Math.max(1, Math.ceil(width / 10)));
+      };
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(function (entries) {
+          const w = entries[0].contentRect.width;
+          if (w) fit(w);
+        }).observe(graph);
+      } else {
+        fit(graph.clientWidth);
+      }
+
+      const label = NUM_FMT.format(total) + " contributions in the last year";
+      graph.setAttribute("aria-label", label);
+      const totalEl = section && section.querySelector(".gh-total");
+      if (totalEl) totalEl.textContent = label;
+
+      sweep();
+      tooltip();
     })
     .catch(function () {
       graph.style.display = "none";
       if (section) {
+        section.classList.add("gh-no-repos");
         const foot = section.querySelector(".gh-foot");
         if (foot) foot.style.display = "none";
         // no wall to peek over, so hide the pandas too
         const peeks = section.querySelectorAll(".gh-peek");
         for (let i = 0; i < peeks.length; i++) peeks[i].style.display = "none";
+        // and nothing for the sheet to open over
+        const sheetEl = section.querySelector(".gh-repos");
+        if (sheetEl) sheetEl.hidden = true;
       }
     });
+
+  /* Reveal the grid a column at a time the first time it's actually seen,
+     by sliding off the curtain drawn by .gh-body::before (see app.css). The
+     step count is the columns that fit the box, so each step lands on a
+     column edge. */
+  function sweep() {
+    const body = graph.parentElement;
+    if (reduce.matches || !body || !("IntersectionObserver" in window)) return;
+    body.classList.add("gh-wait");
+    // Nothing is measured here (the ResizeObserver above already set the
+    // scroll and --gh-cols); this only flips classes.
+    const io = new IntersectionObserver(
+      function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        body.addEventListener("animationend", function end(e) {
+          if (e.animationName !== "gh-sweep") return;
+          body.removeEventListener("animationend", end);
+          body.classList.remove("gh-sweep");
+        });
+        body.classList.remove("gh-wait");
+        body.classList.add("gh-sweep");
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(body);
+  }
+
+  /* One tooltip for all 365 cells, via delegation. Mouse hides it on leave;
+     a tap keeps it up until the next scroll or a tap somewhere else.
+
+     Moving across the grid never reads layout. Reading a rect right after
+     changing the tip's text forces a synchronous layout of the whole page,
+     which measured ~6ms per cell at 4x CPU throttle. Instead: the grid's
+     rect and pitch are read once per hover session, a cell's position is
+     its grid slot times the pitch, and the tip's width comes from canvas
+     measureText, which needs no layout at all. */
+  function tooltip() {
+    const tip = document.createElement("div");
+    tip.className = "gh-tip";
+    tip.setAttribute("aria-hidden", "true");
+    document.body.appendChild(tip);
+    let ctx = null; // canvas for measureText, made on first hover
+    let current = null;
+    let geo = null; // grid rect + pitch; dropped on any scroll or resize
+    let vw = window.innerWidth;
+
+    function measure() {
+      const g = graph.getBoundingClientRect();
+      const gs = getComputedStyle(graph);
+      const ts = getComputedStyle(tip);
+      const cell = parseFloat(gs.gridAutoColumns);
+      geo = {
+        left: g.left - graph.scrollLeft,
+        top: g.top,
+        cell: cell,
+        col: cell + parseFloat(gs.columnGap),
+        row: parseFloat(gs.gridTemplateRows) + parseFloat(gs.rowGap),
+        padX: parseFloat(ts.paddingLeft) + parseFloat(ts.paddingRight),
+        h: parseFloat(ts.lineHeight) + parseFloat(ts.paddingTop) + parseFloat(ts.paddingBottom),
+      };
+      if (!ctx) ctx = document.createElement("canvas").getContext("2d");
+      ctx.font = ts.fontWeight + " " + ts.fontSize + " " + ts.fontFamily;
+    }
+    window.addEventListener(
+      "resize",
+      function () {
+        vw = window.innerWidth;
+        geo = null;
+      },
+      { passive: true }
+    );
+    // capture, to also catch the grid's own horizontal scroll; but only the
+    // page and the grid matter, not some other scroller elsewhere
+    window.addEventListener(
+      "scroll",
+      function (e) {
+        if (e.target !== document && e.target !== graph) return;
+        geo = null;
+        hide();
+      },
+      { capture: true, passive: true }
+    );
+
+    function hide() {
+      if (!current) return;
+      current = null;
+      tip.classList.remove("is-on");
+    }
+    function show(cell) {
+      if (cell === current) return;
+      if (!geo) measure();
+      const wasHidden = !current;
+      current = cell;
+      const text = describe(+cell.dataset.count, cell.dataset.date);
+      const i = +cell.dataset.i;
+      const w = ctx.measureText(text).width + geo.padX;
+      const x = geo.left + Math.floor(i / 7) * geo.col + geo.cell / 2;
+      const y = geo.top + (i % 7) * geo.row;
+      const edge = 8 + w / 2;
+      const cx = Math.min(Math.max(x, edge), vw - edge);
+      tip.textContent = text;
+      tip.style.translate = cx - w / 2 + "px " + (y - geo.h - 8) + "px";
+      if (wasHidden) tip.classList.add("is-on");
+    }
+
+    graph.addEventListener("pointerover", function (e) {
+      const cell = e.target.closest(".gh-cell");
+      // the 2px gaps report the grid itself: keep the tip, don't flicker
+      if (!cell) return;
+      if (cell.classList.contains("gh-pad")) return hide();
+      show(cell);
+    });
+    graph.addEventListener("pointerleave", function (e) {
+      if (e.pointerType === "mouse") hide();
+    });
+    document.addEventListener("pointerdown", function (e) {
+      if (current && !graph.contains(e.target)) hide();
+    });
+  }
+
+  /* ---------- "Most active in" ----------
+     Counted from public push events. GitHub no longer includes the commit
+     list in push payloads, so this counts pushes, and says so. */
+  const sheet = section && section.querySelector(".gh-repos");
+  if (!sheet) return;
+  const STACK = 3;
+  const CACHE = "gh-repos-v1";
+
+  let cached = null;
+  try {
+    cached = JSON.parse(sessionStorage.getItem(CACHE) || "null");
+  } catch (e) {}
+  if (cached && Date.now() - cached.t < 3600000) {
+    build(cached.repos);
+  } else if ("IntersectionObserver" in window) {
+    // The section sits far below the fold. Don't open a connection to a new
+    // origin during page load for it; start when it's ~a screen away. The
+    // bar's space is already reserved, so arriving late shifts nothing.
+    const near = new IntersectionObserver(
+      function (entries) {
+        if (!entries[0].isIntersecting) return;
+        near.disconnect();
+        loadRepos();
+      },
+      { rootMargin: "800px 0px" }
+    );
+    near.observe(section);
+  } else {
+    loadRepos();
+  }
+
+  function loadRepos() {
+    fetch("https://api.github.com/users/" + USER + "/events/public?per_page=100")
+      .then(function (r) {
+        if (!r.ok) throw 0;
+        return r.json();
+      })
+      .then(function (events) {
+        const counts = new Map();
+        events.forEach(function (ev) {
+          if (ev.type !== "PushEvent" || !ev.repo) return;
+          counts.set(ev.repo.name, (counts.get(ev.repo.name) || 0) + 1);
+        });
+        const repos = Array.from(counts)
+          .sort(function (a, b) {
+            return b[1] - a[1];
+          })
+          .slice(0, STACK)
+          .map(function (entry) {
+            return { full: entry[0], count: entry[1] };
+          });
+        try {
+          sessionStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), repos: repos }));
+        } catch (e) {}
+        build(repos);
+      })
+      .catch(function () {
+        build([]);
+      });
+  }
+
+  function avatar(repo) {
+    const parts = repo.full.split("/");
+    const el = document.createElement("span");
+    el.className = "gh-av";
+    // decorative: the repo name right beside it is the accessible label
+    el.setAttribute("aria-hidden", "true");
+    // GitHub has no per-repo logo. Someone else's repo gets its owner's
+    // avatar; my own get their initial.
+    if (parts[0].toLowerCase() !== USER) {
+      const img = document.createElement("img");
+      img.src = "https://github.com/" + parts[0] + ".png?size=48";
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      el.appendChild(img);
+    } else {
+      el.textContent = parts[1].charAt(0);
+    }
+    return el;
+  }
+
+  function build(repos) {
+    if (!repos || !repos.length || graph.style.display === "none") {
+      if (section) section.classList.add("gh-no-repos");
+      return;
+    }
+    const stack = sheet.querySelector(".gh-stack");
+    const list = sheet.querySelector(".gh-repo-list");
+    const toggle = sheet.querySelector(".gh-repo-toggle");
+
+    repos.forEach(function (repo, i) {
+      stack.appendChild(avatar(repo));
+
+      const li = document.createElement("li");
+      li.style.setProperty("--i", i);
+      const a = document.createElement("a");
+      a.className = "gh-repo";
+      a.href = "https://github.com/" + repo.full;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.appendChild(avatar(repo));
+      const name = document.createElement("span");
+      name.className = "gh-repo-name";
+      name.textContent = repo.full.split("/")[1];
+      const count = document.createElement("span");
+      count.className = "gh-repo-count";
+      count.textContent = repo.count + (repo.count === 1 ? " push" : " pushes");
+      a.appendChild(name);
+      a.appendChild(count);
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+
+    // closed rows are clipped out of sight; keep them out of the tab order too
+    list.inert = true;
+    sheet.hidden = false;
+
+    // FLIP: the stack avatars fly into the rows on open and back on close,
+    // so the same three circles read as moving, not swapping.
+    //
+    // The stack->row offsets only change when the sheet resizes, so a
+    // ResizeObserver measures them (its callback runs right after layout,
+    // when reading is free) and a click reads no layout at all. Measuring
+    // on click forced two whole-page layouts: ~22ms per click at 4x CPU.
+    // offsetLeft/Top are relative to the sheet and ignore transforms, so a
+    // resize mid-flight can't poison them.
+    const stackAvs = stack.children;
+    const rowAvs = list.querySelectorAll(".gh-av");
+    let deltas = [];
+    function measureDeltas() {
+      if (!sheet.offsetParent) return; // display:none (Creative mode)
+      deltas = Array.prototype.map.call(stackAvs, function (s, i) {
+        const r = rowAvs[i];
+        return r ? { x: s.offsetLeft - r.offsetLeft, y: s.offsetTop - r.offsetTop } : null;
+      });
+    }
+    if ("ResizeObserver" in window) new ResizeObserver(measureDeltas).observe(sheet);
+    else measureDeltas();
+
+    // Where an avatar is drawn right now, relative to its layout slot: zero
+    // unless it's mid-flight. Worked out from the flight we started and its
+    // eased progress, so a click never has to flush style to ask the browser.
+    const flights = new Map(); // element -> { anim, x, y }
+    function drift(el) {
+      const f = flights.get(el);
+      flights.delete(el);
+      if (!f || f.anim.playState !== "running") return { x: 0, y: 0 };
+      const p = f.anim.effect.getComputedTiming().progress || 0;
+      f.anim.cancel();
+      return { x: f.x * (1 - p), y: f.y * (1 - p) };
+    }
+
+    function set(open) {
+      if (open === sheet.classList.contains("is-open")) return;
+      const from = open ? stackAvs : rowAvs;
+      const to = open ? rowAvs : stackAvs;
+      const sign = open ? 1 : -1;
+      // start from wherever the outgoing circle is drawn right now, so a
+      // click mid-flight reverses smoothly instead of jumping
+      const starts = Array.prototype.map.call(from, function (el, i) {
+        const d = deltas[i];
+        const now = drift(el);
+        return d ? { x: sign * d.x + now.x, y: sign * d.y + now.y } : null;
+      });
+      sheet.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute(
+        "aria-label",
+        open ? "Hide most active repositories" : "Show most active repositories"
+      );
+      list.inert = !open;
+      if (reduce.matches || !Element.prototype.animate) return;
+      Array.prototype.forEach.call(to, function (el, i) {
+        const s = starts[i];
+        if (!s) return;
+        const anim = el.animate([{ translate: s.x + "px " + s.y + "px" }, { translate: "0 0" }], {
+          duration: 560,
+          easing: "cubic-bezier(0.34, 1.3, 0.64, 1)",
+        });
+        flights.set(el, { anim: anim, x: s.x, y: s.y });
+      });
+    }
+
+    toggle.addEventListener("click", function () {
+      set(!sheet.classList.contains("is-open"));
+    });
+    sheet.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || !sheet.classList.contains("is-open")) return;
+      set(false);
+      toggle.focus();
+    });
+  }
 })();
 
 /* ----------------------------------------------------------------
