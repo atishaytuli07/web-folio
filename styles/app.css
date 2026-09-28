@@ -263,37 +263,21 @@
         }
       }
 
-      /* Load performance: skip layout + paint for below-the-fold sections until
-         they scroll near the viewport. Measured effect (mobile, simulate
-         throttling, median of 4 runs, single-variable A/B auto vs visible):
-         LCP ~4.46s -> ~4.05s (-0.4s), TBT ~90ms -> ~15ms (-75ms), perf score
-         +6. FCP is unchanged (the hero isn't deferred, so the first pixel lands
-         at the same time) and CLS stayed 0.000 in every run. It does NOT reduce
-         total style/layout time over the session (those sections still lay out
-         when scrolled to); the win is taking off-screen layout off the load
-         critical path. No JS, no SEO cost (nodes stay in the DOM, just
-         deferred). `auto <h>` is a placeholder height only until a section
-         renders once, then the real size is remembered. The hero is excluded so
-         FCP is unaffected; the race canvas is excluded so its clientWidth is
-         measurable at eval.
-         EXCLUDED (would be visibly clipped): content-visibility forces
-         `contain: paint`, which clips anything overflowing the section box. So
-         we must NOT apply it to sections with intentional overflow:
-           - .photo-scroller-section (Visuals / AI Visuals) breaks out to
-             full-bleed via margin: calc(-50vw + 50%) -> clipping trims it back
-             to the column.
-           - .post-list.has-mascot perches a dog/frog ABOVE the section
-             (bottom: calc(100% - 3px)) -> clipping eats the mascot.
-           - .gh-activity has pandas peeking out its edges (.gh-peek-eat at
-             left: -15px) -> clipping trims the panda.
-         Hence only plain post-lists + gold-mine + footers below. */
-      .post-list:not(.has-mascot),
-      .gold-mine,
-      .creative-footer,
-      .site-footer {
-        content-visibility: auto;
-        contain-intrinsic-size: auto 560px;
-      }
+      /* No content-visibility on the page sections, on purpose.
+         It used to be `content-visibility: auto; contain-intrinsic-size: auto
+         560px` on the plain post-lists and footers, to take off-screen layout
+         off the load path. But one 560px placeholder can't fit sections that
+         really measure 14px (footer) to 1094px (Let's talk): on a first visit
+         the page changed length by ~1090px (desktop) / ~760px (phone) WHILE it
+         was being scrolled. Each correction re-laid out the whole document
+         from the root mid-scroll; with Lenis that is a visible freeze. A/B, full
+         wheel scroll at 6x CPU, 4 runs: worst freeze 256ms -> 112ms, total
+         time frozen 2.06s -> 1.02s, 15ms+ layouts 12 -> 3. The sections are
+         small text lists, so rendering them up front is cheap. (`auto` only
+         remembers a size after the first render, so it never helped the first
+         pass, which is every recruiter's.) The photo-scroller tiles keep theirs
+         (see .photo-scroller > *): that strip is horizontal and its height
+         doesn't depend on them, so it can't change the page length. */
 
       /* Sparrow: flies in, perches, idles, flies off */
       .bird {
