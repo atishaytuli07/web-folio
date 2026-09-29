@@ -1962,6 +1962,11 @@
         margin: 0;
         padding: 0;
       }
+      /* An odd tile count would strand the last tile alone on its row;
+         let it span the grid so it reads as the closing stat. */
+      .gm-stat:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+      }
       .gm-stat {
         display: flex;
         flex-direction: column;

@@ -21,7 +21,7 @@ Same document, two audiences. The mode you pick is remembered.
 
 ## Performance
 
-The site is built to hold a perfect Lighthouse score, and the tricks are commented in the source:
+The site is built to load fast, and the tricks are commented in the source:
 
 - The LCP image is preloaded with `fetchpriority="high"` because it is a CSS background the browser cannot discover early on its own.
 - Below-the-fold sections use `content-visibility: auto` so first paint skips their layout entirely.
