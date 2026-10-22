@@ -129,15 +129,38 @@
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
   )
     return;
-  // autoRaf lets Lenis drive its own animation frame (official recommended
-  // setup). Exposed on window for future use (lenis.scrollTo / stop / start).
   // lerp-based smoothing: the scroll tracks input with a short per-frame
   // catch-up (0.1 = ~snappy but still smooth), instead of a fixed 1.15s glide
-  // that read as floaty. autoRaf still drives Lenis's own frame loop.
-  window.lenis = new Lenis({
-    autoRaf: true,
-    lerp: 0.1,
-  });
+  // that read as floaty. Exposed on window for future use (scrollTo etc.).
+  var lenis = (window.lenis = new Lenis({ lerp: 0.1 }));
+
+  // Lenis is driven only while it is actually gliding. Its stock autoRaf
+  // loop requests a frame forever, so the main thread never rests: on this
+  // page every running animation (bird, butterfly, hero words, clock) was
+  // then restyled every frame even with nothing moving - about 10x the idle
+  // CPU, measured on a 4x-throttled CPU. Same lerp, same feel; the loop
+  // just sleeps between scrolls. Touch, keys and the scrollbar scroll
+  // natively here and never needed it.
+  var rafId = 0;
+  function frame(t) {
+    if (t < lenis.time) lenis.time = t; // never a negative first step
+    lenis.raf(t);
+    rafId = lenis.isScrolling === "smooth" ? requestAnimationFrame(frame) : 0;
+  }
+  function wake() {
+    if (rafId) return;
+    // Lenis times each step from its previous frame; after a rest that gap
+    // is seconds long and the first step would jump straight to the target.
+    // Restart its clock now, so the first step is an ordinary frame.
+    lenis.time = performance.now();
+    rafId = requestAnimationFrame(frame);
+  }
+  lenis.on("virtual-scroll", wake); // every wheel/trackpad input
+  var scrollTo = lenis.scrollTo.bind(lenis);
+  lenis.scrollTo = function () {
+    scrollTo.apply(null, arguments);
+    wake();
+  };
 })();
 
 /* ----------------------------------------------------------------
@@ -1311,6 +1334,32 @@
   Array.prototype.forEach.call(els, function (el) {
     io.observe(el);
   });
+})();
+
+/* ----------------------------------------------------------------
+   The playful layer - shake the trees, poke the clouds, sound, the
+   sun's "Call it a night" hint, the mascots' hover reactions, the
+   photo's outfit swap - lives in
+   play.js + styles/play.css. None of it is needed to show the page, so
+   both are fetched only after the load event, once the main thread is
+   idle: they never compete with first paint, LCP or the hero.
+---------------------------------------------------------------- */
+(function () {
+  "use strict";
+  function inject() {
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = "./styles/play.css";
+    document.head.appendChild(css);
+    var s = document.createElement("script");
+    s.src = "./play.js";
+    document.body.appendChild(s);
+  }
+  function whenIdle() {
+    (window.requestIdleCallback || function (f) { setTimeout(f, 200); })(inject, { timeout: 2000 });
+  }
+  if (document.readyState === "complete") whenIdle();
+  else window.addEventListener("load", whenIdle, { once: true });
 })();
 
 /* Folder stagger indices (for the cascade-in). */
