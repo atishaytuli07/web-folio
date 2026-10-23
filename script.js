@@ -141,18 +141,22 @@
   // CPU, measured on a 4x-throttled CPU. Same lerp, same feel; the loop
   // just sleeps between scrolls. Touch, keys and the scrollbar scroll
   // natively here and never needed it.
-  var rafId = 0;
+  var rafId = 0, fresh = false;
   function frame(t) {
-    if (t < lenis.time) lenis.time = t; // never a negative first step
+    // Lenis times each step from its previous frame (its `time` field,
+    // v1.2.3). After a rest that gap is seconds long and the first step
+    // would jump straight to the target; give the first frame back exactly
+    // one ordinary frame step instead.
+    if (fresh) {
+      lenis.time = t - 1000 / 60;
+      fresh = false;
+    }
     lenis.raf(t);
     rafId = lenis.isScrolling === "smooth" ? requestAnimationFrame(frame) : 0;
   }
   function wake() {
     if (rafId) return;
-    // Lenis times each step from its previous frame; after a rest that gap
-    // is seconds long and the first step would jump straight to the target.
-    // Restart its clock now, so the first step is an ordinary frame.
-    lenis.time = performance.now();
+    fresh = true;
     rafId = requestAnimationFrame(frame);
   }
   lenis.on("virtual-scroll", wake); // every wheel/trackpad input
@@ -679,6 +683,33 @@
   "use strict";
   const vids = document.querySelectorAll(".video-scroller video");
   if (!vids.length) return;
+  // Posters (data-poster) load only when the row comes within 600px of the
+  // screen: the eleven of them are ~105 KB, about a third of the page, for
+  // a section far below the fold. The whole row at once, because tiles
+  // scrolled sideways inside it would otherwise pop in black.
+  const row = document.querySelector(".video-scroller");
+  function posters() {
+    Array.prototype.forEach.call(vids, function (v) {
+      if (v.dataset.poster) {
+        v.poster = v.dataset.poster;
+        v.removeAttribute("data-poster");
+      }
+    });
+  }
+  if ("IntersectionObserver" in window) {
+    const pio = new IntersectionObserver(
+      function (entries) {
+        if (entries[0].isIntersecting) {
+          posters();
+          pio.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    pio.observe(row);
+  } else {
+    posters();
+  }
   const reduce =
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;

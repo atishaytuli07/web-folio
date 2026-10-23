@@ -1,6 +1,6 @@
 // Playful layer: pixel effects, sound, shake-the-tree, poke-the-cloud, the
-// sun hint and the profile photo's outfit swap. Loaded after the page by script.js (see the loader there);
-// styles live in styles/play.css.
+// sun hint and the profile photo's outfit swap. Loaded after the page by
+// script.js (see the loader there); styles live in styles/play.css.
 
 /* ----------------------------------------------------------------
    Pixel effects shared by the trees and clouds: tiny sprites drawn
@@ -24,8 +24,15 @@ window.folioFx = (function () {
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
-  // One bare span per piece, sprite as its background.
+  // One bare span per piece, sprite as its background. However fast the
+  // clicks come, no more than MAX_LIVE pieces exist at once: past that, new
+  // ones are simply skipped.
+  // Nothing spawns under reduced motion either, including pieces a press
+  // already scheduled (leaves and drops are released over ~1s).
+  var MAX_LIVE = 90, live = 0;
   function piece(kind, x, y, w, h, img, behind) {
+    if (live >= MAX_LIVE || still()) return null;
+    live++;
     var el = document.createElement("span");
     el.className = "fall fall-" + kind + (behind ? " is-behind" : "");
     el.style.cssText =
@@ -34,6 +41,13 @@ window.folioFx = (function () {
     document.body.appendChild(el);
     return el;
   }
+  // Idempotent: a piece cleared early (reduced motion switched on) can
+  // still get its finish callback later, and must not be counted twice.
+  function done(el) {
+    if (!el.isConnected) return;
+    el.remove();
+    live--;
+  }
 
   // A piece driven by its CSS keyframes (rain, apple, bolt); the variables
   // feed them. Removed when its main animation ends (an apple also runs a
@@ -41,10 +55,12 @@ window.folioFx = (function () {
   var DONE = { apple: "appleFall", rain: "rainFall", bolt: "boltFlash" };
   function spawn(kind, x, y, w, h, vars, img, behind) {
     var el = piece(kind, x, y, w, h, img, behind);
+    if (!el) return null;
     for (var k in vars) el.style.setProperty("--" + k, vars[k]);
     el.addEventListener("animationend", function (e) {
-      if (e.animationName === DONE[kind]) el.remove();
+      if (e.animationName === DONE[kind]) done(el);
     });
+    return el;
   }
 
   // A piece driven by ONE Web Animation over precomputed keyframes (leaves,
@@ -54,8 +70,9 @@ window.folioFx = (function () {
   // of three animations. Still transform/opacity only: it composites.
   function fly(kind, x, y, w, h, frames, ms, img, behind) {
     var el = piece(kind, x, y, w, h, img, behind);
+    if (!el) return;
     el.animate(frames, { duration: ms, fill: "both" }).onfinish = function () {
-      el.remove();
+      done(el);
     };
   }
 
@@ -64,23 +81,74 @@ window.folioFx = (function () {
   // Round a cycle count to whole half-cycles (at least one).
   function halves(n) { return Math.max(0.5, Math.round(n * 2) / 2); }
 
+  // Read at press time, so turning the setting on mid-visit takes effect:
+  // nothing new spawns. Pieces already in the air are cleared at once when
+  // the browser reports the change; where it doesn't, they simply finish
+  // their few-second fall and remove themselves (they are never frozen, so
+  // none can be stranded on screen).
+  var reduceMq = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
+  function still() {
+    return !!reduceMq && reduceMq.matches;
+  }
+  function onReduce(e) {
+    if (e.matches) Array.prototype.forEach.call(document.querySelectorAll(".fall"), done);
+  }
+  if (reduceMq) {
+    if (reduceMq.addEventListener) reduceMq.addEventListener("change", onReduce);
+    else if (reduceMq.addListener) reduceMq.addListener(onReduce); // Safari < 14
+  }
+
+  // Keep a piece's sideways travel on screen: given where it starts and how
+  // far it wants to drift (plus any sway either side), shrink or flip the
+  // drift so it ends inside the viewport (phones put the trees and clouds
+  // right at the edge).
+  function onScreen(x, w, dx, sway) {
+    var lo = 2 - x + sway, hi = document.documentElement.clientWidth - 2 - (x + w) - sway;
+    return Math.max(Math.min(dx, hi), Math.min(lo, hi));
+  }
+
+  // Restart a one-shot animation class; oneShot() removes it again when the
+  // animation ends, so the element goes back to bare between plays.
+  function replay(el, cls) {
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+  function oneShot(el, cls, name) {
+    el.addEventListener("animationend", function (e) {
+      if (e.target === el && e.animationName === name) el.classList.remove(cls);
+    });
+  }
+
   // The trees and clouds ship as decorative (aria-hidden) divs; they only
   // become buttons here, once this layer has loaded and can answer them.
+  // A held key doesn't auto-repeat the press, and presses closer than
+  // 120ms apart collapse into one.
   function asButton(el, label, press) {
+    var last = 0;
+    function fire() {
+      var now = Date.now();
+      if (now - last < 120) return;
+      last = now;
+      press();
+    }
     el.removeAttribute("aria-hidden");
     el.setAttribute("role", "button");
     el.setAttribute("tabindex", "0");
     el.setAttribute("aria-label", label);
-    el.addEventListener("click", press);
+    el.addEventListener("click", fire);
     el.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        press();
+        if (!e.repeat) fire();
       }
     });
   }
 
-  return { sprite: sprite, spawn: spawn, fly: fly, rnd: rnd, halves: halves, asButton: asButton };
+  return {
+    sprite: sprite, spawn: spawn, fly: fly, rnd: rnd, halves: halves,
+    still: still, replay: replay, oneShot: oneShot, onScreen: onScreen, asButton: asButton,
+  };
 })();
 
 /* ----------------------------------------------------------------
@@ -103,6 +171,68 @@ window.folioSound = (function () {
   var ctx = null, out = null, verb = null, NOISE = {};
   var rnd = window.folioFx.rnd;
 
+  // The heavy sample data - three 3s noises and a 2.4s stereo reverb, ~1M
+  // samples - is built while the browser is idle after this layer loads,
+  // in small slices that stop as soon as the idle period runs out, so it
+  // never blocks a frame or an input, even on a slow phone; and the first
+  // click doesn't pay for it. Made at 48 kHz; the AudioContext resamples if
+  // its own rate differs. A sound needed before its buffer is finished just
+  // completes it on the spot.
+  var RATE = 48000, JOBS = {};
+  function job(kind) {
+    if (JOBS[kind]) return JOBS[kind];
+    var verb = kind === "verb", n = verb ? Math.floor(RATE * 2.4) : RATE * 3;
+    var chans = verb ? [new Float32Array(n), new Float32Array(n)] : [new Float32Array(n)];
+    var c = 0, i = 0, b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, last = 0;
+    var j = { chans: chans, done: false };
+    j.run = function (count) {
+      while (count-- > 0 && !j.done) {
+        var w = Math.random() * 2 - 1, d = chans[c];
+        if (verb) { // a small outdoor-ish space: decaying stereo noise
+          var k = 1 - i / n;
+          d[i] = w * k * k * k;
+        } else if (kind === "white") {
+          d[i] = w;
+        } else if (kind === "pink") { // Paul Kellet's filter
+          b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759;
+          b2 = 0.969 * b2 + w * 0.153852; b3 = 0.8665 * b3 + w * 0.3104856;
+          b4 = 0.55 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.016898;
+          d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+          b6 = w * 0.115926;
+        } else { // brown: integrated
+          last = (last + 0.02 * w) / 1.02;
+          d[i] = last * 3.5;
+        }
+        if (++i === n) {
+          i = 0;
+          if (++c === chans.length) j.done = true;
+        }
+      }
+    };
+    return (JOBS[kind] = j);
+  }
+  function raw(kind) {
+    var j = job(kind);
+    j.run(Infinity);
+    return kind === "verb" ? j.chans : j.chans[0];
+  }
+  var idle = window.requestIdleCallback || function (f) {
+    return setTimeout(function () {
+      var t0 = Date.now();
+      f({ timeRemaining: function () { return Math.max(0, 8 - (Date.now() - t0)); } });
+    }, 50);
+  };
+  (function warm(kinds) {
+    idle(function (deadline) {
+      while (kinds.length && deadline.timeRemaining() > 3) {
+        var j = job(kinds[0]);
+        j.run(4096);
+        if (j.done) kinds.shift();
+      }
+      if (kinds.length) warm(kinds);
+    });
+  })(["verb", "white", "pink", "brown"]);
+
   function ensure() {
     if (!ctx) {
       var AC = window.AudioContext || window.webkitAudioContext;
@@ -117,12 +247,9 @@ window.folioSound = (function () {
       out.gain.value = 0.55;
       out.connect(comp);
       comp.connect(ctx.destination);
-      // A small outdoor-ish space: decaying stereo noise as the impulse.
-      var len = Math.floor(ctx.sampleRate * 2.4), ir = ctx.createBuffer(2, len, ctx.sampleRate);
-      for (var c = 0; c < 2; c++) {
-        var d = ir.getChannelData(c);
-        for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
-      }
+      var v = raw("verb"), ir = ctx.createBuffer(2, v[0].length, RATE);
+      ir.getChannelData(0).set(v[0]);
+      ir.getChannelData(1).set(v[1]);
       verb = ctx.createConvolver();
       verb.buffer = ir;
       var wet = ctx.createGain();
@@ -130,32 +257,21 @@ window.folioSound = (function () {
       verb.connect(wet);
       wet.connect(out);
     }
-    if (ctx.state === "suspended") ctx.resume();
+    // "suspended" before the first gesture, "interrupted" after iOS locks
+    // the phone or takes the audio session: try to resume either way.
+    if (ctx.state !== "running" && ctx.resume) {
+      var p = ctx.resume();
+      if (p && p.catch) p.catch(function () {});
+    }
     return ctx;
   }
 
-  // White, pink (Paul Kellet's filter) and brown (integrated) noise, 3s
-  // each, made on first use and looped from random offsets so repeats
-  // never line up.
+  // White, pink and brown noise as audio buffers, looped from random
+  // offsets so repeats never line up.
   function noiseBuf(kind) {
     if (NOISE[kind]) return NOISE[kind];
-    var n = ctx.sampleRate * 3, buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
-    var b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, last = 0;
-    for (var i = 0; i < n; i++) {
-      var w = Math.random() * 2 - 1;
-      if (kind === "white") {
-        d[i] = w;
-      } else if (kind === "pink") {
-        b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759;
-        b2 = 0.969 * b2 + w * 0.153852; b3 = 0.8665 * b3 + w * 0.3104856;
-        b4 = 0.55 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.016898;
-        d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
-        b6 = w * 0.115926;
-      } else {
-        last = (last + 0.02 * w) / 1.02;
-        d[i] = last * 3.5;
-      }
-    }
+    var d = raw(kind), buf = ctx.createBuffer(1, d.length, RATE);
+    buf.getChannelData(0).set(d);
     return (NOISE[kind] = buf);
   }
 
@@ -306,10 +422,20 @@ window.folioSound = (function () {
     blip: function (t) { tone("sine", t, 1200, 1200, { peak: 0.1, a: 0.005, r: 0.08 }); },
   };
 
+  // A sound that is already playing doesn't restart within GAP ms: a
+  // shower is ~470 audio nodes, and rapid clicks shouldn't stack them.
+  var GAP = { rain: 250, snow: 250, rustle: 120 }, lastAt = {};
+  // Audio can fail (no AudioContext, an exhausted iOS audio session); it
+  // never stops the visuals that called it.
   function play(name, delay, arg) {
     if (!on || !SOUNDS[name]) return;
-    if (!ensure()) return;
-    try { SOUNDS[name](ctx.currentTime + 0.01 + (delay || 0), arg); } catch (e) {}
+    var now = Date.now();
+    if (GAP[name] && now - (lastAt[name] || 0) < GAP[name]) return;
+    lastAt[name] = now;
+    try {
+      if (!ensure()) return;
+      SOUNDS[name](ctx.currentTime + 0.01 + (delay || 0), arg);
+    } catch (e) {}
   }
 
   // Footer switches, one in each mode's footer, kept in sync. Built here
@@ -322,6 +448,9 @@ window.folioSound = (function () {
     var b = document.createElement("button");
     b.type = "button";
     b.className = "sound-toggle";
+    // A fixed name plus aria-pressed: screen readers say "Sound, toggle
+    // button, pressed"; the visible text still reads "Sound on/off".
+    b.setAttribute("aria-label", "Sound");
     b.innerHTML =
       '<span class="st-bars" aria-hidden="true"><i></i><i></i><i></i></span>' +
       '<span class="st-label"></span>';
@@ -352,23 +481,21 @@ window.folioSound = (function () {
    it spring back; leaves come loose from the rim during the rebounds
    and tumble down, and every fourth shake an apple drops out from
    behind the foliage. Nothing is created at click time: each piece is
-   spawned at the moment it detaches. The motion is CSS keyframes on
-   transform/opacity, so JS only spawns nodes and removes them when the
-   fall ends. Reduced motion: the tree only rustles (sound). Narrow
-   screens hide the trees (display:none), so nothing runs there.
+   spawned at the moment it detaches. Leaves are one Web Animation each,
+   the apple and the canopy bend are CSS keyframes; all transform/opacity,
+   so JS only spawns nodes and removes them when they land. Reduced
+   motion: the tree only rustles (sound). On phones the trees are drawn
+   smaller in the bottom-right corner (app.css) and work the same way:
+   everything here is measured from the tree as drawn.
 ---------------------------------------------------------------- */
 (function () {
   "use strict";
   var trees = document.querySelectorAll(".tree");
   if (!trees.length) return;
-  // Reduced motion: the tree stays still and only rustles (sound), so the
-  // button still answers.
-  var still =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // The tree sprite is 54x86 art pixels. The canopy is a disc centred at
-  // (27,27) with radius ~23; the grass line (top of the base) is row 76.
+  // (27,27) with radius ~23; the base strip spans rows 76-80, and fallen
+  // pieces come to rest on row 78, in the middle of it.
   var ART_W = 54, CX = 27, CY = 27, CR = 23, GROUND = 78;
 
   var fx = window.folioFx, sprite = fx.sprite, spawn = fx.spawn, rnd = fx.rnd, halves = fx.halves;
@@ -422,14 +549,14 @@ window.folioSound = (function () {
   var shakes = 0;
   function shake(tree) {
     window.folioSound.play("rustle");
-    if (still) return;
-    tree.classList.remove("is-shaking");
-    void tree.offsetWidth; // restart the rustle on rapid clicks
-    tree.classList.add("is-shaking");
+    // Reduced motion: the tree stays still and only rustles, so the button
+    // still answers.
+    if (fx.still()) return;
+    fx.replay(tree, "is-shaking"); // restarts the bend on rapid clicks
 
-    // Measure now (before the skew moves the crown). Document coordinates:
-    // the trees and the falling pieces both sit on the initial containing
-    // block.
+    // Measure now (before the skew moves the crown), in document
+    // coordinates: the trees and the falling pieces are both positioned
+    // against <body>, which sits at the page origin.
     var r = tree.getBoundingClientRect();
     var s = r.width / ART_W; // screen px per art pixel
     var left = r.left + window.scrollX, top = r.top + window.scrollY;
@@ -453,7 +580,8 @@ window.folioSound = (function () {
       fx.fly("leaf", x, y, w, h, leafPath({
         dur: dur,
         fall: ground - y - h + rnd(-1, 2),
-        dx: (x + w / 2 < cx ? -1 : 1) * rnd(6, 26), // pushed outward by the swing
+        // pushed outward by the swing (sway reaches ~9px either side)
+        dx: fx.onScreen(x, w, (x + w / 2 < cx ? -1 : 1) * rnd(6, 26), 9),
         tilt: rnd(16, 34), // degrees; ~4-9px of swing on the pivot
         // Whole half-cycles, so it touches down hanging straight and face-on.
         swayN: halves((dur * LAND - SWAY_LAG) / rnd(1.4, 2.2)),
@@ -468,11 +596,16 @@ window.folioSound = (function () {
         var x = cx + rnd(-0.4, 0.4) * cr - w / 2;
         var y = cy + cr * 0.35 - h / 2; // hidden in the lower foliage
         var dir = Math.random() < 0.5 ? -1 : 1;
-        spawn("apple", x, y, w, h, {
+        var apple = spawn("apple", x, y, w, h, {
           fall: (ground - y - h).toFixed(1) + "px",
-          roll: (dir * rnd(10, 18)).toFixed(1) + "px",
+          roll: fx.onScreen(x, w, dir * rnd(10, 18), 0).toFixed(1) + "px",
           spin: (dir * rnd(60, 90)).toFixed(0) + "deg",
         }, APPLE, true);
+        // It drops out from behind the foliage; once it is below the canopy
+        // it comes to the front, so it lands and rests in front of the
+        // tree's base instead of disappearing behind it.
+        if (apple)
+          setTimeout(function () { apple.classList.remove("is-behind"); }, 380);
         // Landing and the two bounces, timed to appleFall (5.2s: 13%, 25%, 32%).
         window.folioSound.play("thud", 0.68, 1);
         window.folioSound.play("thud", 1.3, 0.4);
@@ -483,6 +616,7 @@ window.folioSound = (function () {
 
   Array.prototype.forEach.call(trees, function (tree) {
     var big = tree.classList.contains("tree-1");
+    fx.oneShot(tree, "is-shaking", "treeRustle");
     fx.asButton(tree, big ? "Shake the big tree" : "Shake the small tree", function () { shake(tree); });
   });
 })();
@@ -504,9 +638,6 @@ window.folioSound = (function () {
   "use strict";
   var clouds = document.querySelectorAll(".cloud");
   if (!clouds.length) return;
-  var still =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var fx = window.folioFx, sprite = fx.sprite, spawn = fx.spawn, rnd = fx.rnd;
 
   // Colours from the cloud sprite itself (#6fb3df outline, #b4d8f1 shade).
@@ -535,7 +666,8 @@ window.folioSound = (function () {
 
   var smallPokes = [];
   var lastThunder = 0;
-  function poke(cloud, hit, big) {
+  function poke(c) {
+    var cloud = c.cloud, hit = c.hit, big = c.big;
     var dark = document.documentElement.getAttribute("data-theme") === "dark";
     var now = Date.now(), storm = big;
     if (!big) {
@@ -545,20 +677,18 @@ window.folioSound = (function () {
     }
 
     window.folioSound.play(dark ? "snow" : "rain");
-    // Light first, sound a beat later. Rapid pokes share one rumble
-    // instead of stacking thunderclaps on top of each other.
-    if (storm && now - lastThunder > 700) {
+    // Light first, sound a beat later. Only pokes closer than 350ms (a
+    // double-click) share one rumble instead of stacking thunderclaps.
+    if (storm && now - lastThunder > 350) {
       lastThunder = now;
       window.folioSound.play("thunder", 0.25);
     }
-    if (still) return;
+    if (fx.still()) return;
 
-    cloud.classList.remove("is-poked");
-    void cloud.offsetWidth;
-    cloud.classList.add("is-poked");
+    fx.replay(cloud, "is-poked");
     hit.classList.add("is-raining");
-    clearTimeout(hit._rainT);
-    hit._rainT = setTimeout(function () { hit.classList.remove("is-raining"); }, 1700);
+    clearTimeout(c.rainT);
+    c.rainT = setTimeout(function () { hit.classList.remove("is-raining"); }, 1700);
 
     // Measured with the parallax offset included, so drops start right
     // under where the cloud is drawn now.
@@ -578,11 +708,11 @@ window.folioSound = (function () {
     } else {
       for (i = 0; i < 10; i++)
         setTimeout(function () {
-          var dur = rnd(1.8, 2.7);
-          fx.fly("snow", left + r.width * rnd(0.16, 0.84), base - 2 * s, 2.2 * s, 2.2 * s, snowPath({
+          var dur = rnd(1.8, 2.7), flakeX = left + r.width * rnd(0.16, 0.84);
+          fx.fly("snow", flakeX, base - 2 * s, 2.2 * s, 2.2 * s, snowPath({
             dur: dur,
             fall: rnd(70, 125),
-            dx: rnd(-12, 12),
+            dx: fx.onScreen(flakeX, 2.2 * s, rnd(-12, 12), 6),
             tilt: rnd(12, 24), // degrees; ~3-6px of drift on the pivot
             swayN: fx.halves(dur / rnd(1.2, 1.9)),
           }), dur * 1000, FLAKE, true);
@@ -601,13 +731,13 @@ window.folioSound = (function () {
   }
 
   Array.prototype.forEach.call(clouds, function (cloud) {
-    var big = cloud.classList.contains("cloud-1");
-    var hit = document.createElement("span");
-    hit.className = "cloud-hit";
-    cloud.appendChild(hit);
+    var c = { cloud: cloud, hit: document.createElement("span"), big: cloud.classList.contains("cloud-1"), rainT: 0 };
+    c.hit.className = "cloud-hit";
+    cloud.appendChild(c.hit);
     // The cloud was decorative (aria-hidden); its child is now a button.
     cloud.removeAttribute("aria-hidden");
-    fx.asButton(hit, big ? "Poke the storm cloud" : "Poke the small cloud", function () { poke(cloud, hit, big); });
+    fx.oneShot(cloud, "is-poked", "cloudPoke");
+    fx.asButton(c.hit, c.big ? "Poke the storm cloud" : "Poke the small cloud", function () { poke(c); });
   });
 })();
 
@@ -637,16 +767,16 @@ window.folioSound = (function () {
   btn.addEventListener("click", function () {
     btn.classList.remove("is-hinting");
     if (!state.used) { state.used = true; save(); }
-    // The theme handler (top of this file) has already flipped data-theme.
-    setTimeout(function () {
-      var dark = document.documentElement.getAttribute("data-theme") === "dark";
-      window.folioSound.play(dark ? "night" : "day");
-    }, 0);
+    // script.js's theme handler (registered first) has already flipped
+    // data-theme, so this reads the new theme.
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    window.folioSound.play(dark ? "night" : "day");
   });
 
   if (state.used || state.shown >= 3) return;
   function show() {
-    // Only if the sun is actually on screen; otherwise save it for later.
+    // Only if the sun is actually on screen; otherwise this visit gets no
+    // nudge (and the count isn't used up, so a later visit can).
     if (state.used || window.scrollY > 300) return;
     state.shown++;
     save();
@@ -676,7 +806,8 @@ window.folioSound = (function () {
    colour blocks (each block the average colour of that patch, popping a
    little bigger than its slot), then sharpens into the second photo.
    Leaving runs the same wave back, from wherever it got to, so quick
-   in-and-out never jumps. Tap toggles on touch screens.
+   in-and-out never jumps. A finger tap toggles it (mouse and pen use
+   hover).
 
    Drawn on a small canvas, only while something is moving (no idle
    work, no DOM cells, no seams). The second photo (6.5 KB, same framing
@@ -695,16 +826,13 @@ window.folioSound = (function () {
   // thin: only ~2-3 rows are solid pixels at any moment as it sweeps down.
   var ROW_DELAY = 40, JITTER = 30, DUR = 280; // ms
   var BLOCK = 0.35; // share of a cell's change spent as a solid block
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    ROW_DELAY = JITTER = 0;
-    DUR = 1;
-  }
+  var still = window.folioFx.still; // reduced motion: an instant swap
 
   var idle = window.requestIdleCallback || function (f) { setTimeout(f, 300); };
   idle(function () { new Image().src = NEW; });
 
-  var ready = null, canvas, g, W, H, dpr, bh, oy, xs, ys;
-  var avgOld = [], avgNew = [], cells = [], target = 0, raf = 0;
+  var ready = null, canvas, g, W, H, px, bh, oy, xs, ys;
+  var avgOld = [], avgNew = [], cells = [], target = 0, raf = 0, lastPointer = "";
 
   function load(src) {
     var i = new Image();
@@ -721,19 +849,26 @@ window.folioSound = (function () {
         g = canvas.getContext("2d");
         for (var i = 0; i < N * N; i++) cells.push({ v: 0, from: 0, start: 0 });
         return { old: im[0], neu: im[1] };
+      }).catch(function (err) {
+        ready = null; // a failed load (offline, blocked) retries on the next hover
+        throw err;
       });
     return ready;
   }
 
   // The avatar draws its photo as a 4:5 cover background shifted 5% down
-  // (app.css). Reproduce that geometry so the canvas lines up exactly.
+  // (app.css). Reproduce that geometry so the canvas lines up exactly. W/H
+  // are layout px; px is device pixels per layout px, including the CSS
+  // zoom large screens get (app.css), so the canvas is never upscaled.
   function measure(im) {
-    if (W === avatar.clientWidth && H === avatar.clientHeight) return;
+    var zoom = avatar.getBoundingClientRect().width / avatar.offsetWidth || 1;
+    var nextPx = Math.min(window.devicePixelRatio || 1, 3) * zoom;
+    if (W === avatar.clientWidth && H === avatar.clientHeight && px === nextPx) return;
     W = avatar.clientWidth;
     H = avatar.clientHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 3);
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
+    px = nextPx;
+    canvas.width = Math.round(W * px);
+    canvas.height = Math.round(H * px);
     bh = (W * IMG_H) / IMG_W;
     oy = 0.05 * (H - bh);
     xs = []; ys = [];
@@ -746,7 +881,7 @@ window.folioSound = (function () {
   }
   // Source rect (in photo pixels) behind a canvas rect (device pixels).
   function src(x, y, w, h) {
-    return [((x / dpr) * IMG_W) / W, ((y / dpr - oy) * IMG_H) / bh, ((w / dpr) * IMG_W) / W, ((h / dpr) * IMG_H) / bh];
+    return [((x / px) * IMG_W) / W, ((y / px - oy) * IMG_H) / bh, ((w / px) * IMG_W) / W, ((h / px) * IMG_H) / bh];
   }
   // Each cell's average colour: the visible part of the photo scaled down
   // to N x N.
@@ -765,17 +900,17 @@ window.folioSound = (function () {
     target = to;
     init().then(function (im) {
       measure(im);
-      var now = performance.now();
+      var now = performance.now(), instant = still();
       cells.forEach(function (c, i) {
-        c.from = c.v;
-        c.start = now + Math.floor(i / N) * ROW_DELAY + Math.random() * JITTER;
+        c.from = instant ? to : c.v;
+        c.start = instant ? now : now + Math.floor(i / N) * ROW_DELAY + Math.random() * JITTER;
       });
       if (!raf) raf = requestAnimationFrame(function (t) { frame(t, im); });
-    });
+    }).catch(function () {});
   }
 
   function frame(now, im) {
-    var busy = false;
+    var busy = false, any = false;
     var s = src(0, 0, canvas.width, canvas.height);
     g.globalAlpha = 1;
     g.drawImage(im.old, s[0], s[1], s[2], s[3], 0, 0, canvas.width, canvas.height);
@@ -784,6 +919,7 @@ window.folioSound = (function () {
       c.v = t <= 0 ? c.from : c.from + (target - c.from) * Math.min(t, 1);
       if (c.v !== target) busy = true;
       if (c.v <= 0) continue;
+      any = true;
       var r = Math.floor(i / N), col = i % N;
       var x = xs[col], y = ys[r], w = xs[col + 1] - x, h = ys[r + 1] - y;
       if (c.v >= 1) {
@@ -811,16 +947,25 @@ window.folioSound = (function () {
         g.globalAlpha = 1;
       }
     }
+    // Back on the original photo: clear the canvas, so the avatar's own
+    // background shows and a later resize can't leave a stale, stretched
+    // bitmap on top of it.
+    if (!busy && !any) g.clearRect(0, 0, canvas.width, canvas.height);
     raf = busy ? requestAnimationFrame(function (t) { frame(t, im); }) : 0;
   }
 
+  // Mouse and pen hover; a finger taps. The pointer type is taken from the
+  // press itself, so a touchscreen laptop and an Apple Pencil both behave.
   avatar.addEventListener("pointerenter", function (e) {
     if (e.pointerType !== "touch") go(1);
   });
   avatar.addEventListener("pointerleave", function (e) {
     if (e.pointerType !== "touch") go(0);
   });
+  avatar.addEventListener("pointerdown", function (e) {
+    lastPointer = e.pointerType;
+  });
   avatar.addEventListener("click", function () {
-    if (!window.matchMedia("(hover: hover)").matches) go(target ? 0 : 1);
+    if (lastPointer === "touch") go(target ? 0 : 1);
   });
 })();

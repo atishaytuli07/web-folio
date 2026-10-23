@@ -527,14 +527,15 @@
         100% { transform: translate(0, 0) rotate(-5deg); }
       }
       @media (max-width: 900px) {
-        /* Keep the butterfly on mobile (trees + clouds drop away). Tuck it into
-           the empty top-right corner; the margins leave room for the full
-           flight path so it never clips off-screen. */
+        /* On phones the trees shrink to ~0.77x and sit in the bottom-right
+           corner (the 900px block with the clouds, further down). The
+           butterfly stays with them: between the two canopies, as on
+           desktop, scaled to match. Its flight path (up to 38px right, 42px
+           up) stays among the trees and on screen. */
         .butterfly {
           left: auto;
-          right: 50px;
-          top: 50px;
-          bottom: auto;
+          right: 47px;
+          bottom: 34px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
