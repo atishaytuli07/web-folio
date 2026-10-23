@@ -9,7 +9,7 @@ One HTML file, hand-written CSS, vanilla JavaScript. No framework, no build step
 The site has a toggle at the top:
 
 - **Minimal** is the pitch: who I am, where I work, my best projects with real numbers, and how to reach me.
-- **Creative** is the archive: every project I have ever shipped, organized into folders you can open in place. Products, full-stack builds, 17 client works, Figma case studies, site recreations, open source, and the receipts (screenshots of every feature and trending moment).
+- **Creative** is the archive: every project I have ever shipped, organized into folders you can open in place. Products, full-stack builds, 18 client works, Figma case studies, site recreations, open source, and the receipts (screenshots of every feature and trending moment).
 
 Same document, two audiences. The mode you pick is remembered.
 
