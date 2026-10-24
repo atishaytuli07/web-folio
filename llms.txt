@@ -1,16 +1,22 @@
-# Atishay Tuli
+# Atishay Tuli, Design Engineer
 
-> Atishay Tuli is a design engineer and creative frontend developer from India. He designs in Figma, builds in React and Next.js, and specializes in web animation with GSAP, Framer Motion, and Lenis. He works as a Jr. Frontend Developer at Designing Solutions (joined as an intern in January 2025) and has shipped 15+ client sites there, plus freelance work for clients like Traya International and Mountain Bird Bagpackers.
+> Atishay Tuli is a design engineer from India. Atishay designs interfaces in Figma, then builds them in React and Next.js, with motion in GSAP, Framer Motion, and Lenis: one person covering the whole pipeline, design to deploy. Atishay works as a Jr. Frontend Developer at Designing Solutions (joined as an intern in January 2025), has shipped 15+ client sites there, and takes on freelance design and development for clients like Studio Morpheus, Traya International, and Mountain Bird Bagpackers. Products Atishay has designed and built are used by 95,000+ people.
 
 Portfolio: https://www.creativeatishay.in
 
 ## Products
 
-- MakeMyAISite (https://www.makemyaisite.com): turns a LinkedIn profile or resume PDF into a live portfolio website in about 30 seconds, with a jobs tab that matches users to real openings. 40,000+ visitors, 6,500+ users, ranks #2 on Google for "linkedin to portfolio maker".
+- MakeMyAISite (https://www.makemyaisite.com): turns a LinkedIn profile or resume PDF into a live portfolio website in about 30 seconds, with a jobs tab that matches users to real openings. 40,000+ visitors, 6,500+ users, ranks #2 on Google for "linkedin to portfolio maker". Atishay designed and built the marketing site and all 10 portfolio templates, designed the product flow, and ran SEO and AEO.
 - Woblo (https://woblo.in): a free Chrome extension that extracts any website's colors, fonts, and images as ready-to-copy code for Tailwind, CSS, or Figma. 30,000+ users, 4.9 stars on the Chrome Web Store.
 - Will You Be My Valentine (https://willyoubmyvalentine.vercel.app): a playful interactive experience that went viral with 37.5k+ visitors, no ads, no budget. Top 10 trending on Muzli.
 - AI Best Prompts (https://www.aibestprompts.in): a free copy-paste prompt library for Claude, ChatGPT, Gemini, and more. 28.4k+ Google impressions, launched on Product Hunt and Peerlist.
-- design.md (https://github.com/sunil-dsb/design.md): open source. Paste a URL, get a DESIGN.md, tokens, and a design-system CSS file built for AI coding agents (Claude Code, Cursor, v0) to read before they build. 68 GitHub stars. He built the site and the token-extraction engine.
+
+## Case studies
+
+- MakeMyAISite: https://app.notion.com/p/MakeMyAISite-36dc31e57d75803dae3cc619b7e62f1b
+- RoofBros Smart Quote (iOS and Android app design for an Australian roofing supplier, 74 screens): https://roofbros-casestudy.notion.site/RoofBros-Smart-Quote-3abc31e57d7581ac9eccc9cb0a0de23a
+- HKL Community App: https://app.notion.com/p/HKL-Community-App-36bc31e57d7580fe9792c6db688af87b
+- DSOL (internal operations app): https://app.notion.com/p/roofbros-casestudy/DSOL-APP-36dc31e57d7580798bf3fd164c374610
 
 ## Recognition
 
@@ -19,11 +25,16 @@ Portfolio: https://www.creativeatishay.in
 
 ## Skills
 
-Design engineering, frontend development, creative development, UI design in Figma, React, Next.js, GSAP, Framer Motion, Lenis, Three.js, Tailwind CSS, Sanity CMS, on-page SEO and AEO.
+Design engineering, UI and product design in Figma, design systems, prototyping, frontend development in React and Next.js, web animation with GSAP, Framer Motion, and Lenis, Tailwind CSS, Sanity CMS, on-page SEO and AEO.
+
+## Background
+
+Self-taught. B.Tech (2021 to 2025); got serious about coding in 2024, in the third year of the degree, by taking apart websites and rebuilding them.
 
 ## Contact
 
 - Email: atishaytuliiaf@gmail.com
-- GitHub: https://github.com/atishaytuli07
 - LinkedIn: https://www.linkedin.com/in/atishaytuli07/
-- X/Twitter: https://twitter.com/atishaytuli07
+- GitHub: https://github.com/atishaytuli07
+- X: https://x.com/atishaytuli07
+- Dribbble: https://dribbble.com/atishaytuli07

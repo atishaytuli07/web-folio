@@ -969,3 +969,13 @@ window.folioSound = (function () {
     if (lastPointer === "touch") go(target ? 0 : 1);
   });
 })();
+
+/* ----------------------------------------------------------------
+   Folders: a paper rustle when one opens. */
+(function () {
+  "use strict";
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest(".folder"))
+      window.folioSound.play("rustle");
+  });
+})();
